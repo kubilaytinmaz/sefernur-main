@@ -235,6 +235,82 @@ function getMinPriceFromDynamicHotel(hotel: XmlObject): string | undefined {
   return minPrice === null ? undefined : String(minPrice);
 }
 
+/**
+ * Get text content from a language object.
+ * Handles both direct text and CDATA wrapped content.
+ */
+function getDescriptionText(language: unknown): string | undefined {
+  const langObj = asObject(language);
+  if (!langObj) return undefined;
+  
+  // Try #text first (CDATA content)
+  const textContent = langObj["#text"];
+  if (typeof textContent === "string" && textContent.trim()) {
+    return textContent.trim();
+  }
+  
+  // Try direct string value
+  if (typeof language === "string" && language.trim()) {
+    return language.trim();
+  }
+  
+  return undefined;
+}
+
+/**
+ * Extract description from description1/description2 fields.
+ * These fields contain language objects with text content.
+ *
+ * Structure: description1 > language[id, name, #text]
+ *
+ * Priority:
+ * 1. Turkish (id=2) if available
+ * 2. English (id=1) as fallback
+ * 3. First available language
+ */
+function extractDescription(hotel: XmlObject): string | undefined {
+  const descKeys = ["description1", "description2"];
+  
+  for (const key of descKeys) {
+    const descNode = hotel[key];
+    if (!descNode || typeof descNode !== "object" || Array.isArray(descNode)) continue;
+    
+    const descObj = descNode as XmlObject;
+    const languages = asArray(descObj["language"]);
+    
+    if (languages.length === 0) continue;
+    
+    // Try Turkish first (id="2")
+    const turkish = languages.find((lang: unknown) => {
+      const langObj = asObject(lang);
+      const id = langObj?.["@_id"];
+      return id === "2" || id === 2;
+    });
+    if (turkish) {
+      const text = getDescriptionText(turkish);
+      if (text) return text;
+    }
+    
+    // Fallback to English (id="1")
+    const english = languages.find((lang: unknown) => {
+      const langObj = asObject(lang);
+      const id = langObj?.["@_id"];
+      return id === "1" || id === 1;
+    });
+    if (english) {
+      const text = getDescriptionText(english);
+      if (text) return text;
+    }
+    
+    // Last resort: first available language
+    const first = languages[0];
+    const text = getDescriptionText(first);
+    if (text) return text;
+  }
+  
+  return undefined;
+}
+
 // ============================================================================
 // Hotel Normalization
 // ============================================================================
@@ -283,8 +359,8 @@ function normalizeHotelNode(rawHotel: unknown): NormalizedHotel {
   const checkInTime = getString(hotel, ["checkInTime", "checkintime", "@_checkintime"]);
   const checkOutTime = getString(hotel, ["checkOutTime", "checkouttime", "@_checkouttime"]);
   
-  // Description
-  const description = getString(hotel, ["description1", "description"]);
+  // Description - extract from description1/description2 language objects
+  const description = extractDescription(hotel) || getString(hotel, ["description"]);
   
   // City/Country codes
   const cityCode = getString(hotel, ["@_CityCode", "cityCode"]);
@@ -565,6 +641,6 @@ export function extractHotelInfoFromGetRooms(parsedXML: XmlObject): {
     hotelName: getString(hotel, ["@_name", "hotelName", "name"]) || "",
     checkInTime: getString(hotel, ["checkInTime", "checkintime"]) || "14:00",
     checkOutTime: getString(hotel, ["checkOutTime", "checkouttime"]) || "12:00",
-    description: getString(hotel, ["description1", "description"]),
+    description: extractDescription(hotel) || getString(hotel, ["description"]),
   };
 }

@@ -157,6 +157,7 @@ ${hotelIdsXml}
             <field>rating</field>
             <field>hotelImages</field>
             <field>description1</field>
+            <field>description2</field>
             <field>geoPoint</field>
             <field>cityName</field>
             <field>cityCode</field>
