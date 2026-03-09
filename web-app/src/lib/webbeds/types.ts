@@ -100,6 +100,7 @@ export interface NormalizedHotel {
   stars: string;
   price: string;
   image?: string;
+  images?: string[]; // All hotel images
   lat?: string;
   lng?: string;
   rating?: string;

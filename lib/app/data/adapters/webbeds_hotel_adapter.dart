@@ -17,6 +17,10 @@ class WebBedsHotelAdapter {
     double? searchPrice,
   }) {
     print('[WebBedsAdapter] toHotelModel: hotelId=${webBedsHotel.hotelId}, name=${webBedsHotel.name}, searchPrice=$searchPrice, minPrice=${webBedsHotel.minPrice}');
+    print('[WebBedsAdapter] images count: ${webBedsHotel.images.length}');
+    if (webBedsHotel.images.isNotEmpty) {
+      print('[WebBedsAdapter] first image: ${webBedsHotel.images.first}');
+    }
     
     final roomTypes = _convertRoomTypes(webBedsHotel, searchPrice);
     print('[WebBedsAdapter] roomTypes created: ${roomTypes.length} rooms, prices: ${roomTypes.map((r) => r.originalPrice).toList()}');

@@ -39,6 +39,10 @@ class WebBedsXmlBuilder {
         <filters>
             <city>$cityCode</city>
         </filters>
+        <fields>
+            <field>hotelImages</field>
+            <field>images</field>
+        </fields>
     </return>
 </request>''';
   }
@@ -76,6 +80,10 @@ class WebBedsXmlBuilder {
                 </a:condition>
             </c:condition>
         </filters>
+        <fields>
+            <field>hotelImages</field>
+            <field>images</field>
+        </fields>
     </return>
 </request>''';
   }
@@ -121,6 +129,7 @@ class WebBedsXmlBuilder {
             <field>fullAddress</field>
             <field>rating</field>
             <field>hotelImages</field>
+            <field>images</field>
             <field>description1</field>
             <field>description2</field>
             <field>geoPoint</field>

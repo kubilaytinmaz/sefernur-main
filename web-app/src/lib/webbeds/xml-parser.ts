@@ -57,10 +57,10 @@ function dotwRatingToStars(rating: string | undefined): string | undefined {
 }
 
 /**
- * Extract image URL from hotel data.
- * Only checks known image fields to avoid picking up random URLs.
+ * Extract ALL image URLs from hotel data.
+ * Returns an array of all valid image URLs found.
  */
-function extractImageUrl(hotel: XmlObject): string | undefined {
+function extractAllImages(hotel: XmlObject): string[] {
   const VALID_IMAGE_DOMAINS = [
     "dotwconnect.com",
     "webbeds.com",
@@ -68,6 +68,9 @@ function extractImageUrl(hotel: XmlObject): string | undefined {
     "us.dotwconnect.com",
     "eu.dotwconnect.com",
   ];
+  
+  const seenUrls = new Set<string>();
+  const images: string[] = [];
   
   function isValidImageUrl(url: string): boolean {
     if (!url || typeof url !== "string") return false;
@@ -83,21 +86,39 @@ function extractImageUrl(hotel: XmlObject): string | undefined {
     }
   }
   
+  function addImage(url: string | undefined) {
+    if (!url || !isValidImageUrl(url)) return;
+    const trimmed = url.trim();
+    if (!seenUrls.has(trimmed)) {
+      seenUrls.add(trimmed);
+      images.push(trimmed);
+    }
+  }
+  
   // Check hotelImages object
   const hotelImages = asObject(hotel["hotelImages"] ?? hotel["HotelImages"]);
   if (hotelImages) {
     // Try thumb field
     const thumb = getString(hotelImages, ["thumb", "Thumb", "@_thumb", "@_Thumb"]);
-    if (thumb && isValidImageUrl(thumb)) return thumb;
+    addImage(thumb);
     
-    // Try image array
+    // Try image array - get ALL images
     const imageArray = asArray(hotelImages["image"] ?? hotelImages["Image"]);
     for (const img of imageArray) {
-      if (typeof img === "string" && isValidImageUrl(img)) return img;
-      const imgObj = asObject(img);
-      if (imgObj) {
-        const url = getString(imgObj, ["url", "Url", "@_url", "@_Url"]);
-        if (url && isValidImageUrl(url)) return url;
+      if (typeof img === "string") {
+        addImage(img);
+      } else {
+        const imgObj = asObject(img);
+        if (imgObj) {
+          // Try url attribute
+          const url = getString(imgObj, ["url", "Url", "@_url", "@_Url"]);
+          addImage(url);
+          // Also try #text content (for CDATA wrapped URLs)
+          const textContent = imgObj["#text"];
+          if (typeof textContent === "string") {
+            addImage(textContent.trim());
+          }
+        }
       }
     }
   }
@@ -113,10 +134,18 @@ function extractImageUrl(hotel: XmlObject): string | undefined {
     "mainimage",
     "MainImage",
   ]);
+  addImage(directImage);
   
-  if (directImage && isValidImageUrl(directImage)) return directImage;
-  
-  return undefined;
+  return images;
+}
+
+/**
+ * Extract single image URL from hotel data (for backwards compatibility).
+ * Only checks known image fields to avoid picking up random URLs.
+ */
+function extractImageUrl(hotel: XmlObject): string | undefined {
+  const images = extractAllImages(hotel);
+  return images.length > 0 ? images[0] : undefined;
 }
 
 /**
@@ -241,8 +270,9 @@ function normalizeHotelNode(rawHotel: unknown): NormalizedHotel {
   const directPrice = getString(hotel, ["@_Price", "price"]);
   const fallbackMinPrice = getMinPriceFromDynamicHotel(hotel);
   
-  // Image
-  const imageUrl = extractImageUrl(hotel);
+  // Images - extract ALL images
+  const allImages = extractAllImages(hotel);
+  const imageUrl = allImages.length > 0 ? allImages[0] : undefined;
   
   // GeoPoint
   const geoPoint = asObject(hotel["geoPoint"]);
@@ -272,6 +302,7 @@ function normalizeHotelNode(rawHotel: unknown): NormalizedHotel {
     stars,
     price: directPrice || fallbackMinPrice || "0",
     image: imageUrl,
+    images: allImages.length > 0 ? allImages : undefined,
     lat,
     lng,
     checkInTime,

@@ -56,15 +56,13 @@ export async function GET(
 
     const hotel = hotels[0];
 
-    // Extract images from hotelImages structure
-    const images: string[] = [];
-    
-    // Note: In the normalized hotel, image is already extracted
-    // But we need to get ALL images from the hotelImages array
-    // For now, we'll use the single image from normalized data
-    if (hotel.image) {
-      images.push(hotel.image);
-    }
+    // Extract ALL images from hotel
+    // The normalized hotel now includes all images in the 'images' field
+    const images: string[] = hotel.images && hotel.images.length > 0
+      ? hotel.images
+      : (hotel.image ? [hotel.image] : []);
+
+    console.log(`[Hotel Detail] Found ${images.length} images for hotel ${hotelId}`);
 
     // Build response
     const response = {

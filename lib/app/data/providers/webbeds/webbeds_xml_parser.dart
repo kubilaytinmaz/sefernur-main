@@ -134,6 +134,12 @@ class WebBedsXmlParser {
       }
     }
 
+    // Images - dinamik aramada da resimleri çek (hotelImages field istendiyse)
+    final images = _extractAllImages(hotelEl);
+    if (images.isNotEmpty) {
+      print('[WebBedsParser] Dinamik aramada otel $hotelId için ${images.length} resim bulundu');
+    }
+
     return WebBedsHotel(
       hotelId: hotelId,
       name: 'Otel #$hotelId', // Geçici isim - getHotelInfo ile güncellenecek
@@ -150,7 +156,7 @@ class WebBedsXmlParser {
       description2: '',
       latitude: null,
       longitude: null,
-      images: [],
+      images: images,
       amenities: [],
       minPrice: minPrice,
       currency: currency,
@@ -272,29 +278,86 @@ class WebBedsXmlParser {
       longitude = double.tryParse(_getElementText(geoPointEl, 'long') ?? '');
     }
 
-    // Images - hotelImages element içinde
-    final images = <String>[];
+    // Images - Tüm olası kaynakları tara ve birleştir
+    final images = <String>{};  // Set kullanarak duplicate'leri otomatik engelle
+    
+    // Yöntem 1: hotelImages > image elementleri
     final imagesEl = hotelEl.findElements('hotelImages').firstOrNull;
     if (imagesEl != null) {
-      for (final imgEl in imagesEl.findElements('image')) {
-        final url = imgEl.getAttribute('url') ?? _getElementText(imgEl, 'url') ?? imgEl.innerText;
+      final imgElements = imagesEl.findElements('image').toList();
+      print('[WebBedsParser-Static] hotelImages element bulundu, resim sayısı: ${imgElements.length}');
+      for (final imgEl in imgElements) {
+        // Farklı XML yapılarını destekle:
+        // 1. <image url="..." />
+        // 2. <image><url>...</url></image>
+        // 3. <image>http://...</image>
+        String? url = imgEl.getAttribute('url');
+        // null-safety: getAttribute null dönebilir
+        if (url == null || url.isEmpty) {
+          url = _getElementText(imgEl, 'url');
+        }
+        if (url == null || url.isEmpty) {
+          url = imgEl.innerText.trim();
+        }
         if (url.isNotEmpty && url.startsWith('http')) {
           images.add(url);
         }
       }
     }
-    // Alternatif: images element
-    if (images.isEmpty) {
-      final imagesEl2 = hotelEl.findElements('images').firstOrNull;
-      if (imagesEl2 != null) {
-        for (final imgEl in imagesEl2.findElements('image')) {
-          final url = imgEl.getAttribute('url') ?? _getElementText(imgEl, 'url') ?? imgEl.innerText;
-          if (url.isNotEmpty && url.startsWith('http')) {
-            images.add(url);
-          }
+    
+    // Yöntem 2: images > image elementleri (alternatif yapı) — GUARD KALDIRILDI
+    final imagesEl2 = hotelEl.findElements('images').firstOrNull;
+    if (imagesEl2 != null) {
+      final imgElements2 = imagesEl2.findElements('image').toList();
+      print('[WebBedsParser-Static] images element bulundu, resim sayısı: ${imgElements2.length}');
+      for (final imgEl in imgElements2) {
+        String? url = imgEl.getAttribute('url');
+        if (url == null || url.isEmpty) {
+          url = _getElementText(imgEl, 'url');
+        }
+        if (url == null || url.isEmpty) {
+          url = imgEl.innerText.trim();
+        }
+        if (url.isNotEmpty && url.startsWith('http')) {
+          images.add(url);
         }
       }
     }
+    
+    // Yöntem 3: image elementi doğrudan hotel altında — GUARD KALDIRILDI
+    final directImages = hotelEl.findElements('image').toList();
+    if (directImages.isNotEmpty) {
+      print('[WebBedsParser-Static] Doğrudan image elementleri bulundu: ${directImages.length}');
+      for (final imgEl in directImages) {
+        String? url = imgEl.getAttribute('url');
+        if (url == null || url.isEmpty) {
+          url = _getElementText(imgEl, 'url');
+        }
+        if (url == null || url.isEmpty) {
+          url = imgEl.innerText.trim();
+        }
+        if (url.isNotEmpty && url.startsWith('http')) {
+          images.add(url);
+        }
+      }
+    }
+    
+    // Yöntem 4: imageURL veya image elementi (tek resim) — GUARD KALDIRILDI
+    final singleImage = _getElementText(hotelEl, 'imageURL') ??
+                        _getElementText(hotelEl, 'imageUrl') ??
+                        _getElementText(hotelEl, 'image');
+    if (singleImage != null && singleImage.startsWith('http')) {
+      images.add(singleImage);
+    }
+    
+    print('[WebBedsParser-Static] Toplam unique resim sayısı: ${images.length}');
+    if (images.isNotEmpty) {
+      print('[WebBedsParser-Static] İlk resim: ${images.first}');
+    } else {
+      print('[WebBedsParser-Static] UYARI: Hiç resim bulunamadı! hotelId: $hotelId');
+    }
+    
+    final imageList = images.toList();  // Set'i List'e çevir
 
     // Amenities
     final amenities = <String>[];
@@ -335,7 +398,7 @@ class WebBedsXmlParser {
       description2: description2,
       latitude: latitude,
       longitude: longitude,
-      images: images,
+      images: imageList,
       amenities: amenities,
       minPrice: null, // Statik veride fiyat yok
       currency: 'EUR',
@@ -804,5 +867,71 @@ class WebBedsXmlParser {
   static String? _getElementText(XmlElement parent, String name) {
     final element = parent.findElements(name).firstOrNull;
     return element?.innerText.trim();
+  }
+
+  /// Tüm resimleri çek - farklı XML formatlarını destekle
+  /// Tüm yöntemleri sırayla dener ve duplicate'leri engeller
+  static List<String> _extractAllImages(XmlElement hotelEl) {
+    final images = <String>{};  // Set kullanarak duplicate'leri otomatik engelle
+    
+    // Yöntem 1: hotelImages > image elementleri
+    final imagesEl = hotelEl.findElements('hotelImages').firstOrNull;
+    if (imagesEl != null) {
+      for (final imgEl in imagesEl.findElements('image')) {
+        String? url = imgEl.getAttribute('url');
+        // null-safety: getAttribute null dönebilir
+        if (url == null || url.isEmpty) {
+          url = _getElementText(imgEl, 'url');
+        }
+        if (url == null || url.isEmpty) {
+          url = imgEl.innerText.trim();
+        }
+        if (url.isNotEmpty && url.startsWith('http')) {
+          images.add(url);
+        }
+      }
+    }
+    
+    // Yöntem 2: images > image elementleri — GUARD KALDIRILDI
+    final imagesEl2 = hotelEl.findElements('images').firstOrNull;
+    if (imagesEl2 != null) {
+      for (final imgEl in imagesEl2.findElements('image')) {
+        String? url = imgEl.getAttribute('url');
+        if (url == null || url.isEmpty) {
+          url = _getElementText(imgEl, 'url');
+        }
+        if (url == null || url.isEmpty) {
+          url = imgEl.innerText.trim();
+        }
+        if (url.isNotEmpty && url.startsWith('http')) {
+          images.add(url);
+        }
+      }
+    }
+    
+    // Yöntem 3: doğrudan image elementleri — GUARD KALDIRILDI
+    final directImages = hotelEl.findElements('image').toList();
+    for (final imgEl in directImages) {
+      String? url = imgEl.getAttribute('url');
+      if (url == null || url.isEmpty) {
+        url = _getElementText(imgEl, 'url');
+      }
+      if (url == null || url.isEmpty) {
+        url = imgEl.innerText.trim();
+      }
+      if (url.isNotEmpty && url.startsWith('http')) {
+        images.add(url);
+      }
+    }
+    
+    // Yöntem 4: tek resim — GUARD KALDIRILDI
+    final singleImage = _getElementText(hotelEl, 'imageURL') ??
+                        _getElementText(hotelEl, 'imageUrl') ??
+                        _getElementText(hotelEl, 'image');
+    if (singleImage != null && singleImage.startsWith('http')) {
+      images.add(singleImage);
+    }
+    
+    return images.toList();  // Set'i List'e çevir
   }
 }
