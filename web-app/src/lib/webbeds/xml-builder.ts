@@ -8,7 +8,6 @@ interface Room {
 
 /**
  * Wraps inner <request> XML with <customer> auth envelope — V4 DOTW format.
- * This must match the mobile (Flutter) wrapWithCustomer exactly.
  */
 function wrapWithCustomer(requestXml: string): string {
   const encryptedPassword = md5Hash(WEBBEDS_CONFIG.password);
@@ -55,6 +54,14 @@ ${childrenXml}
   return `<rooms no="${rooms.length}">\n${roomLines}\n</rooms>`;
 }
 
+/**
+ * Search hotels by city or country with pricing.
+ * V4 API returns: result > hotels > hotel[@hotelid] > rooms > room > roomType > rateBases > rateBasis > total
+ * 
+ * IMPORTANT: V4 searchhotels does NOT return hotel names, addresses, images etc.
+ * by default. Only hotelid + pricing data is returned.
+ * To get hotel details, use buildSearchByIdsXML with <fields> and <noPrice>true</noPrice>.
+ */
 export function buildSearchHotelsXML(params: {
   cityCode?: number;
   countryCode?: number;
@@ -66,8 +73,7 @@ export function buildSearchHotelsXML(params: {
 }): string {
   const roomsXml = buildRoomsXml(params.rooms, params.nationality, params.nationality);
 
-  // Build filters based on what's provided - V4 requires proper namespace
-  let filters = '';
+  let filters = "";
   if (params.cityCode) {
     filters = `<filters xmlns:a="http://us.dotwconnect.com/xsd/atomicCondition" xmlns:c="http://us.dotwconnect.com/xsd/complexCondition">
                 <city>${params.cityCode}</city>
@@ -77,7 +83,6 @@ export function buildSearchHotelsXML(params: {
                 <country>${params.countryCode}</country>
               </filters>`;
   } else {
-    // If no city or country, still provide filters with namespace
     filters = `<filters xmlns:a="http://us.dotwconnect.com/xsd/atomicCondition" xmlns:c="http://us.dotwconnect.com/xsd/complexCondition">
               </filters>`;
   }
@@ -98,50 +103,12 @@ export function buildSearchHotelsXML(params: {
 }
 
 /**
- * Search all hotels in a city with noPrice to get complete hotel list
- * without pricing constraints. Returns all available hotels.
- * NOTE: WebBeds V4 API does NOT support <fields> with <noPrice>true</noPrice> (error code 26).
- * So we omit the <fields> block entirely.
- */
-export function buildSearchAllHotelsXML(params: {
-  cityCode: number;
-  checkIn: string;
-  checkOut: string;
-  currency: number;
-  nationality?: number;
-}): string {
-  const nat = params.nationality ?? 5;
-
-  const inner = `<request command="searchhotels">
-    <bookingDetails>
-        <fromDate>${params.checkIn}</fromDate>
-        <toDate>${params.checkOut}</toDate>
-        <currency>${params.currency}</currency>
-        <rooms no="1">
-            <room runno="0">
-                <adultsCode>2</adultsCode>
-                <children no="0"></children>
-                <rateBasis>-1</rateBasis>
-                <passengerNationality>${nat}</passengerNationality>
-                <passengerCountryOfResidence>${nat}</passengerCountryOfResidence>
-            </room>
-        </rooms>
-    </bookingDetails>
-    <return>
-        <filters xmlns:a="http://us.dotwconnect.com/xsd/atomicCondition" xmlns:c="http://us.dotwconnect.com/xsd/complexCondition">
-            <noPrice>true</noPrice>
-            <city>${params.cityCode}</city>
-        </filters>
-    </return>
-</request>`;
-
-  return wrapWithCustomer(inner);
-}
-
-/**
- * Batch search by hotel IDs with noPrice + fields to get hotel metadata
- * (name, address, images, rating, etc.)
- * Matches mobile's searchHotelsStatic / searchHotelsByIds pattern.
+ * Search hotels by IDs with noPrice + fields to get hotel metadata (static data).
+ * Returns hotel name, address, images, rating, geoPoint etc. WITHOUT pricing.
+ * 
+ * V4 Response format:
+ * result > hotels > hotel[@hotelid] > hotelName, address, fullAddress, rating, 
+ *   hotelImages > thumb, image[], geoPoint > lat, lng, cityName, etc.
  */
 export function buildSearchByIdsXML(params: {
   hotelIds: string[];
@@ -196,8 +163,8 @@ ${hotelIdsXml}
             <field>countryName</field>
             <field>countryCode</field>
             <field>preferred</field>
-            <field>checkInTime</field>
-            <field>checkOutTime</field>
+            <field>hotelCheckIn</field>
+            <field>hotelCheckOut</field>
         </fields>
     </return>
 </request>`;
@@ -206,18 +173,20 @@ ${hotelIdsXml}
 }
 
 /**
- * Batch search by hotel IDs WITHOUT noPrice — uses normal pricing search
- * but filtered to specific hotel IDs. This works when noPrice + fields
- * returns errors or empty results.
+ * Search hotels by IDs WITH pricing (no noPrice flag).
+ * Used when we need both hotel availability and pricing for specific hotel IDs.
+ * Max 50 hotel IDs per request as recommended by DOTW docs.
  */
 export function buildSearchByIdsWithPriceXML(params: {
   hotelIds: string[];
   checkIn: string;
   checkOut: string;
+  rooms: Room[];
   currency: number;
   nationality?: number;
 }): string {
   const nat = params.nationality ?? 5;
+  const roomsXml = buildRoomsXml(params.rooms, nat, nat);
   const hotelIdsXml = params.hotelIds
     .map((id) => `                            <fieldValue>${id}</fieldValue>`)
     .join("\n");
@@ -227,15 +196,7 @@ export function buildSearchByIdsWithPriceXML(params: {
         <fromDate>${params.checkIn}</fromDate>
         <toDate>${params.checkOut}</toDate>
         <currency>${params.currency}</currency>
-        <rooms no="1">
-            <room runno="0">
-                <adultsCode>1</adultsCode>
-                <children no="0"></children>
-                <rateBasis>-1</rateBasis>
-                <passengerNationality>${nat}</passengerNationality>
-                <passengerCountryOfResidence>${nat}</passengerCountryOfResidence>
-            </room>
-        </rooms>
+        ${roomsXml}
     </bookingDetails>
     <return>
         <filters xmlns:a="http://us.dotwconnect.com/xsd/atomicCondition" xmlns:c="http://us.dotwconnect.com/xsd/complexCondition">
@@ -255,6 +216,12 @@ ${hotelIdsXml}
   return wrapWithCustomer(inner);
 }
 
+/**
+ * Get rooms for a specific hotel.
+ * V4 Response format:
+ * result > hotel[@hotelid, @name] > rooms > room > roomType[@roomtypecode] > 
+ *   name, rateBases > rateBasis[@id] > rateType, total, cancellationRules, allocationDetails
+ */
 export function buildGetRoomsXML(params: {
   hotelId: string;
   checkIn: string;
@@ -278,6 +245,11 @@ export function buildGetRoomsXML(params: {
   return wrapWithCustomer(inner);
 }
 
+/**
+ * Block a room (pre-booking validation).
+ * V4 requires roomTypeSelected to be sent inside the <room> element.
+ * Response must contain <status>checked</status> before proceeding to booking.
+ */
 export function buildBlockRoomXML(params: {
   hotelId: string;
   checkIn: string;
@@ -318,6 +290,10 @@ export function buildBlockRoomXML(params: {
   return wrapWithCustomer(inner);
 }
 
+/**
+ * Confirm booking.
+ * Must be called ONLY after a successful block (status=checked).
+ */
 export function buildBookingXML(params: {
   hotelId: string;
   checkIn: string;

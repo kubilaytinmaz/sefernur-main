@@ -16,6 +16,7 @@ import { useRouteId } from "@/hooks/useRouteId";
 import { formatTlUsdPairFromTl, formatTlUsdPairFromUsd } from "@/lib/currency";
 import { createReservation } from "@/lib/firebase/reservations";
 import { getCityFallbackImage } from "@/lib/hotels/city-images";
+import type { NormalizedRoom } from "@/lib/webbeds/types";
 import { useAuthStore } from "@/store/auth";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -46,36 +47,19 @@ const HOTEL_PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/20
 
 /* ────────── Types ────────── */
 
-interface WebBedsRoomItem {
-  "@_RateId"?: string;
-  "@_RoomName"?: string;
-  "@_RoomTypeCode"?: string;
-  "@_BoardBasis"?: string;
-  "@_Price"?: string;
-  "@_MinSellingPrice"?: string;
-  "@_Currency"?: string;
-  "@_Refundable"?: string;
-  "@_Description"?: string;
-  "@_LeftToSell"?: string;
-  "@_MaxAdults"?: string;
-  "@_MaxChildren"?: string;
-  "@_MaxOccupancy"?: string;
-  "@_AllocationDetails"?: string;
-  "@_Status"?: string;
-  cancellationRules?: unknown;
-  specials?: unknown;
-}
-
 interface RoomsResponse {
   success: boolean;
-  data?: WebBedsRoomItem[];
-  count?: number;
-  hotelInfo?: {
-    checkInTime?: string;
-    checkOutTime?: string;
-    description?: string;
-    hotelName?: string;
+  data?: {
+    hotel: {
+      hotelId: string;
+      hotelName: string;
+      checkInTime: string;
+      checkOutTime: string;
+      description?: string;
+    };
+    rooms: NormalizedRoom[];
   };
+  count?: number;
 }
 
 interface HotelDetailResponse {
@@ -83,19 +67,26 @@ interface HotelDetailResponse {
   data?: {
     hotelId: string;
     hotelName: string;
-    address: string;
-    fullAddress?: any;
-    stars: string;
-    rating?: number;
     description?: string;
+    address: string;
+    fullAddress?: {
+      hotelStreetAddress?: string;
+      hotelCity?: string;
+      hotelCountry?: string;
+    };
+    stars: string;
+    rating?: string;
     images: string[];
-    geoPoint?: any;
-    cityName?: string;
+    geoPoint?: {
+      lat: string;
+      lng: string;
+    };
+    cityName: string;
     cityCode?: string;
     countryName?: string;
     countryCode?: string;
-    checkInTime?: string;
-    checkOutTime?: string;
+    checkInTime: string;
+    checkOutTime: string;
   };
   error?: string;
 }
@@ -283,9 +274,9 @@ function generatePaymentOrderId(): string {
   return `SEFWEB-${Date.now()}`;
 }
 
-function formatPrice(room: WebBedsRoomItem): string {
-  const price = parsePriceToNumber(room["@_Price"]);
-  const currency = room["@_Currency"] || "USD";
+function formatPrice(room: NormalizedRoom): string {
+  const price = parsePriceToNumber(room.price);
+  const currency = room.currency || "USD";
   return currency === "USD" ? formatTlUsdPairFromUsd(price) : formatTlUsdPairFromTl(price);
 }
 
@@ -296,10 +287,10 @@ function calculateNights(checkIn: string, checkOut: string): number {
   return Math.max(1, Math.round(diff / (1000 * 60 * 60 * 24)));
 }
 
-function getLowestPrice(rooms: WebBedsRoomItem[]): number {
+function getLowestPrice(rooms: NormalizedRoom[]): number {
   let min = Infinity;
   for (const r of rooms) {
-    const p = parsePriceToNumber(r["@_Price"]);
+    const p = parsePriceToNumber(r.price);
     if (p > 0 && p < min) min = p;
   }
   return min === Infinity ? 0 : min;
@@ -327,20 +318,20 @@ function RoomCard({
   onSelect,
   nightCount,
 }: {
-  room: WebBedsRoomItem;
+  room: NormalizedRoom;
   index: number;
   isSelected: boolean;
   onSelect: () => void;
   nightCount: number;
 }) {
-  const rateId = room["@_RateId"] || "";
-  const roomName = translateRoomName(room["@_RoomName"] || "Oda");
-  const boardBasis = translateBoardBasis(room["@_BoardBasis"] || "Standart");
-  const priceNumber = parsePriceToNumber(room["@_Price"]);
-  const refundable = room["@_Refundable"] === "true";
-  const maxAdults = room["@_MaxAdults"] || "";
-  const maxChildren = room["@_MaxChildren"] || "";
-  const leftToSell = room["@_LeftToSell"] || "";
+  const rateId = room.rateId || "";
+  const roomName = translateRoomName(room.roomName || "Oda");
+  const boardBasis = translateBoardBasis(room.boardBasis || "Standart");
+  const priceNumber = parsePriceToNumber(room.price);
+  const refundable = room.refundable;
+  const maxAdults = room.maxAdults || "";
+  const maxChildren = room.maxChildren || "";
+  const leftToSell = room.leftToSell || "";
   const leftNum = Number(leftToSell);
   const perNight = nightCount > 0 ? priceNumber / nightCount : priceNumber;
 
@@ -423,7 +414,7 @@ function BookingFormSection({
   bookingMutation: { isPending: boolean };
   bookingError: string | null;
   bookingMessage: string | null;
-  selectedRoom: WebBedsRoomItem | undefined;
+  selectedRoom: NormalizedRoom | undefined;
   nightCount: number;
 }) {
   const inputClass =
@@ -435,8 +426,8 @@ function BookingFormSection({
       {selectedRoom && (
         <div className="rounded-xl border border-emerald-200 bg-linear-to-br from-emerald-50 to-emerald-100/50 p-4">
           <p className="text-xs font-medium text-emerald-600 mb-1">Seçilen Oda</p>
-          <p className="font-semibold text-slate-900 text-sm">{selectedRoom["@_RoomName"] || "Oda"}</p>
-          <p className="text-xs text-slate-600 mt-0.5">{selectedRoom["@_BoardBasis"] || "Standart"}</p>
+          <p className="font-semibold text-slate-900 text-sm">{selectedRoom.roomName || "Oda"}</p>
+          <p className="text-xs text-slate-600 mt-0.5">{selectedRoom.boardBasis || "Standart"}</p>
           <div className="mt-2 pt-2 border-t border-emerald-200/60">
             <p className="text-xs text-slate-500">{nightCount} gece toplam</p>
             <p className="text-xl font-bold text-emerald-700">{formatPrice(selectedRoom)}</p>
@@ -623,17 +614,11 @@ export default function HotelDetailPage() {
 
   // Fetch hotel details including all images
   const hotelDetailQuery = useQuery({
-    queryKey: ["hotelDetail", hotelId, checkIn, checkOut],
-    enabled: Boolean(hotelId && checkIn && checkOut),
+    queryKey: ["hotelDetail", hotelId],
+    enabled: Boolean(hotelId),
     queryFn: async () => {
-      const response = await axios.post<HotelDetailResponse>(
-        `/api/webbeds/hotel/${hotelId}`,
-        {
-          checkIn,
-          checkOut,
-          nationality: 5,
-          currency: 520,
-        }
+      const response = await axios.get<HotelDetailResponse>(
+        `/api/hotels/${hotelId}`
       );
       return response.data;
     },
@@ -654,23 +639,25 @@ export default function HotelDetailPage() {
     queryKey: ["hotelRooms", hotelId, checkIn, checkOut, adults, cityCode],
     enabled: Boolean(hotelId && checkIn && checkOut),
     queryFn: async () => {
-      const response = await axios.post<RoomsResponse>("/api/webbeds/rooms", {
-        hotelId,
-        checkIn,
-        checkOut,
-        rooms: [{ adults, children: 0, childAges: [] }],
-        nationality: 5,
-        currency: 520,
-      });
+      const response = await axios.post<RoomsResponse>(
+        `/api/hotels/${hotelId}/rooms`,
+        {
+          checkIn,
+          checkOut,
+          rooms: [{ adults, children: 0, childAges: [] }],
+          nationality: 5,
+          currency: 520,
+        }
+      );
       return response.data;
     },
   });
 
-  const roomItems = useMemo(() => roomsQuery.data?.data ?? [], [roomsQuery.data]);
+  const roomItems = useMemo(() => roomsQuery.data?.data?.rooms ?? [], [roomsQuery.data]);
   
   // Use hotel name from rooms API if available, fallback to URL
   const hotelName = useMemo(() => {
-    const apiName = roomsQuery.data?.hotelInfo?.hotelName;
+    const apiName = roomsQuery.data?.data?.hotel?.hotelName;
     if (apiName && apiName.trim() && !apiName.startsWith("Otel #")) {
       return apiName;
     }
@@ -678,7 +665,7 @@ export default function HotelDetailPage() {
   }, [roomsQuery.data, hotelNameFromUrl]);
   
   const selectedRoom = useMemo(
-    () => roomItems.find((item) => item["@_RateId"] === selectedRateId),
+    () => roomItems.find((item) => item.rateId === selectedRateId),
     [roomItems, selectedRateId],
   );
   const lowestPrice = useMemo(() => getLowestPrice(roomItems), [roomItems]);
@@ -698,14 +685,14 @@ export default function HotelDetailPage() {
 
   const bookingMutation = useMutation({
     mutationFn: async () => {
-      const selected = roomItems.find((item) => item["@_RateId"] === selectedRateId);
-      const amount = parsePriceToNumber(selected?.["@_Price"]);
-      const currency = selected?.["@_Currency"] || "USD";
-      const roomTypeCode = selected?.["@_RoomTypeCode"] || "";
-      const allocationDetails = selected?.["@_AllocationDetails"] || "";
+      const selected = roomItems.find((item) => item.rateId === selectedRateId);
+      const amount = parsePriceToNumber(selected?.price);
+      const currency = selected?.currency || "USD";
+      const roomTypeCode = selected?.roomTypeCode || "";
+      const allocationDetails = selected?.allocationDetails || "";
 
       // Extract raw rate basis ID from composite rateId (format: "roomTypeCode_rateBasisId")
-      const compositeId = selected?.["@_RateId"] || "";
+      const compositeId = selected?.rateId || "";
       const rawRateBasis = roomTypeCode && compositeId.startsWith(roomTypeCode + "_")
         ? compositeId.slice(roomTypeCode.length + 1)
         : compositeId;
@@ -719,8 +706,7 @@ export default function HotelDetailPage() {
       }
 
       // Step 1: Block the room (15-minute hold via V4 getrooms with roomTypeSelected)
-      const blockResponse = await axios.post("/api/webbeds/block", {
-        hotelId,
+      const blockResponse = await axios.post(`/api/hotels/${hotelId}/block`, {
         checkIn,
         checkOut,
         rooms: [{ adults, children: 0, childAges: [] }],
@@ -745,8 +731,7 @@ export default function HotelDetailPage() {
       const salutationMap: Record<string, number> = { Mr: 1, Mrs: 2, Ms: 3, Miss: 4 };
       const paymentOrderId = generatePaymentOrderId();
 
-      const bookingResponse = await axios.post("/api/webbeds/booking", {
-        hotelId,
+      const bookingResponse = await axios.post(`/api/hotels/${hotelId}/booking`, {
         checkIn,
         checkOut,
         currency: 520,
@@ -764,7 +749,6 @@ export default function HotelDetailPage() {
           email: form.email,
           phone: form.phone,
         },
-        specialRequests: form.specialRequests || undefined,
       });
 
       if (isAuthenticated && user?.id) {
@@ -1032,11 +1016,11 @@ export default function HotelDetailPage() {
               <div className="space-y-3">
                 {visibleRooms.map((room, index) => (
                   <RoomCard
-                    key={`${room["@_RateId"] || "rate"}-${index}`}
+                    key={`${room.rateId || "rate"}-${index}`}
                     room={room}
                     index={index}
-                    isSelected={selectedRateId === (room["@_RateId"] || "")}
-                    onSelect={() => handleSelectRoom(room["@_RateId"] || "")}
+                    isSelected={selectedRateId === (room.rateId || "")}
+                    onSelect={() => handleSelectRoom(room.rateId || "")}
                     nightCount={nightCount}
                   />
                 ))}

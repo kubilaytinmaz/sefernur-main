@@ -12,9 +12,7 @@ import {
   type ViewMode
 } from "@/components/hotels";
 import { EmptyState, ErrorState, LoadingState } from "@/components/states/AsyncStates";
-import { formatHotelAddress } from "@/lib/hotels/address-formatter";
 import { getCityFallbackImage } from "@/lib/hotels/city-images";
-import { getHotelMetadata, getHotelName } from "@/lib/hotels/hotel-metadata";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { format } from "date-fns";
@@ -28,22 +26,33 @@ const HOTEL_PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/20
 
 /* ────────── Types ────────── */
 
-type WebBedsHotelItem = {
-  "@_HotelId"?: string;
-  "@_HotelName"?: string;
-  "@_Address"?: string;
-  "@_CityName"?: string;
-  "@_Price"?: string;
-  "@_Stars"?: string;
-  name?: string;
-  address?: string;
-  [key: string]: unknown;
+type NormalizedHotelItem = {
+  hotelId: string;
+  hotelName: string;
+  address: string;
+  cityName: string;
+  cityCode?: string;
+  countryName?: string;
+  countryCode?: string;
+  stars: string;
+  price: string;
+  image?: string;
+  lat?: string;
+  lng?: string;
+  rating?: string;
+  reviewCount?: number;
+  distanceToHolySite?: number;
+  holySiteName?: string;
+  distanceText?: string;
+  checkInTime?: string;
+  checkOutTime?: string;
+  description?: string;
 };
 
 interface HotelSearchResponse {
   success: boolean;
   count: number;
-  data?: WebBedsHotelItem[];
+  data?: NormalizedHotelItem[];
 }
 
 /* ────────── Constants ────────── */
@@ -93,120 +102,16 @@ function parsePriceToNumber(rawPrice?: string): number {
   return Number.isFinite(value) ? value : 0;
 }
 
-function getHotelImageUrl(hotel: WebBedsHotelItem, cityCode: number): string {
-  const hotelName = hotel["@_HotelName"] || hotel.name || "Unknown";
-  const hotelId = String(hotel["@_HotelId"] || "");
-  
-  // Önce direkt olarak @_Image key'ini kontrol et (WebBeds XML parser'ın kullandığı key)
-  const directImage = hotel["@_Image" as keyof WebBedsHotelItem];
-  if (typeof directImage === "string" && directImage.startsWith("http")) {
-    console.log(`[getHotelImageUrl] ${hotelName}: Using @_Image`);
-    return directImage;
-  }
-
-  // HotelImages objesinden resim ara
-  const hotelImages = hotel["hotelImages" as keyof WebBedsHotelItem];
-  if (hotelImages && typeof hotelImages === "object") {
-    // Thumb resmi dene
-    const thumb = (hotelImages as any).thumb;
-    if (typeof thumb === "string" && thumb.startsWith("http")) {
-      console.log(`[getHotelImageUrl] ${hotelName}: Using hotelImages.thumb`);
-      return thumb;
-    }
-    
-    // Image array'inden ilkini dene
-    const imageArray = (hotelImages as any).image;
-    if (Array.isArray(imageArray) && imageArray.length > 0) {
-      const firstImage = imageArray[0];
-      if (typeof firstImage === "object" && firstImage.url && typeof firstImage.url === "string") {
-        console.log(`[getHotelImageUrl] ${hotelName}: Using hotelImages.image[0].url`);
-        return firstImage.url;
-      }
-      if (typeof firstImage === "string" && firstImage.startsWith("http")) {
-        console.log(`[getHotelImageUrl] ${hotelName}: Using hotelImages.image[0]`);
-        return firstImage;
-      }
-    }
-  }
-
-  // Diğer olası key'leri ara
-  const fromKnown = findFirstStringByKeys(hotel, [
-    "@_image",        // küçük harf variant
-    "@_mainimage",
-    "mainimage",
-    "image",
-    "@_imageurl",
-    "imageurl",
-    "@_thumbnail",
-    "thumbnail",
-    "@_photo",
-    "photo",
-    "@_hotelimage",
-    "hotelimage",
-  ]);
-
-  if (fromKnown && fromKnown.startsWith("http")) {
-    console.log(`[getHotelImageUrl] ${hotelName}: Using fromKnown (${fromKnown.substring(0, 50)}...)`);
-    return fromKnown;
-  }
-
-  // Try metadata image URL
-  const metadata = getHotelMetadata(hotelId);
-  if (metadata?.imageUrl && metadata.imageUrl.startsWith("http")) {
-    console.log(`[getHotelImageUrl] ${hotelName}: Using metadata image`);
-    return metadata.imageUrl;
+function getHotelImageUrl(hotel: NormalizedHotelItem, cityCode: number): string {
+  // Hotel image is already provided by the new API
+  // If image exists and is valid, use it
+  if (hotel.image) {
+    return hotel.image;
   }
 
   // Fallback: Use city-specific images for Makkah and Madinah
-  const cityFallback = getCityFallbackImage(cityCode, hotelId);
-  console.log(`[getHotelImageUrl] ${hotelName}: Using city fallback for city ${cityCode}`);
+  const cityFallback = getCityFallbackImage(cityCode, hotel.hotelId);
   return cityFallback;
-}
-
-function hotelName(hotel: WebBedsHotelItem): string {
-  const apiName = hotel["@_HotelName"] || hotel.name;
-  const hotelId = String(hotel["@_HotelId"] || "");
-  
-  // If API name exists and is not a fallback (doesn't start with "Otel #"), use it
-  if (apiName && typeof apiName === "string" && !apiName.startsWith("Otel #")) {
-    return apiName;
-  }
-  
-  // Try to get from metadata
-  const metadataName = getHotelName(hotelId);
-  if (metadataName) {
-    return metadataName;
-  }
-  
-  // Last resort: use fallback
-  return apiName || "Otel";
-}
-
-function hotelAddress(hotel: WebBedsHotelItem, cityCode: number): string {
-  // Önce ham adresi al
-  const rawAddress = String(hotel["@_Address"] || hotel.address || "");
-  const cityName = String(hotel["@_CityName"] || hotel["@_cityname"] || "");
-  
-  // Eğer sadece şehir adı varsa (örn: "MAKKAH"), formatla
-  if (!rawAddress && cityName) {
-    return formatHotelAddress(cityName, cityCode).displayAddress;
-  }
-  
-  // Adres varsa formatla - Türkçe bölge isimleriyle
-  if (rawAddress) {
-    return formatHotelAddress(rawAddress, cityCode).displayAddress;
-  }
-  
-  return "Adres bilgisi bulunamadı";
-}
-
-function hotelGuestRating(hotel: WebBedsHotelItem): number | undefined {
-  const ratingStr = hotel["@_GuestRating"] || hotel["guestRating"];
-  if (ratingStr) {
-    const rating = parseFloat(String(ratingStr));
-    if (!isNaN(rating) && rating > 0) return rating;
-  }
-  return undefined;
 }
 
 /* ────────── Main Page ────────── */
@@ -248,7 +153,7 @@ export default function HotelsPage() {
         rooms: [{ adults: 2, children: 0, childAges: [] }],
       };
       console.log("[HotelsPage] Featured query payload:", payload);
-      const response = await axios.post<HotelSearchResponse>("/api/webbeds/search", payload);
+      const response = await axios.post<HotelSearchResponse>("/api/hotels/search", payload);
       return response.data;
     },
   });
@@ -259,7 +164,7 @@ export default function HotelsPage() {
     queryFn: async () => {
       const apiParams = getSearchParamsForApi(searchParams);
       console.log("[HotelsPage] Search query payload:", apiParams);
-      const response = await axios.post<HotelSearchResponse>("/api/webbeds/search", apiParams);
+      const response = await axios.post<HotelSearchResponse>("/api/hotels/search", apiParams);
       return response.data;
     },
     enabled: hasSearched,
@@ -271,30 +176,25 @@ export default function HotelsPage() {
       ? (searchQuery.data?.data ?? [])
       : (featuredQuery.data?.data ?? []);
 
-    // Convert to card format
+    // Convert to card format - new API already returns normalized data
     let hotels = rawHotels.map((hotel) => {
-      // Parse Google rating if available
-      const guestRating = hotelGuestRating(hotel);
-      const reviewCountStr = String(hotel["@_ReviewCount"] || "");
-      const reviewCount = reviewCountStr ? parseInt(reviewCountStr, 10) : undefined;
-      
       // Şehir kodunu al (Mekke: 164, Medine: 174)
       const hotelCityCode = searchParams.cityCode || 164;
       
       return {
-        id: String(hotel["@_HotelId"] || ""),
-        name: hotelName(hotel),
-        address: hotelAddress(hotel, hotelCityCode),
-        cityName: String(hotel["@_CityName"] || hotel["@_cityname"] || ""),
-        price: parsePriceToNumber(hotel["@_Price"]),
-        stars: Number(hotel["@_Stars"] || 0),
+        id: hotel.hotelId,
+        name: hotel.hotelName,
+        address: hotel.address,
+        cityName: hotel.cityName,
+        price: parsePriceToNumber(hotel.price),
+        stars: Number(hotel.stars) || 0,
         image: getHotelImageUrl(hotel, hotelCityCode),
-        rating: guestRating,
-        reviewCount: (reviewCount && !isNaN(reviewCount) && reviewCount > 0) ? reviewCount : undefined,
+        rating: hotel.rating ? parseFloat(hotel.rating) : undefined,
+        reviewCount: hotel.reviewCount,
         amenities: [] as string[],
-        distance: hotel["@_DistanceToHolySite"] ? Number(hotel["@_DistanceToHolySite"]) / 1000 : undefined, // meters to km
-        distanceText: String(hotel["@_DistanceText"] || "") || undefined,
-        holySiteName: String(hotel["@_HolySiteName"] || "") || undefined,
+        distance: hotel.distanceToHolySite ? hotel.distanceToHolySite / 1000 : undefined, // meters to km
+        distanceText: hotel.distanceText,
+        holySiteName: hotel.holySiteName,
         boardBasis: undefined as string | undefined,
       };
     });

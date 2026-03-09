@@ -1,11 +1,15 @@
 import { XMLParser } from "fast-xml-parser";
+import type { CancellationRule, NormalizedHotel, NormalizedRoom, XmlObject } from "./types";
 
 const parser = new XMLParser({
   ignoreAttributes: false,
   attributeNamePrefix: "@_",
+  textNodeName: "#text",
 });
 
-type XmlObject = Record<string, unknown>;
+// ============================================================================
+// Helper Functions
+// ============================================================================
 
 function asArray<T>(value: T | T[] | undefined): T[] {
   if (value === undefined) return [];
@@ -15,28 +19,6 @@ function asArray<T>(value: T | T[] | undefined): T[] {
 function asObject(value: unknown): XmlObject | undefined {
   if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
   return value as XmlObject;
-}
-
-function getByPath(source: unknown, path: string[]): unknown {
-  let current: unknown = source;
-
-  for (const segment of path) {
-    const object = asObject(current);
-    if (!object) return undefined;
-
-    const direct = object[segment];
-    if (direct !== undefined) {
-      current = direct;
-      continue;
-    }
-
-    const lowerSegment = segment.toLowerCase();
-    const matchedKey = Object.keys(object).find((key) => key.toLowerCase() === lowerSegment);
-    if (!matchedKey) return undefined;
-    current = object[matchedKey];
-  }
-
-  return current;
 }
 
 function getString(source: unknown, keys: string[]): string | undefined {
@@ -74,86 +56,78 @@ function dotwRatingToStars(rating: string | undefined): string | undefined {
   return undefined;
 }
 
-function findFirstHttpUrl(source: unknown): string | undefined {
-  if (typeof source === "string") {
-    const value = source.trim();
-    return value.startsWith("http") ? value : undefined;
-  }
-
-  if (Array.isArray(source)) {
-    for (const item of source) {
-      const found = findFirstHttpUrl(item);
-      if (found) return found;
+/**
+ * Extract image URL from hotel data.
+ * Only checks known image fields to avoid picking up random URLs.
+ */
+function extractImageUrl(hotel: XmlObject): string | undefined {
+  const VALID_IMAGE_DOMAINS = [
+    "dotwconnect.com",
+    "webbeds.com",
+    "static-images.webbeds.com",
+    "us.dotwconnect.com",
+    "eu.dotwconnect.com",
+  ];
+  
+  function isValidImageUrl(url: string): boolean {
+    if (!url || typeof url !== "string") return false;
+    const lowerUrl = url.toLowerCase().trim();
+    if (!lowerUrl.startsWith("http")) return false;
+    
+    try {
+      const urlObj = new URL(lowerUrl);
+      const hostname = urlObj.hostname.toLowerCase();
+      return VALID_IMAGE_DOMAINS.some(domain => hostname.includes(domain));
+    } catch {
+      return false;
     }
-    return undefined;
   }
-
-  const object = asObject(source);
-  if (!object) return undefined;
-
-  const directUrl = getString(object, ["@_url", "url", "@_image", "image"]);
-  if (directUrl && directUrl.startsWith("http")) return directUrl;
-
-  for (const value of Object.values(object)) {
-    const found = findFirstHttpUrl(value);
-    if (found) return found;
+  
+  // Check hotelImages object
+  const hotelImages = asObject(hotel["hotelImages"] ?? hotel["HotelImages"]);
+  if (hotelImages) {
+    // Try thumb field
+    const thumb = getString(hotelImages, ["thumb", "Thumb", "@_thumb", "@_Thumb"]);
+    if (thumb && isValidImageUrl(thumb)) return thumb;
+    
+    // Try image array
+    const imageArray = asArray(hotelImages["image"] ?? hotelImages["Image"]);
+    for (const img of imageArray) {
+      if (typeof img === "string" && isValidImageUrl(img)) return img;
+      const imgObj = asObject(img);
+      if (imgObj) {
+        const url = getString(imgObj, ["url", "Url", "@_url", "@_Url"]);
+        if (url && isValidImageUrl(url)) return url;
+      }
+    }
   }
-
+  
+  // Check direct image fields
+  const directImage = getString(hotel, [
+    "@_Image",
+    "@_image",
+    "@_mainimage",
+    "@_MainImage",
+    "image",
+    "Image",
+    "mainimage",
+    "MainImage",
+  ]);
+  
+  if (directImage && isValidImageUrl(directImage)) return directImage;
+  
   return undefined;
-}
-
-function getMinPriceFromDynamicHotel(hotel: XmlObject): string | undefined {
-  let minPrice: number | null = null;
-
-  function extractPrice(totalRaw: unknown) {
-    // V4 API returns standard decimal format like "1035.8778"
-    const raw = String(totalRaw ?? "").replace(/[^\d.]/g, "");
-    const total = Number(raw);
-    if (Number.isFinite(total) && total > 0 && (minPrice === null || total < minPrice)) {
-      minPrice = total;
-    }
-  }
-
-  // V4 path: hotel > rooms > room > roomType > rateBases > rateBasis > total
-  const rooms = asArray(getByPath(hotel, ["rooms", "room"]));
-  for (const room of rooms) {
-    const roomTypes = asArray(getByPath(room, ["roomType"]));
-    for (const roomType of roomTypes) {
-      const rateBases = asArray(getByPath(roomType, ["rateBases", "rateBasis"]));
-      for (const rateBasis of rateBases) {
-        extractPrice(getByPath(rateBasis, ["total"]));
-      }
-      // Also try direct rateBasis (without rateBases wrapper)
-      const directRateBases = asArray(getByPath(roomType, ["rateBasis"]));
-      for (const rateBasis of directRateBases) {
-        extractPrice(getByPath(rateBasis, ["total"]));
-      }
-    }
-  }
-
-  // Fallback: direct roomType path (non-V4 / flat structure)
-  const directRoomTypes = asArray(getByPath(hotel, ["roomType"]));
-  for (const roomType of directRoomTypes) {
-    const rateBases = asArray(getByPath(roomType, ["rateBasis"]));
-    for (const rateBasis of rateBases) {
-      extractPrice(getByPath(rateBasis, ["total"]));
-    }
-  }
-
-  return minPrice === null ? undefined : String(minPrice);
 }
 
 /**
  * Extract a flat address string from V4 hotel data.
- * V4 returns <address> as a plain string, but <fullAddress> as a complex object
- * with sub-elements like hotelStreetAddress, hotelCity, hotelCountry.
  */
 function extractAddress(hotel: XmlObject): string | undefined {
   // Try simple string fields first
   const simple = getString(hotel, ["@_Address", "address", "@_FullAddress"]);
   if (simple) return simple;
 
-  // V4: fullAddress is an object — extract and combine sub-fields
+  // V4: fullAddress is an object
   const fa = hotel["fullAddress"] ?? hotel["FullAddress"];
   if (fa && typeof fa === "object" && !Array.isArray(fa)) {
     const obj = fa as Record<string, unknown>;
@@ -171,8 +145,7 @@ function extractAddress(hotel: XmlObject): string | undefined {
 }
 
 /**
- * Extract city name from fullAddress object for display purposes.
- * Returns just the city name without street address or country.
+ * Extract city name from fullAddress object.
  */
 function extractCityOnly(hotel: XmlObject): string | undefined {
   const fa = hotel["fullAddress"] ?? hotel["FullAddress"];
@@ -188,92 +161,128 @@ function extractCityOnly(hotel: XmlObject): string | undefined {
 }
 
 /**
- * Extract guest rating from API response.
- * WebBeds may return a guest rating (0-10 scale) separate from star rating.
+ * Get minimum price from dynamic hotel structure (V4 searchhotels response).
+ * Path: hotel > rooms > room > roomType > rateBases > rateBasis > total
  */
-function extractGuestRating(hotel: XmlObject): number | undefined {
-  // Try to find guest rating in various possible fields
-  const ratingStr = getString(hotel, [
-    "guestRating",
-    "guestRatingValue",
-    "ratingValue",
-    "tripAdvisorRating",
-    "reviewScore"
-  ]);
-  
-  if (ratingStr) {
-    const rating = parseFloat(ratingStr.replace(/[^\d.]/g, ""));
-    if (!isNaN(rating) && rating > 0 && rating <= 10) {
-      return rating;
+function getMinPriceFromDynamicHotel(hotel: XmlObject): string | undefined {
+  let minPrice: number | null = null;
+
+  function extractPrice(totalRaw: unknown) {
+    const raw = String(totalRaw ?? "").replace(/[^\d.]/g, "");
+    const total = Number(raw);
+    if (Number.isFinite(total) && total > 0 && (minPrice === null || total < minPrice)) {
+      minPrice = total;
     }
   }
-  
-  // Check for rating object with value
-  const ratingObj = asObject(hotel["rating"] ?? hotel["Rating"]);
-  if (ratingObj) {
-    const value = getString(ratingObj, ["value", "ratingValue", "score"]);
-    if (value) {
-      const rating = parseFloat(value.replace(/[^\d.]/g, ""));
-      if (!isNaN(rating) && rating > 0 && rating <= 10) {
-        return rating;
+
+  // V4 path: hotel > rooms > room > roomType > rateBases > rateBasis > total
+  const roomsWrapper = hotel["rooms"] as XmlObject | undefined;
+  const rooms = asArray(roomsWrapper?.["room"]);
+  for (const room of rooms) {
+    const roomObj = asObject(room);
+    if (!roomObj) continue;
+
+    const roomTypes = asArray(roomObj["roomType"]);
+    for (const rt of roomTypes) {
+      const rtObj = asObject(rt);
+      if (!rtObj) continue;
+
+      const rateBasesWrapper = rtObj["rateBases"] as XmlObject | undefined;
+      const rateBases = asArray(rateBasesWrapper?.["rateBasis"]);
+      for (const rb of rateBases) {
+        const rbObj = asObject(rb);
+        extractPrice(rbObj?.["total"]);
+      }
+      
+      // Also try direct rateBasis (without rateBases wrapper)
+      const directRateBases = asArray(rtObj["rateBasis"]);
+      for (const rb of directRateBases) {
+        const rbObj = asObject(rb);
+        extractPrice(rbObj?.["total"]);
       }
     }
   }
-  
-  return undefined;
+
+  return minPrice === null ? undefined : String(minPrice);
 }
 
-function normalizeHotelNode(rawHotel: unknown): XmlObject {
+// ============================================================================
+// Hotel Normalization
+// ============================================================================
+
+/**
+ * Normalize a V4 hotel node from searchhotels response.
+ * 
+ * V4 searchhotels response structure (without fields):
+ * result > hotels > hotel[@hotelid] > rooms > room > roomType > rateBases > rateBasis > total
+ * 
+ * V4 searchhotels response structure (with fields + noPrice):
+ * result > hotels > hotel[@hotelid] > hotelName, address, fullAddress, rating, hotelImages, geoPoint, etc.
+ */
+function normalizeHotelNode(rawHotel: unknown): NormalizedHotel {
   const hotel = asObject(rawHotel) ?? {};
 
-  const hotelId = getString(hotel, ["@_HotelId", "@_hotelid", "hotelid", "hotelId"]);
+  // Hotel ID - always present
+  const hotelId = getString(hotel, ["@_HotelId", "@_hotelid", "hotelid"]) || "";
 
-  // V4 with <fields>: hotel details come as child elements (hotelName, address, etc.)
-  // Also check @_name which is used in some API responses (like getrooms)
-  const hotelName = getString(hotel, ["@_HotelName", "hotelName", "name", "@_name"]) || `Otel #${hotelId ?? ""}`.trim();
-  const address = extractAddress(hotel) ?? "Adres bilgisi bulunamadı";
-  const cityOnly = extractCityOnly(hotel);
-  const cityName = cityOnly || getString(hotel, ["@_CityName", "cityName", "city", "@_cityname"]);
+  // Hotel name - from various possible sources
+  // @_name comes from getRooms response, hotelName from search with fields
+  const hotelName = getString(hotel, ["@_name", "hotelName", "name"]) || `Otel #${hotelId}`;
+  
+  // Address
+  const address = extractAddress(hotel) || "Adres bilgisi bulunamadı";
+  const cityName = extractCityOnly(hotel) || "";
+  
+  // Rating/Stars
   const rawRating = getString(hotel, ["@_Stars", "rating", "stars"]);
-  const stars = dotwRatingToStars(rawRating);
-  const guestRating = extractGuestRating(hotel);
-
-  const directPrice = getString(hotel, ["@_Price", "price", "minPrice"]);
+  const stars = dotwRatingToStars(rawRating) || "";
+  
+  // Price
+  const directPrice = getString(hotel, ["@_Price", "price"]);
   const fallbackMinPrice = getMinPriceFromDynamicHotel(hotel);
-
-  const imageUrl =
-    findFirstHttpUrl(getByPath(hotel, ["hotelImages"])) ||
-    findFirstHttpUrl(getByPath(hotel, ["images"])) ||
-    findFirstHttpUrl(hotel);
-
-  // Extract geoPoint (lat/lng)
+  
+  // Image
+  const imageUrl = extractImageUrl(hotel);
+  
+  // GeoPoint
   const geoPoint = asObject(hotel["geoPoint"]);
   const lat = getString(geoPoint ?? {}, ["lat", "@_lat"]);
   const lng = getString(geoPoint ?? {}, ["lng", "@_lng"]);
+  
+  // Check-in/out times
+  const checkInTime = getString(hotel, ["checkInTime", "checkintime", "@_checkintime"]);
+  const checkOutTime = getString(hotel, ["checkOutTime", "checkouttime", "@_checkouttime"]);
+  
+  // Description
+  const description = getString(hotel, ["description1", "description"]);
+  
+  // City/Country codes
+  const cityCode = getString(hotel, ["@_CityCode", "cityCode"]);
+  const countryCode = getString(hotel, ["@_CountryCode", "countryCode"]);
+  const countryName = getString(hotel, ["@_CountryName", "countryName"]);
 
-  // Extract check-in/out times
-  const checkInTime = getString(hotel, ["checkInTime", "checkintime", "@_checkintime", "checkIn"]);
-  const checkOutTime = getString(hotel, ["checkOutTime", "checkouttime", "@_checkouttime", "checkOut"]);
-
-  const normalized: XmlObject = {
-    ...hotel,
-    "@_HotelId": hotelId ?? "",
-    "@_HotelName": hotelName,
-    "@_Address": address,
+  return {
+    hotelId,
+    hotelName,
+    address,
+    cityName,
+    cityCode,
+    countryName,
+    countryCode,
+    stars,
+    price: directPrice || fallbackMinPrice || "0",
+    image: imageUrl,
+    lat,
+    lng,
+    checkInTime,
+    checkOutTime,
+    description,
   };
-
-  if (cityName) normalized["@_CityName"] = cityName;
-  if (stars) normalized["@_Stars"] = stars;
-  if (guestRating) normalized["@_GuestRating"] = String(guestRating);
-  if (directPrice || fallbackMinPrice) normalized["@_Price"] = directPrice ?? fallbackMinPrice ?? "0";
-  if (imageUrl) normalized["@_Image"] = imageUrl;
-  if (lat) normalized["@_Lat"] = lat;
-  if (lng) normalized["@_Lng"] = lng;
-  if (checkInTime) normalized["checkInTime"] = checkInTime;
-  if (checkOutTime) normalized["checkOutTime"] = checkOutTime;
-
-  return normalized;
 }
+
+// ============================================================================
+// Main Export Functions
+// ============================================================================
 
 export function parseWebBedsXML(xmlString: string): XmlObject {
   try {
@@ -284,31 +293,56 @@ export function parseWebBedsXML(xmlString: string): XmlObject {
   }
 }
 
-export function extractHotelsFromSearchResponse(parsedXML: XmlObject): XmlObject[] {
+/**
+ * Extract hotels from V4 searchhotels response.
+ * 
+ * V4 Response paths:
+ * - result > hotels > hotel (array or single)
+ * - result > hotel (single hotel, e.g., from getRooms)
+ */
+export function extractHotelsFromSearchResponse(parsedXML: XmlObject): NormalizedHotel[] {
   try {
-    const gatewayHotelNode = getByPath(parsedXML, ["Response", "Body", "SearchHotelsResponse", "Hotels", "Hotel"]);
-    const dotwHotelNode = getByPath(parsedXML, ["result", "hotels", "hotel"]);
-    const hotelNode = gatewayHotelNode ?? dotwHotelNode;
+    const result = parsedXML["result"] as XmlObject | undefined;
+    
+    if (!result) {
+      console.log("[extractHotels] No 'result' node found");
+      return [];
+    }
 
-    console.log("[extractHotels] gatewayHotelNode:", gatewayHotelNode ? "found" : "not found");
-    console.log("[extractHotels] dotwHotelNode:", dotwHotelNode ? "found" : "not found");
-    console.log("[extractHotels] parsedXML keys:", Object.keys(parsedXML));
+    // Try V4 format: result > hotels > hotel
+    const hotelsNode = result["hotels"] as XmlObject | undefined;
+    if (hotelsNode) {
+      const hotelNode = hotelsNode["hotel"];
+      if (hotelNode) {
+        return asArray(hotelNode).map(normalizeHotelNode);
+      }
+    }
 
-    return asArray(hotelNode).map(normalizeHotelNode);
+    // Try single hotel format: result > hotel (from getRooms)
+    const singleHotel = result["hotel"];
+    if (singleHotel) {
+      return [normalizeHotelNode(singleHotel)];
+    }
+
+    console.log("[extractHotels] No hotels found in response");
+    return [];
   } catch (error) {
     console.error("Error extracting hotels:", error);
     return [];
   }
 }
 
+// ============================================================================
+// Room Parsing
+// ============================================================================
+
 /**
  * Normalize a V4 roomType + rateBasis into a flat selectable room item.
- * Each roomType may have multiple rateBases — each one becomes a separate item.
  */
 function normalizeRoomItem(
   roomType: XmlObject,
   rateBasis: XmlObject,
-): XmlObject {
+): NormalizedRoom {
   const roomName = getString(roomType, ["name", "@_name"]) || "Oda";
   const roomTypeCode = getString(roomType, ["@_roomtypecode", "code", "@_code"]) || "";
   const description = getString(roomType, ["description"]) || "";
@@ -322,15 +356,17 @@ function normalizeRoomItem(
 
   // rateBasis fields
   const rawRateId = getString(rateBasis, ["@_id", "id"]) || "0";
-  const rateId = `${roomTypeCode}_${rawRateId}`; // Composite key to avoid collisions
-  const boardBasis = getString(rateBasis, ["@_description", "name", "description"]) || "Standart";
+  const rateId = `${roomTypeCode}_${rawRateId}`;
+  
+  // Board basis from rateType description
+  const rateType = asObject(rateBasis["rateType"]);
+  const boardBasis = getString(rateType ?? {}, ["@_description", "name", "description"]) || "Standart";
 
-  // Price from total element (may be nested object or direct value)
+  // Price from total element
   let price = "0";
   const totalRaw = rateBasis["total"];
   if (totalRaw !== undefined && totalRaw !== null) {
     if (typeof totalRaw === "object" && !Array.isArray(totalRaw)) {
-      // total may have a formatted sub-element or just inner text
       const formatted = getString(totalRaw as XmlObject, ["formatted", "#text"]);
       if (formatted) {
         price = formatted.replace(/[^\d.]/g, "");
@@ -353,113 +389,151 @@ function normalizeRoomItem(
   }
 
   // Currency from rateType element
-  const rateType = asObject(rateBasis["rateType"]);
   const currency = getString(rateType ?? {}, ["@_currencyshort", "currencyshort", "currency"]) || "USD";
 
   // Refundable
   const nonRefundable = getString(rateType ?? {}, ["@_nonrefundable", "nonrefundable"]);
-  const refundable = nonRefundable === "yes" ? "false" : "true";
+  const refundable = nonRefundable === "yes" ? false : true;
 
-  // Allocation details (needed for blocking)
+  // Allocation details
   const allocationDetails = getString(rateBasis, ["allocationDetails"]) || "";
 
   // Status
   const status = getString(rateBasis, ["status"]) || "";
 
   // Cancellation rules
-  const cancellationRules = rateBasis["cancellationRules"];
-
-  // Specials
-  const specials = rateBasis["specials"];
+  const cancellationRulesNode = rateBasis["cancellationRules"];
+  let cancellationRules: CancellationRule[] = [];
+  
+  if (cancellationRulesNode && typeof cancellationRulesNode === "object") {
+    const rulesObj = asObject(cancellationRulesNode);
+    if (rulesObj) {
+      const rulesArray = asArray(rulesObj["rule"]);
+      cancellationRules = rulesArray.map((rule: unknown) => {
+        const r = asObject(rule);
+        return {
+          fromDate: getString(r, ["fromDate"]),
+          toDate: getString(r, ["toDate"]),
+          amendCharge: getString(r, ["amendCharge"]),
+          cancelCharge: getString(r, ["cancelCharge"]),
+          charge: getString(r, ["charge"]),
+          amendRestricted: getString(r, ["amendRestricted"]),
+          cancelRestricted: getString(r, ["cancelRestricted"]),
+          noShowPolicy: getString(r, ["noShowPolicy"]),
+        };
+      });
+    }
+  }
 
   return {
-    "@_RateId": rateId,
-    "@_RoomName": roomName,
-    "@_RoomTypeCode": roomTypeCode,
-    "@_BoardBasis": boardBasis,
-    "@_Price": price,
-    "@_MinSellingPrice": minSellingPrice,
-    "@_Currency": currency,
-    "@_Refundable": refundable,
-    "@_Description": description,
-    "@_LeftToSell": leftToSell,
-    "@_MaxAdults": maxAdults,
-    "@_MaxChildren": maxChildren,
-    "@_MaxOccupancy": maxOccupancy,
-    "@_AllocationDetails": allocationDetails,
-    "@_Status": status,
+    rateId,
+    roomName,
+    roomTypeCode,
+    boardBasis,
+    price,
+    minSellingPrice,
+    currency,
+    refundable,
+    description,
+    leftToSell,
+    maxAdults,
+    maxChildren,
+    maxOccupancy,
+    allocationDetails,
+    status,
     cancellationRules,
-    specials,
   };
 }
 
-export function extractRoomsFromResponse(parsedXML: XmlObject): XmlObject[] {
+/**
+ * Extract rooms from V4 getRooms response.
+ * 
+ * V4 Response path:
+ * result > hotel > rooms > room > roomType > rateBases > rateBasis
+ */
+export function extractRoomsFromResponse(parsedXML: XmlObject): NormalizedRoom[] {
   try {
-    const items: XmlObject[] = [];
+    const items: NormalizedRoom[] = [];
 
-    // V4 DOTW format: result > hotel > rooms > room[] > roomType[] > rateBases > rateBasis[]
-    const v4Hotel = asObject(getByPath(parsedXML, ["result", "hotel"]));
-    if (v4Hotel) {
-      // Check allowBook
-      const allowBook = getString(v4Hotel, ["allowBook"]);
-      if (allowBook === "no") {
-        console.warn("[extractRooms] Hotel does not allow booking");
-        return [];
-      }
+    // V4 DOTW format: result > hotel > rooms > room > roomType
+    const result = parsedXML["result"] as XmlObject | undefined;
+    if (!result) return [];
 
-      // V4 path: hotel > rooms > room > roomType
-      const rooms = asArray(getByPath(v4Hotel, ["rooms", "room"]));
-      for (const room of rooms) {
-        const roomObj = asObject(room);
-        if (!roomObj) continue;
+    const v4Hotel = asObject(result["hotel"]);
+    if (!v4Hotel) return [];
 
-        const roomTypes = asArray(roomObj["roomType"]);
-        for (const rt of roomTypes) {
-          const rtObj = asObject(rt);
-          if (!rtObj) continue;
+    // Check allowBook
+    const allowBook = getString(v4Hotel, ["allowBook"]);
+    if (allowBook === "no") {
+      console.warn("[extractRooms] Hotel does not allow booking");
+      return [];
+    }
 
-          const rateBases = asArray(getByPath(rtObj, ["rateBases", "rateBasis"]));
-          if (rateBases.length === 0) {
-            // Try direct rateBasis (without rateBases wrapper)
-            const directRateBases = asArray(rtObj["rateBasis"]);
-            for (const rb of directRateBases) {
-              const rbObj = asObject(rb);
-              if (rbObj) items.push(normalizeRoomItem(rtObj, rbObj));
-            }
-          } else {
-            for (const rb of rateBases) {
-              const rbObj = asObject(rb);
-              if (rbObj) items.push(normalizeRoomItem(rtObj, rbObj));
-            }
-          }
-        }
-      }
+    // V4 path: hotel > rooms > room > roomType
+    const roomsWrapper = v4Hotel["rooms"] as XmlObject | undefined;
+    const rooms = asArray(roomsWrapper?.["room"]);
+    for (const room of rooms) {
+      const roomObj = asObject(room);
+      if (!roomObj) continue;
 
-      // Also try direct roomType under hotel (flat V4 variant)
-      if (items.length === 0) {
-        const directRoomTypes = asArray(v4Hotel["roomType"]);
-        for (const rt of directRoomTypes) {
-          const rtObj = asObject(rt);
-          if (!rtObj) continue;
+      const roomTypes = asArray(roomObj["roomType"]);
+      for (const rt of roomTypes) {
+        const rtObj = asObject(rt);
+        if (!rtObj) continue;
 
-          const rateBases = asArray(getByPath(rtObj, ["rateBases", "rateBasis"]));
+        const rateBasesWrapper = rtObj["rateBases"] as XmlObject | undefined;
+        const rateBases = asArray(rateBasesWrapper?.["rateBasis"]);
+        if (rateBases.length > 0) {
           for (const rb of rateBases) {
+            const rbObj = asObject(rb);
+            if (rbObj) items.push(normalizeRoomItem(rtObj, rbObj));
+          }
+        } else {
+          // Try direct rateBasis (without rateBases wrapper)
+          const directRateBases = asArray(rtObj["rateBasis"]);
+          for (const rb of directRateBases) {
             const rbObj = asObject(rb);
             if (rbObj) items.push(normalizeRoomItem(rtObj, rbObj));
           }
         }
       }
-
-      if (items.length > 0) return items;
     }
 
-    // Legacy gateway format fallback
-    const legacyRoomNode = getByPath(parsedXML, ["Response", "Body", "RoomsResponse", "Rooms", "Room"]);
-    if (legacyRoomNode) return asArray(legacyRoomNode) as XmlObject[];
-
-    return [];
+    return items;
   } catch (error) {
     console.error("Error extracting rooms:", error);
     return [];
   }
+}
+
+/**
+ * Extract hotel info from getRooms response.
+ * Returns hotel name, check-in/out times, description.
+ */
+export function extractHotelInfoFromGetRooms(parsedXML: XmlObject): {
+  hotelId: string;
+  hotelName: string;
+  checkInTime: string;
+  checkOutTime: string;
+  description?: string;
+} {
+  const result = parsedXML["result"] as XmlObject | undefined;
+  const hotel = result?.["hotel"] as XmlObject | undefined;
+  
+  if (!hotel) {
+    return {
+      hotelId: "",
+      hotelName: "",
+      checkInTime: "14:00",
+      checkOutTime: "12:00",
+    };
+  }
+
+  return {
+    hotelId: getString(hotel, ["@_hotelid", "@_HotelId"]) || "",
+    hotelName: getString(hotel, ["@_name", "hotelName", "name"]) || "",
+    checkInTime: getString(hotel, ["checkInTime", "checkintime"]) || "14:00",
+    checkOutTime: getString(hotel, ["checkOutTime", "checkouttime"]) || "12:00",
+    description: getString(hotel, ["description1", "description"]),
+  };
 }

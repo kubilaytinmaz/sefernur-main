@@ -51,8 +51,8 @@ const capacityOptions = [
 /* ────────── Main Page ────────── */
 
 export default function TransfersPage() {
-  // Seçili popüler hizmet - alt kısımdaki fiyatları etkiler
-  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
+  // Seçili popüler hizmetler - çoklu seçim destekli
+  const [selectedServiceIds, setSelectedServiceIds] = useState<string[]>([]);
 
   const transfersQuery = useQuery({
     queryKey: ["transfers", "active"],
@@ -75,15 +75,18 @@ export default function TransfersPage() {
     console.log("Arama:", params);
   };
 
-  // Popüler hizmet seçimi (toggle)
-  const handleServiceSelect = (serviceId: string) => {
-    setSelectedServiceId(prev => prev === serviceId ? null : serviceId);
+  // Popüler hizmet seçimi (çoklu seçim toggle)
+  const handleServiceSelect = (serviceIds: string[]) => {
+    setSelectedServiceIds(serviceIds);
   };
 
-  // Seçili hizmet bilgisini al
-  const selectedService: PopularService | null = selectedServiceId 
-    ? POPULAR_SERVICES.find(s => s.id === selectedServiceId) ?? null 
-    : null;
+  // Seçili hizmetleri al
+  const selectedServices: PopularService[] = useMemo(
+    () => selectedServiceIds
+      .map(id => POPULAR_SERVICES.find(s => s.id === id))
+      .filter(Boolean) as PopularService[],
+    [selectedServiceIds]
+  );
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -123,30 +126,30 @@ export default function TransfersPage() {
       {/* Popüler Transferler ve Hizmetler */}
       <PopularServicesSection
         onServiceSelect={handleServiceSelect}
-        selectedServiceId={selectedServiceId}
+        selectedServiceIds={selectedServiceIds}
       />
 
       {/* Seçili Hizmet Bilgisi */}
-      {selectedService && (
+      {selectedServices.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="bg-gradient-to-r from-cyan-50 to-sky-50 rounded-xl border border-cyan-200 p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-cyan-100 flex items-center justify-center text-xl">
-                  {selectedService.icon}
+                  {selectedServices[0].icon}
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-cyan-900">{selectedService.name}</h3>
+                  <h3 className="text-sm font-semibold text-cyan-900">{selectedServices[0].name}</h3>
                   <p className="text-xs text-cyan-700">
-                    {selectedService.duration.text}
-                    {selectedService.distance && ` • ${selectedService.distance.text}`}
+                    {selectedServices[0].duration.text}
+                    {selectedServices[0].distance && ` • ${selectedServices[0].distance.text}`}
                     {' • '}
-                    <span className="font-semibold">{selectedService.price.display}</span>
+                    <span className="font-semibold">{selectedServices[0].price.display}</span>
                   </p>
                 </div>
               </div>
               <button
-                onClick={() => setSelectedServiceId(null)}
+                onClick={() => setSelectedServiceIds([])}
                 className="text-xs text-cyan-600 hover:text-cyan-800 font-medium px-3 py-1.5 rounded-lg bg-white/50 hover:bg-white border border-cyan-200 transition-colors"
               >
                 Seçimi Kaldır
@@ -186,7 +189,7 @@ export default function TransfersPage() {
               <TransferCard
                 key={transfer.id}
                 transfer={transfer}
-                selectedService={selectedService}
+                selectedService={selectedServices[0]}
               />
             ))}
           </div>
@@ -203,7 +206,7 @@ function TransferCard({
   selectedService
 }: {
   transfer: TransferModel;
-  selectedService: PopularService | null;
+  selectedService: PopularService | undefined;
 }) {
   const firstImage = transfer.images?.[0];
   const vehicleLabel = vehicleTypeLabels[transfer.vehicleType] || transfer.vehicleType;

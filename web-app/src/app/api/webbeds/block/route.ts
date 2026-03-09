@@ -1,68 +1,32 @@
-import { WEBBEDS_CONFIG } from "@/lib/webbeds/config";
-import { buildBlockRoomXML } from "@/lib/webbeds/xml-builder";
-import { parseWebBedsXML } from "@/lib/webbeds/xml-parser";
-import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
-// POST /api/webbeds/block - Block a room (15-minute hold)
+/**
+ * Redirect old /api/webbeds/block to new /api/hotels/[hotelId]/block
+ * This maintains backward compatibility while using the new API
+ */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const {
-      hotelId,
-      checkIn,
-      checkOut,
-      rooms,
-      roomTypeCode,
-      selectedRateBasis,
-      allocationDetails,
-      nationality = 5,
-      currency = 520,
-    } = body;
+    const { hotelId } = body;
 
-    if (!hotelId || !checkIn || !checkOut || !roomTypeCode || !allocationDetails) {
+    if (!hotelId) {
       return NextResponse.json(
-        { error: "Missing required fields: hotelId, checkIn, checkOut, roomTypeCode, allocationDetails" },
-        { status: 400 },
+        { success: false, error: "hotelId is required" },
+        { status: 400 }
       );
     }
 
-    const xmlRequest = buildBlockRoomXML({
-      hotelId,
-      checkIn,
-      checkOut,
-      rooms: rooms || [{ adults: 2, children: 0, childAges: [] }],
-      roomTypeCode,
-      selectedRateBasis: selectedRateBasis || "0",
-      allocationDetails,
-      nationality,
-      currency,
-    });
-
-    const response = await axios.post(WEBBEDS_CONFIG.baseUrl, xmlRequest, {
-      headers: {
-        "Content-Type": "text/xml; charset=utf-8",
-        "Accept": "text/xml",
-        "Accept-Encoding": "gzip, deflate",
-      },
-      timeout: 60000,
-    });
-
-    const parsedData = parseWebBedsXML(response.data);
-
-    return NextResponse.json({
-      success: true,
-      data: parsedData,
-    });
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Unknown error";
-    console.error("WebBeds block error:", error);
     return NextResponse.json(
       {
-        error: "Failed to block room",
-        message,
+        message: "API endpoint has moved to /api/hotels/[hotelId]/block",
+        newEndpoint: `/api/hotels/${hotelId}/block`
       },
-      { status: 500 },
+      { status: 301 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: "Invalid request" },
+      { status: 400 }
     );
   }
 }
