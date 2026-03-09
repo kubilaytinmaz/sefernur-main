@@ -1,0 +1,15 @@
+export 'auth/auth_repository.dart';
+export 'car/car_repository.dart';
+export 'favorite/favorite_repository.dart';
+export 'guide/guide_repository.dart';
+export 'hotel/hotel_repository.dart';
+export 'notification/notification_repository.dart';
+export 'promotion/promotion_repository.dart';
+export 'referral/referral_repository.dart';
+export 'reservation/reservation_repository.dart';
+export 'review/review_repository.dart';
+export 'search/popular_search_repository.dart';
+export 'user/user_repository.dart';
+export 'visa/visa_repository.dart';
+// WebBeds
+export 'webbeds/webbeds_repository.dart';

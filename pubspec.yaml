@@ -1,0 +1,178 @@
+name: sefernur
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.3+13
+
+environment:
+  sdk: ^3.8.1
+  flutter: ">=3.16.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  
+  # Core Framework
+  cupertino_icons: ^1.0.8
+
+  # State Management
+  get: ^4.7.2
+
+  # Network & API
+  dio: ^5.9.0
+  connectivity_plus: ^7.0.0
+  internet_connection_checker_plus: ^2.9.1
+
+  # Firebase Services
+  firebase_core: ^4.2.1
+  firebase_analytics: ^12.0.4
+  firebase_auth: ^6.1.2
+  cloud_firestore: ^6.1.0
+  cloud_functions: ^6.0.4
+  firebase_database: ^12.0.4
+  firebase_storage: ^13.0.4
+  firebase_messaging: ^16.0.4
+  firebase_remote_config: ^6.1.1
+  firebase_app_check: ^0.4.1+2
+  # Deep link handling (replaces deprecated uni_links)
+  app_links: ^6.4.1
+  share_plus: ^12.0.1
+
+  # Chat (Firebase-based)
+  flutter_firebase_chat_core: ^1.6.8
+  flutter_chat_types: ^3.6.2
+
+  # Local Storage
+  get_storage: ^2.1.1
+
+  # UI & Images
+  cached_network_image: ^3.4.1
+  flutter_blurhash: ^0.9.1
+  octo_image: ^2.1.0
+  lottie: ^3.3.2
+  flutter_svg: ^2.2.2
+
+  # Icons
+  font_awesome_flutter: ^10.12.0
+  icons_plus: ^5.0.0
+
+  # UI Components & Widgets
+  loading_animation_widget: ^1.3.0
+  flutter_form_builder: ^10.2.0
+  animated_bottom_navigation_bar: ^1.4.0
+  country_code_picker: ^3.4.1
+  pinput: ^5.0.2
+  google_sign_in: ^7.2.0
+  sign_in_with_apple: ^7.0.1
+  crypto: ^3.0.6
+  
+  # Utilities & Tools
+  flutter_local_notifications: ^19.5.0
+  flutter_screenutil: ^5.9.3
+  package_info_plus: ^8.3.1
+  url_launcher: ^6.3.1
+  validators: ^3.0.0
+  equatable: ^2.0.7
+  fpdart: ^1.2.0
+  google_fonts: ^6.3.2
+  logger: ^2.6.2
+  morphable_shape: ^2.0.0
+  intl: ^0.20.2
+  file_picker: ^10.3.3
+  image_picker: ^1.2.0
+  http: ^1.5.0
+  
+  # Payment
+  uuid: ^4.5.1
+  webview_flutter: ^4.10.0
+
+  # JSON Serialization
+  freezed_annotation: ^3.0.0
+  json_annotation: ^4.9.0
+  permission_handler: ^12.0.1
+  latlong2: ^0.9.1
+  geolocator: ^14.0.2
+  flutter_map: ^8.2.2
+  easy_date_timeline: ^2.0.9
+  smooth_page_indicator: ^1.2.0
+  xml: ^6.6.1
+
+dependency_overrides:
+  # flutter_firebase_chat_core 1.6.8 constrains firebase_core to ^3.0.0.
+  # We need firebase_core ^4.2.1; this override forces resolution.
+  firebase_core: ^4.2.1
+  # Chat core also pins firebase_auth ^5.x; force v6.1.2 (verify runtime API compatibility)
+  firebase_auth: ^6.1.2
+  # Chat core also pins cloud_firestore ^5.x; force v6.1.0 (verify runtime API compatibility)
+  cloud_firestore: ^6.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # Linting & Analysis
+  flutter_lints: ^6.0.0
+
+  # Code Generation
+  build_runner: ^2.10.1
+  freezed: ^3.2.3
+  json_serializable: ^6.11.1
+  icons_launcher: ^3.0.3
+
+icons_launcher:
+  image_path: "assets/images/app_icon.png"
+  platforms:
+    android:
+      enable: true
+    ios:
+      enable: true
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/svgs/
+    - assets/fonts/
+
+  fonts:
+    - family: Roie
+      fonts:
+        - asset: assets/fonts/Roie.ttf
+    - family: Prelia
+      fonts:
+        - asset: assets/fonts/Prelia.ttf
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/roboto-thin.ttf
+          weight: 100
+        - asset: assets/fonts/roboto-light.ttf
+          weight: 300
+        - asset: assets/fonts/roboto-regular.ttf
+          weight: 400
+        - asset: assets/fonts/roboto-medium.ttf
+          weight: 500
+        - asset: assets/fonts/roboto-bold.ttf
+          weight: 700
+        - asset: assets/fonts/roboto-black.ttf
+          weight: 900
+        - asset: assets/fonts/roboto-black-italic.ttf
+          weight: 900
+          style: italic
+        - asset: assets/fonts/roboto-bold-italic.ttf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/roboto-medium-italic.ttf
+          weight: 500
+          style: italic
+        - asset: assets/fonts/roboto-italic.ttf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/roboto-light-italic.ttf
+          weight: 300
+          style: italic
+        - asset: assets/fonts/roboto-thin-italic.ttf
+          weight: 100
+          style: italic

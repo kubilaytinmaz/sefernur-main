@@ -1,0 +1,5 @@
+# Production keystore settings. Fill in before assembling a release build.
+storeFile=/Users/eyexapp/Workspace/sefernur/android/sefernur-release-key.jks
+storePassword=eyexapp1221!
+keyPassword=eyexapp1221!
+keyAlias=sefernur

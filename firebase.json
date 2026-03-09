@@ -1,0 +1,94 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "sefernur-app",
+          "appId": "1:2795089756:android:ccb69b166c28a607cddb99",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "sefernur-app",
+          "configurations": {
+            "android": "1:2795089756:android:ccb69b166c28a607cddb99",
+            "ios": "1:2795089756:ios:62ae1b309c3f43c1cddb99",
+            "web": "1:2795089756:web:12ad99f5addbd628cddb99"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "web-app/out",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "Content-Security-Policy",
+            "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://*.firebaseapp.com https://*.googleapis.com https://www.googletagmanager.com https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https: http:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://*.cloudfunctions.net wss://*.firebaseio.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebasestorage.googleapis.com https://www.google.com https://www.googletagmanager.com https://www.google-analytics.com; frame-src 'self' https://*.firebaseapp.com https://*.kuveytturk.com.tr https://boatest.kuveytturk.com.tr https://www.google.com https://www.gstatic.com; object-src 'none'; base-uri 'self'"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(jpg|jpeg|gif|png|svg|webp|ico)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=31536000"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(js|css)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=31536000"
+          }
+        ]
+      }
+    ],
+    "rewrites": [
+      { "source": "/api/**", "function": { "functionId": "api", "region": "europe-west1" } },
+      { "source": "/tours/*", "destination": "/tours/_/index.html" },
+      { "source": "/hotels/*", "destination": "/hotels/_/index.html" },
+      { "source": "/places/*", "destination": "/places/_/index.html" },
+      { "source": "/guides/*", "destination": "/guides/_/index.html" },
+      { "source": "/transfers/*", "destination": "/transfers/_/index.html" },
+      { "source": "/visa/*", "destination": "/visa/_/index.html" },
+      { "source": "/admin/campaigns/*", "destination": "/admin/campaigns/_/index.html" },
+      { "source": "/admin/cars/*", "destination": "/admin/cars/_/index.html" },
+      { "source": "/admin/guides/*", "destination": "/admin/guides/_/index.html" },
+      { "source": "/admin/hotels/*", "destination": "/admin/hotels/_/index.html" },
+      { "source": "/admin/places/*", "destination": "/admin/places/_/index.html" },
+      { "source": "/admin/promotions/*", "destination": "/admin/promotions/_/index.html" },
+      { "source": "/admin/reservations/*", "destination": "/admin/reservations/_/index.html" },
+      { "source": "/admin/tours/*", "destination": "/admin/tours/_/index.html" },
+      { "source": "/admin/transfers/*", "destination": "/admin/transfers/_/index.html" },
+      { "source": "/admin/users/*", "destination": "/admin/users/_/index.html" },
+      { "source": "/admin/visa/*", "destination": "/admin/visa/_/index.html" },
+      { "source": "**", "destination": "/index.html" }
+    ]
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ]
+}

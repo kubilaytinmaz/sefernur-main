@@ -1,0 +1,14 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "next build verify",
+			"type": "shell",
+			"command": "node ./node_modules/next/dist/bin/next",
+			"args": [
+				"build"
+			],
+			"isBackground": false
+		}
+	]
+}

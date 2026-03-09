@@ -1,0 +1,70 @@
+{
+  "project_info": {
+    "project_number": "2795089756",
+    "project_id": "sefernur-app",
+    "storage_bucket": "sefernur-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2795089756:android:ccb69b166c28a607cddb99",
+        "android_client_info": {
+          "package_name": "com.eyexapp.sefernur"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "2795089756-2u17qrrb0h1hd43v2cjphi6v16n4lhhh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.eyexapp.sefernur",
+            "certificate_hash": "186528034c51885d63f8e81eee164d57693a8901"
+          }
+        },
+        {
+          "client_id": "2795089756-7ncdn83keam8f9scvf33bbull5e8nk41.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.eyexapp.sefernur",
+            "certificate_hash": "4d3fb6ad5529a5a6a4ce944c23a9fb6d974020c3"
+          }
+        },
+        {
+          "client_id": "2795089756-hiebuhig8li1mgp4g4md4e6gqsc37j9r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.eyexapp.sefernur",
+            "certificate_hash": "ca8254a73d3b21fcd12232dbdc68440d316a7d19"
+          }
+        },
+        {
+          "client_id": "2795089756-vbk4d21mo3kbus2m21rcu4svecif2cid.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAaYh21tWvrjjaoTCt-gWfZ1x7cBynwezc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "2795089756-vbk4d21mo3kbus2m21rcu4svecif2cid.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "2795089756-0g3assoirfva21g18id267u7ik3lb4gq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.eyexapp.sefernur"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
