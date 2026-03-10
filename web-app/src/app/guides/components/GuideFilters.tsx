@@ -1,13 +1,13 @@
 /**
  * Guide Filters Component
- * Rehber filtre paneli bileşeni
+ * Modern accordion style filtre paneli bileşeni
  */
 
 "use client";
 
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
-import { GUIDE_EXPERIENCE_RANGES, GUIDE_FILTER_PRESETS, GUIDE_PRICE_RANGES } from "@/lib/guides/constants";
+import { GUIDE_EXPERIENCE_RANGES, GUIDE_FILTER_PRESETS, GUIDE_PRICE_RANGES, type GuideFilterPreset } from "@/lib/guides/constants";
 import { languageLabels, specialtyLabels } from "@/types/guide";
 import { Award, ChevronDown, ChevronUp, SlidersHorizontal, X } from "lucide-react";
 import { useState } from "react";
@@ -24,7 +24,7 @@ export function GuideFilters({ isOpen, onClose, children }: GuideFiltersProps) {
       {/* Mobile Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm transition-opacity"
           onClick={onClose}
           aria-hidden="true"
         />
@@ -34,16 +34,16 @@ export function GuideFilters({ isOpen, onClose, children }: GuideFiltersProps) {
       <aside
         className={`
           fixed lg:sticky top-20 left-0 z-50 lg:z-10
-          h-[calc(100vh-5rem)] lg:h-auto
+          h-[calc(100vh-5rem)] lg:h-auto lg:max-h-[calc(100vh-6rem)]
           w-80 lg:w-72
           bg-white lg:bg-transparent
-          border-r lg:border-0 border-slate-200
+          border-r lg:border-0 border-slate-200/80
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}
         aria-label="Filtreler"
       >
-        <div className="h-full overflow-y-auto p-4 lg:p-0">
+        <div className="h-full overflow-y-auto p-4 lg:p-0 custom-scrollbar">
           <div className="flex items-center justify-between mb-4 lg:hidden">
             <div className="flex items-center gap-2">
               <SlidersHorizontal className="w-5 h-5 text-violet-600" />
@@ -70,27 +70,37 @@ interface FilterSectionProps {
   title: string;
   defaultOpen?: boolean;
   children: React.ReactNode;
+  icon?: React.ReactNode;
 }
 
-export function FilterSection({ title, defaultOpen = true, children }: FilterSectionProps) {
+export function FilterSection({ title, defaultOpen = true, children, icon }: FilterSectionProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <Card className="border-slate-200 bg-white mb-3">
+    <Card className="border-slate-200/80 bg-white/80 backdrop-blur-sm mb-3 overflow-hidden hover:border-violet-200/50 transition-colors">
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 text-left cursor-pointer"
+        className="w-full flex items-center justify-between p-4 text-left cursor-pointer hover:bg-slate-50/50 transition-colors"
         aria-expanded={isOpen}
       >
-        <h3 className="text-sm font-semibold text-slate-900">{title}</h3>
+        <div className="flex items-center gap-2">
+          {icon && <span className="text-violet-600">{icon}</span>}
+          <h3 className="text-sm font-semibold text-slate-900">{title}</h3>
+        </div>
         {isOpen ? (
-          <ChevronUp className="w-4 h-4 text-slate-400" />
+          <ChevronUp className="w-4 h-4 text-slate-400 transition-transform" />
         ) : (
-          <ChevronDown className="w-4 h-4 text-slate-400" />
+          <ChevronDown className="w-4 h-4 text-slate-400 transition-transform" />
         )}
       </button>
-      {isOpen && <CardContent className="px-4 pb-4 pt-0">{children}</CardContent>}
+      <div
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${
+          isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <CardContent className="px-4 pb-4 pt-0">{children}</CardContent>
+      </div>
     </Card>
   );
 }
@@ -104,14 +114,14 @@ interface CheckboxFilterProps {
 
 export function CheckboxFilter({ label, checked, onChange, count }: CheckboxFilterProps) {
   return (
-    <label className="flex items-center gap-2 py-2 px-3 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
+    <label className="flex items-center gap-2 py-2 px-3 rounded-lg hover:bg-violet-50/50 cursor-pointer transition-colors group">
       <input
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500 focus:ring-offset-0"
+        className="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500 focus:ring-offset-0 focus:ring-2 transition-colors"
       />
-      <span className="flex-1 text-sm text-slate-700">{label}</span>
+      <span className="flex-1 text-sm text-slate-700 group-hover:text-slate-900 transition-colors">{label}</span>
       {count !== undefined && <span className="text-xs text-slate-400">({count})</span>}
     </label>
   );
@@ -142,8 +152,8 @@ export function SpecialtyFilters({ selected, onChange }: SpecialtyFiltersProps) 
             px-3 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer
             ${
               selected.includes(key)
-                ? "bg-violet-600 text-white shadow-md shadow-violet-200"
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                ? "bg-gradient-to-r from-violet-600 to-violet-700 text-white shadow-md shadow-violet-200 hover:shadow-lg hover:shadow-violet-300"
+                : "bg-slate-100 text-slate-600 hover:bg-violet-50 hover:text-violet-700 border border-slate-200 hover:border-violet-200"
             }
           `}
         >
@@ -206,11 +216,11 @@ export function PriceRangeFilter({ value, onChange }: PriceRangeFilterProps) {
           type="button"
           onClick={() => onChange({ min: range.min, max: range.max })}
           className={`
-            w-full text-left px-3 py-2 rounded-lg text-sm transition-all cursor-pointer
+            w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all cursor-pointer
             ${
               selectedRange?.min === range.min && selectedRange?.max === range.max
-                ? "bg-violet-50 text-violet-700 border border-violet-200 font-medium"
-                : "bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent"
+                ? "bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 border border-violet-200 font-medium shadow-sm"
+                : "bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent hover:border-slate-200"
             }
           `}
         >
@@ -239,11 +249,11 @@ export function ExperienceFilter({ value, onChange }: ExperienceFilterProps) {
           type="button"
           onClick={() => onChange({ min: range.min, max: range.max })}
           className={`
-            w-full text-left px-3 py-2 rounded-lg text-sm transition-all cursor-pointer
+            w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all cursor-pointer
             ${
               selectedRange?.min === range.min && selectedRange?.max === range.max
-                ? "bg-violet-50 text-violet-700 border border-violet-200 font-medium"
-                : "bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent"
+                ? "bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 border border-violet-200 font-medium shadow-sm"
+                : "bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent hover:border-slate-200"
             }
           `}
         >
@@ -268,11 +278,11 @@ export function RatingFilter({ value, onChange }: RatingFilterProps) {
         type="button"
         onClick={() => onChange(undefined)}
         className={`
-          w-full text-left px-3 py-2 rounded-lg text-sm transition-all cursor-pointer
+          w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all cursor-pointer
           ${
             value === undefined
-              ? "bg-violet-50 text-violet-700 border border-violet-200 font-medium"
-              : "bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent"
+              ? "bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 border border-violet-200 font-medium shadow-sm"
+              : "bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent hover:border-slate-200"
           }
         `}
       >
@@ -284,11 +294,11 @@ export function RatingFilter({ value, onChange }: RatingFilterProps) {
           type="button"
           onClick={() => onChange(rating)}
           className={`
-            w-full text-left px-3 py-2 rounded-lg text-sm transition-all cursor-pointer flex items-center gap-2
+            w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all cursor-pointer flex items-center gap-2
             ${
               value === rating
-                ? "bg-violet-50 text-violet-700 border border-violet-200 font-medium"
-                : "bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent"
+                ? "bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 border border-violet-200 font-medium shadow-sm"
+                : "bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent hover:border-slate-200"
             }
           `}
         >
@@ -301,18 +311,20 @@ export function RatingFilter({ value, onChange }: RatingFilterProps) {
 }
 
 interface FilterPresetButtonsProps {
-  onSelectPreset: (preset: typeof GUIDE_FILTER_PRESETS[number]) => void;
+  presets?: GuideFilterPreset[];
+  onSelectPreset: (preset: GuideFilterPreset) => void;
 }
 
-export function FilterPresetButtons({ onSelectPreset }: FilterPresetButtonsProps) {
+export function FilterPresetButtons({ presets, onSelectPreset }: FilterPresetButtonsProps) {
+  const items = presets ?? GUIDE_FILTER_PRESETS;
   return (
     <div className="flex flex-wrap gap-2 mb-4">
-      {GUIDE_FILTER_PRESETS.map((preset) => (
+      {items.map((preset) => (
         <button
           key={preset.id}
           type="button"
           onClick={() => onSelectPreset(preset)}
-          className="px-3 py-1.5 rounded-full bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 text-xs font-medium border border-violet-200 hover:border-violet-300 hover:shadow-md transition-all cursor-pointer"
+          className="px-3 py-1.5 rounded-full bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 text-xs font-medium border border-violet-200/50 hover:border-violet-300 hover:shadow-md hover:shadow-violet-100 transition-all cursor-pointer hover:-translate-y-0.5"
         >
           {preset.label}
         </button>
@@ -333,7 +345,7 @@ export function ClearFiltersButton({ onClick, disabled }: ClearFiltersButtonProp
       onClick={onClick}
       disabled={disabled}
       variant="outline"
-      className="w-full mt-4 border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-full mt-4 border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-700 hover:border-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
     >
       Filtreleri Temizle
     </Button>

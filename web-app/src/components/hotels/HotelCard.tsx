@@ -53,8 +53,8 @@ function calculateNights(checkIn: string, checkOut: string): number {
 }
 
 function getHotelImageUrl(hotel: HotelCardData): string {
-  // Eğer image prop'u varsa ve http veya data: ile başlıyorsa kullan
-  if (hotel.image && (hotel.image.startsWith("http") || hotel.image.startsWith("data:"))) {
+  // Eğer image prop'u varsa ve geçerli bir URL ise kullan (http, data:, veya yerel /images/ yolu)
+  if (hotel.image && (hotel.image.startsWith("http") || hotel.image.startsWith("data:") || hotel.image.startsWith("/"))) {
     return hotel.image;
   }
   
@@ -280,7 +280,7 @@ function GridCard({
                 }}
                 className="px-4 py-2 text-sm font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors"
               >
-                Detay
+                Yer Durumuna Bak
               </button>
             </div>
           </div>

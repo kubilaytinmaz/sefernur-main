@@ -72,6 +72,7 @@ export async function GET(
         hotelName: hotel.hotelName,
         description: hotel.description,
         address: hotel.address,
+        fullAddress: hotel.fullAddress,
         cityName: hotel.cityName,
         cityCode: hotel.cityCode,
         countryName: hotel.countryName,

@@ -3,14 +3,14 @@
 import { Button } from "@/components/ui/Button";
 import { useSiteSettings } from "@/providers/site-settings-provider";
 import {
-    Facebook,
-    Instagram,
-    Mail,
-    MapPin,
-    Phone,
-    Send,
-    Twitter,
-    Youtube,
+  Facebook,
+  Instagram,
+  Mail,
+  MapPin,
+  Phone,
+  Send,
+  Twitter,
+  Youtube,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -126,7 +126,7 @@ export function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link
-                  href="/hotels"
+                  href="/oteller"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
                   Otel Rezervasyonu
@@ -134,7 +134,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/tours"
+                  href="/turlar"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
                   Umre Turları
@@ -142,7 +142,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/transfers"
+                  href="/transferler"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
                   Transfer Hizmetleri
@@ -150,7 +150,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/guides"
+                  href="/rehberler"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
                   Rehberlik
@@ -163,7 +163,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/visa"
+                  href="/vize"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
                   Vize İşlemleri
@@ -178,7 +178,7 @@ export function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link
-                  href="/about"
+                  href="/hakkimizda"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
                   Hakkımızda
@@ -186,7 +186,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/contact"
+                  href="/iletisim"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
                   İletişim
@@ -194,7 +194,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/campaigns"
+                  href="/kampanyalar"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
                   Kampanyalar
@@ -202,7 +202,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/blog"
+                  href="/gezilecek-yerler"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
                   Gezilecek Yerler
@@ -210,7 +210,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/faq"
+                  href="/sikca-sorulan-sorular"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
                   Sık Sorulanlar
@@ -225,7 +225,7 @@ export function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link
-                  href="/privacy"
+                  href="/gizlilik-politikasi"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
                   Gizlilik Politikası
@@ -233,7 +233,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/terms"
+                  href="/kullanim-kosullari"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
                   Kullanım Koşulları
@@ -241,7 +241,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/kvkk"
+                  href="/kvkk-aydinlatma-metni"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
                   KVKK
@@ -249,7 +249,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/cancellation"
+                  href="/iptal-iade-politikasi"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
                   İptal & İade
@@ -257,7 +257,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/cookies"
+                  href="/cerez-politikasi"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
                   Çerez Politikası

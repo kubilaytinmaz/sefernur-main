@@ -10,6 +10,7 @@ import { formatTlUsdPairFromTl } from "@/lib/currency";
 import { getActiveTransfers } from "@/lib/firebase/domain";
 import { POPULAR_SERVICES, type PopularService } from "@/lib/transfers/popular-services-simple";
 import { calculateTransferPrice } from "@/lib/transfers/pricing";
+import { createSlug } from "@/lib/transfers/seo-slugs";
 import { displayAddress } from "@/types/address";
 import { TransferModel, VehicleType, vehicleTypeLabels } from "@/types/transfer";
 import { useQuery } from "@tanstack/react-query";
@@ -127,37 +128,11 @@ export default function TransfersPage() {
       <PopularServicesSection
         onServiceSelect={handleServiceSelect}
         selectedServiceIds={selectedServiceIds}
+        availableVehicles={transfers.map(t => ({
+          vehicleType: t.vehicleType,
+          basePrice: t.basePrice,
+        }))}
       />
-
-      {/* Seçili Hizmet Bilgisi */}
-      {selectedServices.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="bg-gradient-to-r from-cyan-50 to-sky-50 rounded-xl border border-cyan-200 p-4 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-cyan-100 flex items-center justify-center text-xl">
-                  {selectedServices[0].icon}
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-cyan-900">{selectedServices[0].name}</h3>
-                  <p className="text-xs text-cyan-700">
-                    {selectedServices[0].duration.text}
-                    {selectedServices[0].distance && ` • ${selectedServices[0].distance.text}`}
-                    {' • '}
-                    <span className="font-semibold">{selectedServices[0].price.display}</span>
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => setSelectedServiceIds([])}
-                className="text-xs text-cyan-600 hover:text-cyan-800 font-medium px-3 py-1.5 rounded-lg bg-white/50 hover:bg-white border border-cyan-200 transition-colors"
-              >
-                Seçimi Kaldır
-              </button>
-           </div>
-           </div>
-         </section>
-      )}
 
       {/* Transfer Vehicles Section Title */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
@@ -248,8 +223,18 @@ function TransferCard({
     return 'Transfer + ' + (selectedService.type === 'tour' ? 'Tur' : 'Rehber');
   }, [selectedService]);
 
+  // SEO uyumlu Türkçe URL oluştur
+  const vehicleName = transfer.vehicleName || vehicleLabel;
+  const vehicleSlug = `${createSlug(vehicleName)}-${transfer.id}`;
+  const tourSlug = selectedService ? `${createSlug(selectedService.name)}-${selectedService.id}` : null;
+  
+  // Booking URL: Tur varsa tur ile, yoksa sadece araç
+  const bookingUrl = tourSlug
+    ? `/transfer-rezervasyon/${vehicleSlug}/${tourSlug}`
+    : `/transfer-rezervasyon/${vehicleSlug}/tursuz`;
+
   return (
-    <Link href={`/transfers/${transfer.id}`}>
+    <Link href={bookingUrl}>
       <Card className="group overflow-hidden border-slate-200 bg-white hover:border-cyan-300 transition-colors duration-200 cursor-pointer h-full">
         {/* Image Section */}
         <div className="relative h-48 overflow-hidden bg-slate-100">

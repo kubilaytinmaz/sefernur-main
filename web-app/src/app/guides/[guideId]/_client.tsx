@@ -1,9 +1,15 @@
+/**
+ * Guide Detail Page - Modern Redesign
+ * Rehber detay sayfası - modern yeniden tasarım
+ */
+
 "use client";
 
-import { EmptyState, ErrorState, LoadingState } from "@/components/states/AsyncStates";
+import { EmptyState, ErrorState } from "@/components/states/AsyncStates";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
+import { useGuideFavorites } from "@/hooks/guides/useGuideFavorites";
 import { useRouteId } from "@/hooks/useRouteId";
 import { formatTlUsdPairFromTl } from "@/lib/currency";
 import { getGuideById } from "@/lib/firebase/domain";
@@ -23,6 +29,7 @@ import {
   ChevronRight,
   Clock,
   Globe,
+  Heart,
   Languages,
   Mail,
   MapPin,
@@ -39,10 +46,14 @@ import {
 import Link from "next/link";
 import { FormEvent, useCallback, useState } from "react";
 
+import { GuideShareButtons } from "../components/GuideShareButtons";
+import { GuideDetailSkeleton } from "../components/skeletons/GuideDetailSkeleton";
+
 /* ────────── Main Page ────────── */
 
 export default function GuideDetailPage() {
   const guideId = useRouteId();
+  const { toggleFavorite, isFavorite } = useGuideFavorites();
 
   const guideQuery = useQuery({
     queryKey: ["guide", guideId],
@@ -53,11 +64,7 @@ export default function GuideDetailPage() {
   const guide = guideQuery.data;
 
   if (guideQuery.isLoading) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <LoadingState title="Rehber yükleniyor" description="Rehber detayları getiriliyor..." />
-      </div>
-    );
+    return <GuideDetailSkeleton />;
   }
 
   if (guideQuery.isError) {
@@ -108,23 +115,40 @@ export default function GuideDetailPage() {
             <div>
               <div className="flex flex-wrap items-center gap-2 mb-3">
                 {guide.isPopular ? (
-                  <Badge className="bg-amber-500 text-white border-0 gap-1">
+                  <Badge className="bg-gradient-to-r from-amber-500 to-amber-600 text-white border-0 gap-1 shadow-sm shadow-amber-200">
                     <Star className="w-3.5 h-3.5 fill-white" /> Popüler
                   </Badge>
                 ) : null}
                 {guide.specialties.map((sp) => (
-                  <Badge key={sp} className="bg-violet-50 text-violet-700 border border-violet-200 gap-1">
+                  <Badge key={sp} className="bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 border border-violet-200 gap-1">
                     {sp}
                   </Badge>
                 ))}
               </div>
-              <h1 className="text-2xl md:text-3xl font-bold text-slate-900">{guide.name}</h1>
-              {guide.company ? (
-                <p className="mt-2 flex items-center gap-2 text-slate-500">
-                  <Briefcase className="w-4 h-4" />
-                  {guide.company}
-                </p>
-              ) : null}
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <h1 className="text-2xl md:text-3xl font-bold text-slate-900">{guide.name}</h1>
+                  {guide.company ? (
+                    <p className="mt-2 flex items-center gap-2 text-slate-500">
+                      <Briefcase className="w-4 h-4" />
+                      {guide.company}
+                    </p>
+                  ) : null}
+                </div>
+                {/* Favorite Button */}
+                <button
+                  type="button"
+                  onClick={() => toggleFavorite(guide.id)}
+                  className={`p-3 rounded-xl transition-all cursor-pointer ${
+                    isFavorite(guide.id)
+                      ? "bg-rose-50 text-rose-600 hover:bg-rose-100"
+                      : "bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                  }`}
+                  aria-label={isFavorite(guide.id) ? "Favorilerden çıkar" : "Favorilere ekle"}
+                >
+                  <Heart className={`w-5 h-5 ${isFavorite(guide.id) ? "fill-rose-500" : ""}`} />
+                </button>
+              </div>
             </div>
 
             {/* Quick Info Chips */}
@@ -155,9 +179,15 @@ export default function GuideDetailPage() {
               ) : null}
             </div>
 
+            {/* Share Buttons */}
+            <div className="flex items-center justify-between p-4 rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-sm">
+              <span className="text-sm font-medium text-slate-700">Paylaş:</span>
+              <GuideShareButtons guideName={guide.name} guideUrl={`/guides/${guide.id}`} />
+            </div>
+
             {/* Bio / About */}
             {guide.bio ? (
-              <Card className="border-slate-200 bg-white">
+              <Card className="border-slate-200/80 bg-white/80 backdrop-blur-sm hover:border-violet-200/50 transition-colors">
                 <CardContent className="p-5">
                   <h3 className="text-sm font-semibold text-slate-900 mb-3 flex items-center gap-2">
                     <User className="w-4 h-4 text-violet-600" />
@@ -172,7 +202,7 @@ export default function GuideDetailPage() {
 
             {/* Certifications */}
             {guide.certifications.length > 0 ? (
-              <Card className="border-slate-200 bg-white">
+              <Card className="border-slate-200/80 bg-white/80 backdrop-blur-sm hover:border-violet-200/50 transition-colors">
                 <CardContent className="p-5">
                   <h3 className="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
                     <Award className="w-4 h-4 text-violet-600" />
@@ -192,7 +222,7 @@ export default function GuideDetailPage() {
 
             {/* Service Addresses */}
             {guide.serviceAddresses.length > 0 ? (
-              <Card className="border-slate-200 bg-white">
+              <Card className="border-slate-200/80 bg-white/80 backdrop-blur-sm hover:border-violet-200/50 transition-colors">
                 <CardContent className="p-5">
                   <h3 className="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
                     <Globe className="w-4 h-4 text-violet-600" />
@@ -202,7 +232,7 @@ export default function GuideDetailPage() {
                     {guide.serviceAddresses.map((addr, i) => (
                       <div
                         key={i}
-                        className="flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-700"
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200/80 bg-gradient-to-r from-violet-50 to-fuchsia-50 text-sm text-slate-700"
                       >
                         <MapPin className="w-4 h-4 text-violet-500 shrink-0" />
                         <span>
@@ -222,7 +252,7 @@ export default function GuideDetailPage() {
           <div className="lg:col-span-1">
             <div className="sticky top-6 space-y-4">
               {/* Price Card */}
-              <Card className="border-violet-200 bg-linear-to-br from-violet-50 to-fuchsia-50">
+              <Card className="border-violet-200/80 bg-gradient-to-br from-violet-50 to-fuchsia-50 shadow-sm shadow-violet-100">
                 <CardContent className="p-5">
                   <p className="text-xs text-violet-600 uppercase tracking-wider font-medium">
                     Günlük Ücret
@@ -238,15 +268,15 @@ export default function GuideDetailPage() {
 
               {/* Contact Card */}
               {guide.phone || guide.whatsapp || guide.email ? (
-                <Card className="border-slate-200 bg-white">
+                <Card className="border-slate-200/80 bg-white/80 backdrop-blur-sm">
                   <CardContent className="p-5 space-y-3">
                     <h3 className="text-sm font-semibold text-slate-900">İletişim</h3>
                     {guide.phone ? (
                       <a
                         href={`tel:${guide.phone}`}
-                        className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-violet-300 hover:bg-violet-50 transition-colors cursor-pointer"
+                        className="flex items-center gap-3 p-3 rounded-xl border border-slate-200/80 hover:border-violet-300 hover:bg-violet-50/50 transition-all cursor-pointer group"
                       >
-                        <div className="w-9 h-9 rounded-lg bg-violet-100 flex items-center justify-center">
+                        <div className="w-9 h-9 rounded-lg bg-violet-100 flex items-center justify-center group-hover:bg-violet-200 transition-colors">
                           <Phone className="w-4 h-4 text-violet-700" />
                         </div>
                         <div>
@@ -260,9 +290,9 @@ export default function GuideDetailPage() {
                         href={`https://wa.me/${guide.whatsapp.replace(/\D/g, "")}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-green-300 hover:bg-green-50 transition-colors cursor-pointer"
+                        className="flex items-center gap-3 p-3 rounded-xl border border-slate-200/80 hover:border-green-300 hover:bg-green-50/50 transition-all cursor-pointer group"
                       >
-                        <div className="w-9 h-9 rounded-lg bg-green-100 flex items-center justify-center">
+                        <div className="w-9 h-9 rounded-lg bg-green-100 flex items-center justify-center group-hover:bg-green-200 transition-colors">
                           <MessageCircle className="w-4 h-4 text-green-700" />
                         </div>
                         <div>
@@ -274,9 +304,9 @@ export default function GuideDetailPage() {
                     {guide.email ? (
                       <a
                         href={`mailto:${guide.email}`}
-                        className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-sky-300 hover:bg-sky-50 transition-colors cursor-pointer"
+                        className="flex items-center gap-3 p-3 rounded-xl border border-slate-200/80 hover:border-sky-300 hover:bg-sky-50/50 transition-all cursor-pointer group"
                       >
-                        <div className="w-9 h-9 rounded-lg bg-sky-100 flex items-center justify-center">
+                        <div className="w-9 h-9 rounded-lg bg-sky-100 flex items-center justify-center group-hover:bg-sky-200 transition-colors">
                           <Mail className="w-4 h-4 text-sky-700" />
                         </div>
                         <div>
@@ -315,7 +345,7 @@ function ImageGallery({ images, name }: { images: string[]; name: string }) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="relative rounded-2xl overflow-hidden bg-slate-100 h-64 sm:h-80 md:h-96">
+      <div className="relative rounded-2xl overflow-hidden bg-slate-100 h-64 sm:h-80 md:h-96 shadow-lg">
         {hasImages ? (
           <>
             <img
@@ -323,21 +353,21 @@ function ImageGallery({ images, name }: { images: string[]; name: string }) {
               alt={`${name} - ${currentIndex + 1}`}
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-linear-to-t from-black/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
 
             {images.length > 1 ? (
               <>
                 <button
                   type="button"
                   onClick={() => goTo("prev")}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center hover:bg-white transition-colors cursor-pointer"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center hover:bg-white hover:scale-110 transition-all cursor-pointer shadow-lg"
                 >
                   <ChevronLeft className="w-5 h-5 text-slate-700" />
                 </button>
                 <button
                   type="button"
                   onClick={() => goTo("next")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center hover:bg-white transition-colors cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center hover:bg-white hover:scale-110 transition-all cursor-pointer shadow-lg"
                 >
                   <ChevronRight className="w-5 h-5 text-slate-700" />
                 </button>
@@ -365,7 +395,7 @@ function ImageGallery({ images, name }: { images: string[]; name: string }) {
             </div>
           </>
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-violet-50 to-fuchsia-50">
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-violet-50 to-fuchsia-50">
             <div className="text-center">
               <User className="w-16 h-16 text-violet-200 mx-auto" />
               <p className="mt-2 text-sm text-slate-400">Görsel henüz eklenmedi</p>
@@ -381,7 +411,7 @@ function ImageGallery({ images, name }: { images: string[]; name: string }) {
 
 function InfoChip({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm">
+    <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200/80 bg-white/80 backdrop-blur-sm text-sm hover:border-violet-200/50 transition-colors">
       <span className="text-violet-600">{icon}</span>
       <div>
         <p className="text-[10px] text-slate-400 uppercase tracking-wider leading-tight">{label}</p>
@@ -472,22 +502,9 @@ function ReservationForm({ guide }: { guide: GuideModel }) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // Takvim için tarih oluşturma (sonraki 30 gün)
-  const generateCalendarDays = () => {
-    const days: Date[] = [];
-    const current = new Date(today);
-    for (let i = 0; i < 30; i++) {
-      days.push(new Date(current));
-      current.setDate(current.getDate() + 1);
-    }
-    return days;
-  };
-
-  const calendarDays = generateCalendarDays();
-
   if (success) {
     return (
-      <Card className="border-violet-200 bg-violet-50">
+      <Card className="border-violet-200/80 bg-gradient-to-br from-violet-50 to-fuchsia-50 shadow-sm shadow-violet-100">
         <CardContent className="p-6 text-center">
           <CheckCircle2 className="w-12 h-12 text-violet-600 mx-auto mb-3" />
           <h3 className="text-lg font-semibold text-violet-900">Rezervasyon Alındı!</h3>
@@ -500,7 +517,7 @@ function ReservationForm({ guide }: { guide: GuideModel }) {
   }
 
   return (
-    <Card className="border-slate-200 bg-white">
+    <Card className="border-slate-200/80 bg-white/80 backdrop-blur-sm">
       <CardContent className="p-5">
         <h3 className="text-sm font-semibold text-slate-900 mb-4">Rezervasyon Talebi</h3>
 
@@ -519,7 +536,7 @@ function ReservationForm({ guide }: { guide: GuideModel }) {
                 const date = e.target.value ? new Date(e.target.value + 'T00:00:00') : undefined;
                 setStartDate(date);
               }}
-              className="w-full h-10 px-3 rounded-lg border border-slate-200 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+              className="w-full h-10 px-3 rounded-lg border border-slate-200/80 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
               required
             />
             {selectedAvailability && (
@@ -546,7 +563,7 @@ function ReservationForm({ guide }: { guide: GuideModel }) {
               <button
                 type="button"
                 onClick={() => setDays((prev) => Math.max(minBookingDays, prev - 1))}
-                className="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-colors cursor-pointer"
+                className="w-9 h-9 rounded-lg border border-slate-200/80 flex items-center justify-center hover:bg-slate-50 transition-colors cursor-pointer"
               >
                 <Minus className="w-4 h-4 text-slate-500" />
               </button>
@@ -554,7 +571,7 @@ function ReservationForm({ guide }: { guide: GuideModel }) {
               <button
                 type="button"
                 onClick={() => setDays((prev) => Math.min(30, prev + 1))}
-                className="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-colors cursor-pointer"
+                className="w-9 h-9 rounded-lg border border-slate-200/80 flex items-center justify-center hover:bg-slate-50 transition-colors cursor-pointer"
               >
                 <Plus className="w-4 h-4 text-slate-500" />
               </button>
@@ -572,7 +589,7 @@ function ReservationForm({ guide }: { guide: GuideModel }) {
               <button
                 type="button"
                 onClick={() => setPeopleCount((prev) => Math.max(1, prev - 1))}
-                className="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-colors cursor-pointer"
+                className="w-9 h-9 rounded-lg border border-slate-200/80 flex items-center justify-center hover:bg-slate-50 transition-colors cursor-pointer"
               >
                 <Minus className="w-4 h-4 text-slate-500" />
               </button>
@@ -580,7 +597,7 @@ function ReservationForm({ guide }: { guide: GuideModel }) {
               <button
                 type="button"
                 onClick={() => setPeopleCount((prev) => Math.min(maxGroupSize, prev + 1))}
-                className="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-colors cursor-pointer"
+                className="w-9 h-9 rounded-lg border border-slate-200/80 flex items-center justify-center hover:bg-slate-50 transition-colors cursor-pointer"
               >
                 <Plus className="w-4 h-4 text-slate-500" />
               </button>
@@ -596,7 +613,7 @@ function ReservationForm({ guide }: { guide: GuideModel }) {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="+90 5XX XXX XX XX"
-              className="w-full h-10 px-3 rounded-lg border border-slate-200 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+              className="w-full h-10 px-3 rounded-lg border border-slate-200/80 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
               required
             />
           </div>
@@ -608,7 +625,7 @@ function ReservationForm({ guide }: { guide: GuideModel }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="ornek@email.com"
-              className="w-full h-10 px-3 rounded-lg border border-slate-200 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+              className="w-full h-10 px-3 rounded-lg border border-slate-200/80 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
             />
           </div>
 
@@ -619,7 +636,7 @@ function ReservationForm({ guide }: { guide: GuideModel }) {
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Özel istek veya notlarınız..."
               rows={3}
-              className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent resize-none"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200/80 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent resize-none transition-all"
             />
           </div>
 
@@ -653,7 +670,7 @@ function ReservationForm({ guide }: { guide: GuideModel }) {
 
             <Button
               type="submit"
-              className="w-full h-11 bg-violet-600 hover:bg-violet-700 text-white rounded-xl font-medium flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full h-11 bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-700 hover:to-violet-800 text-white rounded-xl font-medium flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-violet-200 hover:shadow-lg hover:shadow-violet-300 transition-all"
               disabled={reservationMutation.isPending || !user}
             >
               {reservationMutation.isPending ? (

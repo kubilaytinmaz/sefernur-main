@@ -39,7 +39,7 @@ function calculateNights(checkIn: string, checkOut: string): number {
 }
 
 function getHotelImageUrl(hotel: SimilarHotel, cityCode: number): string {
-  if (hotel.image && hotel.image.startsWith("http")) {
+  if (hotel.image && (hotel.image.startsWith("http") || hotel.image.startsWith("/"))) {
     return hotel.image;
   }
   return getCityFallbackImage(cityCode, hotel.id);

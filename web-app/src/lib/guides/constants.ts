@@ -3,7 +3,6 @@
  * Rehber sistemi için sabitler
  */
 
-import { GuideSpecialty } from "@/types/guide";
 
 export const GUIDE_SORT_OPTIONS = [
   { value: "recommended", label: "Önerilen" },
@@ -47,12 +46,22 @@ export type GuideViewMode = typeof GUIDE_VIEW_MODES[keyof typeof GUIDE_VIEW_MODE
 
 export const MAX_COMPARE_GUIDES = 3;
 
-export const GUIDE_FILTER_PRESETS = [
+export interface GuideFilterPreset {
+  id: string;
+  label: string;
+  filters: {
+    specialties?: string[];
+    languages?: string[];
+    minRating?: number;
+  };
+}
+
+export const GUIDE_FILTER_PRESETS: GuideFilterPreset[] = [
   {
     id: "hac",
     label: "Hac için Rehber",
     filters: {
-      specialties: ["hac" as GuideSpecialty],
+      specialties: ["hac"],
       languages: ["tr", "ar"],
     },
   },
@@ -60,7 +69,7 @@ export const GUIDE_FILTER_PRESETS = [
     id: "umre",
     label: "Umre için Rehber",
     filters: {
-      specialties: ["umre" as GuideSpecialty],
+      specialties: ["umre"],
       languages: ["tr"],
     },
   },
@@ -68,7 +77,7 @@ export const GUIDE_FILTER_PRESETS = [
     id: "vip",
     label: "VIP Rehberlik",
     filters: {
-      specialties: ["vip" as GuideSpecialty],
+      specialties: ["vip"],
       minRating: 4.5,
     },
   },
@@ -76,7 +85,7 @@ export const GUIDE_FILTER_PRESETS = [
     id: "cultural",
     label: "Kültür Turu",
     filters: {
-      specialties: ["tarih" as GuideSpecialty, "kultur" as GuideSpecialty],
+      specialties: ["tarih", "kultur"],
     },
   },
-] as const;
+];

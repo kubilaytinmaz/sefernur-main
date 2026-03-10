@@ -93,6 +93,7 @@ export interface NormalizedHotel {
   hotelId: string;
   hotelName: string;
   address: string;
+  fullAddress?: HotelFullAddress;
   cityName: string;
   cityCode?: string;
   countryName?: string;

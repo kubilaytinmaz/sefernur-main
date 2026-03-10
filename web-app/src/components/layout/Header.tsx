@@ -26,12 +26,12 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 const navigation = [
-  { name: "Oteller", href: "/hotels", icon: Hotel },
-  { name: "Transfer", href: "/transfers", icon: Plane },
-  { name: "Turlar", href: "/tours", icon: Compass },
-  { name: "Gezilecek Yerler", href: "/places", icon: MapPin },
-  { name: "Rehber", href: "/guides", icon: UserCircle },
-  { name: "Vize", href: "/visa", icon: Shield },
+  { name: "Oteller", href: "/oteller", icon: Hotel },
+  { name: "Transfer", href: "/transferler", icon: Plane },
+  { name: "Turlar", href: "/turlar", icon: Compass },
+  { name: "Gezilecek Yerler", href: "/gezilecek-yerler", icon: MapPin },
+  { name: "Rehber", href: "/rehberler", icon: UserCircle },
+  { name: "Vize", href: "/vize", icon: Shield },
 ];
 
 export function Header() {

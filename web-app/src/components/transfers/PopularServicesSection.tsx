@@ -1,13 +1,12 @@
 "use client";
 
-// Popüler Hizmetler Bölümü - Tur ve Rehberler
-// Çoklu seçim destekli, detaylı bilgi gösterimli
+// Popüler Hizmetler Bölümü - Turlar
+// Çoklu seçim destekli, detaylı bilgi modal ile gösterimli
 
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardContent } from "@/components/ui/Card";
 import {
   POPULAR_SERVICES,
-  getServiceTypeLabel,
   type PopularService,
 } from "@/lib/transfers/popular-services-simple";
 import { cn } from "@/lib/utils";
@@ -17,11 +16,12 @@ import {
   Clock3,
   Info,
   MapPin,
-  Route,
   Star,
-  X,
+  X
 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
+
+import { TourDetailModal } from "./TourDetailModal";
 
 /** Çoklu seçim uyarı eşiği - Bu sayıyı aşınca uyarı gösterilir */
 const SELECTION_WARNING_THRESHOLD = 3;
@@ -30,14 +30,29 @@ export interface PopularServicesSectionProps {
   onServiceSelect?: (serviceIds: string[]) => void;
   selectedServiceIds?: string[];
   className?: string;
+  availableVehicles?: Array<{ vehicleType: string; basePrice: number }>;
 }
 
 export function PopularServicesSection({
   onServiceSelect,
   selectedServiceIds = [],
   className,
+  availableVehicles = [],
 }: PopularServicesSectionProps) {
   const [showWarning, setShowWarning] = useState(false);
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState<PopularService | null>(null);
+
+  // Her tur için başlayan fiyatı hesapla (müsait araçlardan en ucuz)
+  const getStartingPrice = useCallback((service: PopularService): string => {
+    if (availableVehicles.length === 0) {
+      return service.price.display;
+    }
+
+    // Müsait araçlardan en ucuz fiyatı bul
+    const minPrice = Math.min(...availableVehicles.map(v => v.basePrice));
+    return `${minPrice}₺'den başlayan fiyatlar`;
+  }, [availableVehicles]);
 
   // Seçim toggle işlemi
   const handleToggle = useCallback(
@@ -97,11 +112,10 @@ export function PopularServicesSection({
       <div className="mb-4 flex items-start justify-between">
         <div>
           <h2 className="text-lg font-bold text-slate-900">
-            Popüler Turlar ve Rehberler
+            Popüler Turlar
           </h2>
           <p className="mt-0.5 text-xs text-slate-500">
-            En çok tercih edilen turlar ve rehberlik hizmetleri — Birden fazla
-            seçebilirsiniz
+            En çok tercih edilen turlar — Birden fazla seçebilirsiniz
           </p>
         </div>
         {selectionCount > 0 && (
@@ -119,7 +133,7 @@ export function PopularServicesSection({
         <div className="mb-3 flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 animate-in fade-in slide-in-from-top-2 duration-300">
           <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
           <p className="text-xs text-amber-800 flex-1">
-            <span className="font-semibold">{selectionCount} tur/rehber</span>{" "}
+            <span className="font-semibold">{selectionCount} tur</span>{" "}
             seçtiniz. Fazla seçim toplam süreyi ve maliyeti artırır. Lütfen
             programınıza uygun sayıda tur seçin.
           </p>
@@ -142,9 +156,24 @@ export function PopularServicesSection({
             isSelected={selectedServiceIds.includes(service.id)}
             selectionIndex={selectedServiceIds.indexOf(service.id)}
             onToggle={handleToggle}
+            onShowDetail={() => {
+              setSelectedService(service);
+              setDetailModalOpen(true);
+            }}
+            startingPrice={getStartingPrice(service)}
           />
         ))}
       </div>
+
+      {/* Tur Detay Modal */}
+      <TourDetailModal
+        open={detailModalOpen}
+        onClose={() => {
+          setDetailModalOpen(false);
+          setSelectedService(null);
+        }}
+        service={selectedService}
+      />
 
       {/* Seçim Özeti */}
       {selectionCount > 0 && (
@@ -168,6 +197,8 @@ interface ServiceCardProps {
   isSelected: boolean;
   selectionIndex: number; // -1 ise seçili değil
   onToggle: (id: string) => void;
+  onShowDetail: () => void;
+  startingPrice: string;
 }
 
 function ServiceCard({
@@ -175,8 +206,9 @@ function ServiceCard({
   isSelected,
   selectionIndex,
   onToggle,
+  onShowDetail,
+  startingPrice,
 }: ServiceCardProps) {
-  const typeLabel = getServiceTypeLabel(service.type);
 
   return (
     <button
@@ -254,67 +286,46 @@ function ServiceCard({
               </div>
             </div>
 
-            {/* Güzergah bilgisi */}
-            {service.route && (
-              <div className="flex items-start gap-1 text-[10px] text-slate-600">
-                <Route className="w-3 h-3 shrink-0 text-slate-400 mt-0.5" />
-                <span className="line-clamp-1">
-                  {service.route.from} → {service.route.to}
-                </span>
-              </div>
-            )}
-
-            {/* Ziyaret edilecek yerler (ilk 3 tanesi) */}
-            {service.tourDetails &&
-              service.tourDetails.highlights.length > 0 && (
-                <div className="flex flex-wrap gap-1">
-                  {service.tourDetails.highlights.slice(0, 3).map((h, i) => (
-                    <span
-                      key={i}
-                      className="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded-full"
-                    >
-                      {h}
-                    </span>
-                  ))}
-                  {service.tourDetails.highlights.length > 3 && (
-                    <span className="text-[9px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded-full">
-                      +{service.tourDetails.highlights.length - 3}
-                    </span>
-                  )}
-                </div>
-              )}
-
-            {/* Hizmet tipi + Fiyat */}
-            <div className="flex items-center justify-between gap-1">
-              <Badge
-                className={cn(
-                  "text-[9px] px-1.5 py-0",
-                  service.type === "tour" &&
-                    "bg-orange-50 text-orange-700 border-orange-200",
-                  service.type === "guide" &&
-                    "bg-purple-50 text-purple-700 border-purple-200"
-                )}
-              >
-                {typeLabel}
-              </Badge>
-              <span className="text-[10px] font-semibold text-cyan-700">
-                {service.price.display}
+            {/* Fiyat */}
+            <div className="flex flex-col gap-0.5">
+              <span className="text-[9px] text-slate-400 uppercase">Başlayan Fiyatlar</span>
+              <span className="text-[11px] font-bold text-cyan-700">
+                {startingPrice}
               </span>
             </div>
           </div>
 
-          {/* Alt kısım: Seçim göstergesi */}
-          <div className="mt-auto pt-2 border-t border-slate-100">
-            <div
+          {/* Alt kısım: Butonlar */}
+          <div className="mt-auto pt-2 border-t border-slate-100 space-y-1.5">
+            {/* Tur bilgisi butonu */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onShowDetail();
+              }}
+              className="w-full text-[9px] font-medium text-center py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-cyan-50 hover:text-cyan-700 transition-colors flex items-center justify-center gap-1"
+            >
+              <Info className="w-3 h-3" />
+              Tur bilgisi için tıklayınız
+            </button>
+            
+            {/* Seçim butonu - Daha belirgin */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggle(service.id);
+              }}
               className={cn(
-                "text-[9px] font-medium text-center py-1 rounded-md transition-colors",
+                "w-full text-[10px] font-semibold text-center py-2 rounded-lg transition-all cursor-pointer shadow-sm",
                 isSelected
-                  ? "bg-cyan-600 text-white"
-                  : "bg-slate-100 text-slate-600 hover:bg-cyan-100 hover:text-cyan-700"
+                  ? "bg-cyan-600 text-white shadow-md"
+                  : "bg-gradient-to-r from-cyan-500 to-sky-500 text-white hover:from-cyan-600 hover:to-sky-600 shadow-md hover:shadow-lg"
               )}
             >
-              {isSelected ? "✓ Seçili" : "Seçmek için tıkla"}
-            </div>
+              {isSelected ? "✓ Seçili" : "Seçmek için tıklayınız"}
+            </button>
           </div>
         </CardContent>
       </Card>

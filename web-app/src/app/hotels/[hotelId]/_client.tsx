@@ -20,6 +20,7 @@ import type { NormalizedRoom } from "@/lib/webbeds/types";
 import { useAuthStore } from "@/store/auth";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { format } from "date-fns";
 import {
   ArrowLeft,
   BedDouble,
@@ -41,6 +42,17 @@ import { useSearchParams } from "next/navigation";
 import { FormEvent, useCallback, useMemo, useRef, useState } from "react";
 
 /* ────────── Constants ────────── */
+
+// Default dates for hotel search (today and tomorrow)
+const DEFAULT_CHECK_IN = format(new Date(), "yyyy-MM-dd"); // Bugün
+const DEFAULT_CHECK_OUT = format(
+  (() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow;
+  })(),
+  "yyyy-MM-dd",
+); // Yarın
 
 // SVG placeholder for hotels without images (fallback when no city images available)
 const HOTEL_PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='700' viewBox='0 0 1200 700'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2310b981;stop-opacity:0.1' /%3E%3Cstop offset='100%25' style='stop-color:%230ea5e9;stop-opacity:0.1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='url(%23grad)' width='1200' height='700'/%3E%3Crect fill='%23f1f5f9' x='400' y='200' width='400' height='300' rx='8'/%3E%3Cpath fill='%2394a3b8' d='M550 280h100v80h-100z'/%3E%3Cpath fill='%2394a3b8' d='M560 300h20v20h-20zm30 0h20v20h-20zm30 0h20v20h-20z'/%3E%3Cpath fill='%2394a3b8' d='M560 330h20v20h-20zm30 0h20v20h-20zm30 0h20v20h-20z'/%3E%3Ctext fill='%2364748b' font-family='system-ui,-apple-system,sans-serif' font-size='24' font-weight='500' x='600' y='420' text-anchor='middle'%3EOtel Resmi%3C/text%3E%3Ctext fill='%2394a3b8' font-family='system-ui,-apple-system,sans-serif' font-size='16' x='600' y='450' text-anchor='middle'%3EMevcut Değil%3C/text%3E%3C/svg%3E";
@@ -572,12 +584,12 @@ export default function HotelDetailPage() {
   const searchParams = useSearchParams();
   const { user, isAuthenticated } = useAuthStore();
   const bookingRef = useRef<HTMLDivElement>(null);
-  const checkIn = searchParams.get("checkIn") || "";
-  const checkOut = searchParams.get("checkOut") || "";
+  const checkIn = searchParams.get("checkIn") || DEFAULT_CHECK_IN;
+  const checkOut = searchParams.get("checkOut") || DEFAULT_CHECK_OUT;
   const adults = Number(searchParams.get("adults") || "2");
   const cityCode = Number(searchParams.get("cityCode") || "164"); // Mekke default
   const hotelNameFromUrl = searchParams.get("hotelName") || hotelId;
-  const hotelAddress = searchParams.get("hotelAddress") || "Adres bilgisi bulunamadı";
+  const hotelAddressFromUrl = searchParams.get("hotelAddress") || "";
   // Validate image URL - reject Unsplash URLs, accept data URLs
   const rawImageParam = searchParams.get("image");
   const isValidImageUrl = rawImageParam &&
@@ -589,8 +601,7 @@ export default function HotelDetailPage() {
   const hotelImage = isValidImageUrl
     ? rawImageParam
     : getCityFallbackImage(cityCode, hotelId);
-  const stars = Number(searchParams.get("stars") || "0");
-  const nightCount = calculateNights(checkIn, checkOut);
+  const starsFromUrl = Number(searchParams.get("stars") || "0");
 
   const [selectedRateId, setSelectedRateId] = useState("");
   const [bookingMessage, setBookingMessage] = useState<string | null>(null);
@@ -635,9 +646,66 @@ export default function HotelDetailPage() {
     return [hotelImage];
   }, [hotelDetailQuery.data, hotelImage]);
 
+  // Use API data for hotel details, fallback to URL params
+  const hotelName = useMemo(() => {
+    const apiName = hotelDetailQuery.data?.data?.hotelName;
+    if (apiName && apiName.trim() && !apiName.startsWith("Otel #")) {
+      return apiName;
+    }
+    return hotelNameFromUrl;
+  }, [hotelDetailQuery.data, hotelNameFromUrl]);
+
+  const hotelAddress = useMemo(() => {
+    const apiAddress = hotelDetailQuery.data?.data?.address || hotelDetailQuery.data?.data?.fullAddress?.hotelStreetAddress;
+    if (apiAddress && apiAddress.trim()) {
+      return apiAddress;
+    }
+    return hotelAddressFromUrl || "Adres bilgisi bulunamadı";
+  }, [hotelDetailQuery.data, hotelAddressFromUrl]);
+
+  const stars = useMemo(() => {
+    const apiStars = hotelDetailQuery.data?.data?.stars;
+    if (apiStars && Number(apiStars) > 0) {
+      return Number(apiStars);
+    }
+    return starsFromUrl;
+  }, [hotelDetailQuery.data, starsFromUrl]);
+
+  const nightCount = useMemo(() => {
+    if (checkIn && checkOut) {
+      return calculateNights(checkIn, checkOut);
+    }
+    // Default to 1 night if dates not provided
+    return 1;
+  }, [checkIn, checkOut]);
+
+  const cityName = useMemo(() => {
+    return hotelDetailQuery.data?.data?.cityName || searchParams.get("cityName") || "";
+  }, [hotelDetailQuery.data, searchParams]);
+
+  const countryName = useMemo(() => {
+    return hotelDetailQuery.data?.data?.countryName || searchParams.get("countryName") || "";
+  }, [hotelDetailQuery.data, searchParams]);
+
+  const geoPoint = useMemo(() => {
+    return hotelDetailQuery.data?.data?.geoPoint || undefined;
+  }, [hotelDetailQuery.data]);
+
+  const checkInTime = useMemo(() => {
+    return hotelDetailQuery.data?.data?.checkInTime || "";
+  }, [hotelDetailQuery.data]);
+
+  const checkOutTime = useMemo(() => {
+    return hotelDetailQuery.data?.data?.checkOutTime || "";
+  }, [hotelDetailQuery.data]);
+
+  const description = useMemo(() => {
+    return hotelDetailQuery.data?.data?.description || "";
+  }, [hotelDetailQuery.data]);
+
   const roomsQuery = useQuery({
     queryKey: ["hotelRooms", hotelId, checkIn, checkOut, adults, cityCode],
-    enabled: Boolean(hotelId && checkIn && checkOut),
+    enabled: Boolean(hotelId),
     queryFn: async () => {
       const response = await axios.post<RoomsResponse>(
         `/api/hotels/${hotelId}/rooms`,
@@ -654,16 +722,7 @@ export default function HotelDetailPage() {
   });
 
   const roomItems = useMemo(() => roomsQuery.data?.data?.rooms ?? [], [roomsQuery.data]);
-  
-  // Use hotel name from rooms API if available, fallback to URL
-  const hotelName = useMemo(() => {
-    const apiName = roomsQuery.data?.data?.hotel?.hotelName;
-    if (apiName && apiName.trim() && !apiName.startsWith("Otel #")) {
-      return apiName;
-    }
-    return hotelNameFromUrl;
-  }, [roomsQuery.data, hotelNameFromUrl]);
-  
+
   const selectedRoom = useMemo(
     () => roomItems.find((item) => item.rateId === selectedRateId),
     [roomItems, selectedRateId],
@@ -891,11 +950,11 @@ export default function HotelDetailPage() {
                 <div className="grid grid-cols-2 gap-3 pt-4 border-t border-white/10">
                   <div>
                     <p className="text-xs text-white/50 mb-0.5">Giriş</p>
-                    <p className="font-semibold text-sm">{checkIn}</p>
+                    <p className="font-semibold text-sm">{checkIn || "Tarih seçin"}</p>
                   </div>
                   <div>
                     <p className="text-xs text-white/50 mb-0.5">Çıkış</p>
-                    <p className="font-semibold text-sm">{checkOut}</p>
+                    <p className="font-semibold text-sm">{checkOut || "Tarih seçin"}</p>
                   </div>
                   <div>
                     <p className="text-xs text-white/50 mb-0.5">Süre</p>
@@ -972,21 +1031,94 @@ export default function HotelDetailPage() {
                 hotelName={hotelName}
                 address={hotelAddress}
                 stars={stars}
-                description={hotelDetailQuery.data?.data?.description}
-                checkInTime={hotelDetailQuery.data?.data?.checkInTime}
-                checkOutTime={hotelDetailQuery.data?.data?.checkOutTime}
-                cityName={searchParams.get("cityName") || undefined}
-                countryName={searchParams.get("countryName") || undefined}
+                description={description}
+                checkInTime={checkInTime}
+                checkOutTime={checkOutTime}
+                cityName={cityName || undefined}
+                countryName={countryName || undefined}
               />
               <HotelAmenities />
+            </div>
+
+            {/* Rooms + Booking Section */}
+            <div className="grid xl:grid-cols-3 gap-8">
+              {/* Left: Room List */}
+              <div className="xl:col-span-2 space-y-6">
+                {/* Section header */}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-900">Oda Seçenekleri</h2>
+                    <p className="text-sm text-slate-500 mt-0.5">
+                      {roomItems.length} farklı seçenek bulundu — birini seçerek rezervasyona geçin
+                    </p>
+                  </div>
+                </div>
+
+                {/* Room cards */}
+                <div className="space-y-3">
+                  {visibleRooms.map((room, index) => (
+                    <RoomCard
+                      key={`${room.rateId || "rate"}-${index}`}
+                      room={room}
+                      index={index}
+                      isSelected={selectedRateId === (room.rateId || "")}
+                      onSelect={() => handleSelectRoom(room.rateId || "")}
+                      nightCount={nightCount}
+                    />
+                  ))}
+                </div>
+
+                {/* Show more / less */}
+                {roomItems.length > 6 && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllRooms((v) => !v)}
+                    className="w-full flex items-center justify-center gap-2 py-3 text-sm font-medium text-emerald-700 hover:text-emerald-800 border border-emerald-200 rounded-xl hover:bg-emerald-50 transition-colors"
+                  >
+                    {showAllRooms ? (
+                      <>
+                        <ChevronUp className="w-4 h-4" /> Daha az göster
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="w-4 h-4" /> Tümünü göster ({roomItems.length} oda)
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+
+              {/* Right: Sticky Booking Form */}
+              <div ref={bookingRef} className="xl:col-span-1">
+                <div className="xl:sticky xl:top-6">
+                  <Card className="border-slate-200 bg-white shadow-lg shadow-slate-200/50">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg text-slate-900">Rezervasyon & Ödeme</CardTitle>
+                      <p className="text-xs text-slate-500">Bilgileri doldurup güvenli ödeme adımına geçin</p>
+                    </CardHeader>
+                    <CardContent>
+                      <BookingFormSection
+                        form={form}
+                        setForm={setForm}
+                        submitBooking={submitBooking}
+                        bookingMutation={bookingMutation}
+                        bookingError={bookingError}
+                        bookingMessage={bookingMessage}
+                        selectedRoom={selectedRoom}
+                        nightCount={nightCount}
+                      />
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
             </div>
 
             {/* Location */}
             <HotelLocation
               address={hotelAddress}
               cityCode={cityCode}
-              lat={parseFloat(searchParams.get("lat") || "0") || undefined}
-              lng={parseFloat(searchParams.get("lng") || "0") || undefined}
+              lat={geoPoint?.lat ? parseFloat(geoPoint.lat) : undefined}
+              lng={geoPoint?.lng ? parseFloat(geoPoint.lng) : undefined}
             />
 
             {/* Reviews */}
@@ -998,89 +1130,16 @@ export default function HotelDetailPage() {
               googlePlaceId={searchParams.get("googlePlaceId") || undefined}
             />
 
-            {/* Rooms + Booking Section */}
-            <div className="grid xl:grid-cols-3 gap-8">
-            {/* Left: Room List */}
-            <div className="xl:col-span-2 space-y-6">
-              {/* Section header */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-bold text-slate-900">Oda Seçenekleri</h2>
-                  <p className="text-sm text-slate-500 mt-0.5">
-                    {roomItems.length} farklı seçenek bulundu — birini seçerek rezervasyona geçin
-                  </p>
-                </div>
-              </div>
-
-              {/* Room cards */}
-              <div className="space-y-3">
-                {visibleRooms.map((room, index) => (
-                  <RoomCard
-                    key={`${room.rateId || "rate"}-${index}`}
-                    room={room}
-                    index={index}
-                    isSelected={selectedRateId === (room.rateId || "")}
-                    onSelect={() => handleSelectRoom(room.rateId || "")}
-                    nightCount={nightCount}
-                  />
-                ))}
-              </div>
-
-              {/* Show more / less */}
-              {roomItems.length > 6 && (
-                <button
-                  type="button"
-                  onClick={() => setShowAllRooms((v) => !v)}
-                  className="w-full flex items-center justify-center gap-2 py-3 text-sm font-medium text-emerald-700 hover:text-emerald-800 border border-emerald-200 rounded-xl hover:bg-emerald-50 transition-colors"
-                >
-                  {showAllRooms ? (
-                    <>
-                      <ChevronUp className="w-4 h-4" /> Daha az göster
-                    </>
-                  ) : (
-                    <>
-                      <ChevronDown className="w-4 h-4" /> Tümünü göster ({roomItems.length} oda)
-                    </>
-                  )}
-                </button>
-              )}
-            </div>
-
-            {/* Right: Sticky Booking Form */}
-            <div ref={bookingRef} className="xl:col-span-1">
-              <div className="xl:sticky xl:top-6">
-                <Card className="border-slate-200 bg-white shadow-lg shadow-slate-200/50">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg text-slate-900">Rezervasyon & Ödeme</CardTitle>
-                    <p className="text-xs text-slate-500">Bilgileri doldurup güvenli ödeme adımına geçin</p>
-                  </CardHeader>
-                  <CardContent>
-                    <BookingFormSection
-                      form={form}
-                      setForm={setForm}
-                      submitBooking={submitBooking}
-                      bookingMutation={bookingMutation}
-                      bookingError={bookingError}
-                      bookingMessage={bookingMessage}
-                      selectedRoom={selectedRoom}
-                      nightCount={nightCount}
-                    />
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
+            {/* Similar Hotels */}
+            <SimilarHotels
+              hotels={[]}
+              cityCode={cityCode}
+              checkIn={checkIn}
+              checkOut={checkOut}
+              adults={adults}
+              currentHotelId={hotelId}
+            />
           </div>
-
-          {/* Similar Hotels */}
-          <SimilarHotels
-            hotels={[]}
-            cityCode={cityCode}
-            checkIn={checkIn}
-            checkOut={checkOut}
-            adults={adults}
-            currentHotelId={hotelId}
-          />
-        </div>
         )}
       </section>
     </div>

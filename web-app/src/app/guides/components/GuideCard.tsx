@@ -8,34 +8,92 @@
 import { Badge } from "@/components/ui/Badge";
 import { formatTlUsdPairFromTl } from "@/lib/currency";
 import { GuideModel } from "@/types/guide";
-import { Award, ChevronRight, Languages, MapPin, Star, User } from "lucide-react";
+import { Award, ChevronRight, Heart, Languages, MapPin, Scale, Star, User } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 interface GuideCardProps {
   guide: GuideModel;
   viewMode?: "grid" | "list";
+  onFavoriteToggle?: (guideId: string) => void;
+  onCompareToggle?: (guideId: string) => void;
+  isFavorite?: boolean;
+  isComparing?: boolean;
 }
 
-export function GuideCard({ guide, viewMode = "grid" }: GuideCardProps) {
+export function GuideCard({
+  guide,
+  viewMode = "grid",
+  onFavoriteToggle,
+  onCompareToggle,
+  isFavorite = false,
+  isComparing = false,
+}: GuideCardProps) {
+  const [localFavorite, setLocalFavorite] = useState(isFavorite);
   const hasImage = guide.images.length > 0;
   const imageUrl = hasImage ? guide.images[0] : undefined;
 
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setLocalFavorite(!localFavorite);
+    onFavoriteToggle?.(guide.id);
+  };
+
+  const handleCompareClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onCompareToggle?.(guide.id);
+  };
+
   if (viewMode === "list") {
-    return <GuideListView guide={guide} imageUrl={imageUrl} />;
+    return (
+      <GuideListView
+        guide={guide}
+        imageUrl={imageUrl}
+        localFavorite={localFavorite}
+        isComparing={isComparing}
+        onFavoriteClick={handleFavoriteClick}
+        onCompareClick={handleCompareClick}
+      />
+    );
   }
 
-  return <GuideGridView guide={guide} imageUrl={imageUrl} />;
+  return (
+    <GuideGridView
+      guide={guide}
+      imageUrl={imageUrl}
+      localFavorite={localFavorite}
+      isComparing={isComparing}
+      onFavoriteClick={handleFavoriteClick}
+      onCompareClick={handleCompareClick}
+    />
+  );
 }
 
-function GuideGridView({ guide, imageUrl }: { guide: GuideModel; imageUrl?: string }) {
+function GuideGridView({
+  guide,
+  imageUrl,
+  localFavorite,
+  isComparing,
+  onFavoriteClick,
+  onCompareClick,
+}: {
+  guide: GuideModel;
+  imageUrl?: string;
+  localFavorite: boolean;
+  isComparing: boolean;
+  onFavoriteClick: (e: React.MouseEvent) => void;
+  onCompareClick: (e: React.MouseEvent) => void;
+}) {
   return (
     <Link
       href={`/guides/${guide.id}`}
-      className="group relative"
+      className="group relative block"
       aria-label={`${guide.name} rehber detaylarını gör`}
     >
-      {/* Card Container with Glassmorphism */}
-      <div className="relative overflow-hidden rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:border-violet-200 transition-all duration-300 hover:-translate-y-1">
+      {/* Card Container with Modern Glassmorphism */}
+      <div className="relative overflow-hidden rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-violet-200 transition-all duration-300 hover:-translate-y-1">
         {/* Image Section */}
         <div className="relative h-56 overflow-hidden bg-gradient-to-br from-violet-50 to-fuchsia-50">
           {imageUrl ? (
@@ -56,7 +114,7 @@ function GuideGridView({ guide, imageUrl }: { guide: GuideModel; imageUrl?: stri
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
             {guide.isPopular && (
-              <Badge className="bg-amber-500 text-white border-0 gap-1 shadow-lg">
+              <Badge className="bg-amber-500/90 backdrop-blur-sm text-white border-0 gap-1 shadow-lg">
                 <Star className="w-3 h-3 fill-white" /> Popüler
               </Badge>
             )}
@@ -133,20 +191,64 @@ function GuideGridView({ guide, imageUrl }: { guide: GuideModel; imageUrl?: stri
               </Badge>
             )}
           </div>
+
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2 pt-2">
+            <button
+              type="button"
+              onClick={onFavoriteClick}
+              className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
+                localFavorite
+                  ? "bg-rose-50 text-rose-600 hover:bg-rose-100"
+                  : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+              }`}
+              aria-label={localFavorite ? "Favorilerden çıkar" : "Favorilere ekle"}
+            >
+              <Heart className={`w-4 h-4 ${localFavorite ? "fill-rose-500" : ""}`} />
+              {localFavorite ? "Favoride" : "Favori"}
+            </button>
+            <button
+              type="button"
+              onClick={onCompareClick}
+              className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
+                isComparing
+                  ? "bg-violet-50 text-violet-600 hover:bg-violet-100"
+                  : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+              }`}
+              aria-label={isComparing ? "Karşılaştırmadan çıkar" : "Karşılaştırmaya ekle"}
+            >
+              <Scale className={`w-4 h-4 ${isComparing ? "fill-violet-500" : ""}`} />
+              {isComparing ? "Karşılaştır" : "Karşılaştır"}
+            </button>
+          </div>
         </div>
       </div>
     </Link>
   );
 }
 
-function GuideListView({ guide, imageUrl }: { guide: GuideModel; imageUrl?: string }) {
+function GuideListView({
+  guide,
+  imageUrl,
+  localFavorite,
+  isComparing,
+  onFavoriteClick,
+  onCompareClick,
+}: {
+  guide: GuideModel;
+  imageUrl?: string;
+  localFavorite: boolean;
+  isComparing: boolean;
+  onFavoriteClick: (e: React.MouseEvent) => void;
+  onCompareClick: (e: React.MouseEvent) => void;
+}) {
   return (
     <Link
       href={`/guides/${guide.id}`}
       className="group block"
       aria-label={`${guide.name} rehber detaylarını gör`}
     >
-      <div className="flex gap-4 p-4 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-lg hover:border-violet-200 transition-all duration-300">
+      <div className="flex gap-4 p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow-lg hover:border-violet-200 transition-all duration-300">
         {/* Image */}
         <div className="relative w-32 h-32 shrink-0 rounded-xl overflow-hidden bg-gradient-to-br from-violet-50 to-fuchsia-50">
           {imageUrl ? (
@@ -161,7 +263,7 @@ function GuideListView({ guide, imageUrl }: { guide: GuideModel; imageUrl?: stri
             </div>
           )}
           {guide.isPopular && (
-            <Badge className="absolute top-2 left-2 bg-amber-500 text-white border-0 text-xs">
+            <Badge className="absolute top-2 left-2 bg-amber-500/90 backdrop-blur-sm text-white border-0 text-xs">
               <Star className="w-3 h-3 fill-white" />
             </Badge>
           )}
@@ -222,6 +324,34 @@ function GuideListView({ guide, imageUrl }: { guide: GuideModel; imageUrl?: stri
               <span className="text-xs font-normal text-slate-400">/gün</span>
             </p>
           </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex flex-col gap-2">
+          <button
+            type="button"
+            onClick={onFavoriteClick}
+            className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all cursor-pointer ${
+              localFavorite
+                ? "bg-rose-50 text-rose-600 hover:bg-rose-100"
+                : "bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            }`}
+            aria-label={localFavorite ? "Favorilerden çıkar" : "Favorilere ekle"}
+          >
+            <Heart className={`w-4 h-4 ${localFavorite ? "fill-rose-500" : ""}`} />
+          </button>
+          <button
+            type="button"
+            onClick={onCompareClick}
+            className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all cursor-pointer ${
+              isComparing
+                ? "bg-violet-50 text-violet-600 hover:bg-violet-100"
+                : "bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            }`}
+            aria-label={isComparing ? "Karşılaştırmadan çıkar" : "Karşılaştırmaya ekle"}
+          >
+            <Scale className={`w-4 h-4 ${isComparing ? "fill-violet-500" : ""}`} />
+          </button>
         </div>
 
         {/* Arrow */}

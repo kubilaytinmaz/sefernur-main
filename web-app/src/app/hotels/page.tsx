@@ -248,6 +248,14 @@ export default function HotelsPage() {
     sortDirection,
   ]);
 
+  // Extract prices for histogram
+  const allPrices = useMemo(() => {
+    const rawHotels = hasSearched
+      ? (searchQuery.data?.data ?? [])
+      : (featuredQuery.data?.data ?? []);
+    return rawHotels.map(h => parsePriceToNumber(h.price)).filter(p => p > 0);
+  }, [featuredQuery.data?.data, searchQuery.data?.data, hasSearched]);
+
   const activeQuery = hasSearched ? searchQuery : featuredQuery;
 
   // Handlers
@@ -311,6 +319,7 @@ export default function HotelsPage() {
               onFiltersChange={setFilters}
               resultsCount={processedHotels.length}
               onClear={handleClearFilters}
+              prices={allPrices}
             />
           </aside>
 
@@ -324,6 +333,7 @@ export default function HotelsPage() {
               onClear={handleClearFilters}
               isOpen={filtersOpen}
               onToggle={() => setFiltersOpen(!filtersOpen)}
+              prices={allPrices}
             />
 
             {/* Sort Bar */}

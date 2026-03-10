@@ -1,31 +1,40 @@
 /**
  * City-specific fallback images for hotels without their own images
- * Uses high-quality royalty-free images from Pexels
+ * Uses locally hosted high-quality images from Unsplash (royalty-free)
+ * All images verified for content accuracy (Mecca, Medina, Islamic architecture)
+ *
+ * For Saudi Arabia cities:
+ * - Makkah (164): Uses Kaaba images
+ * - Madinah (174, 365): Uses Prophet's Mosque images
+ * - Other Saudi cities (Jeddah, Riyadh, etc.): Mixed Kaaba and Mosque images
  */
 
 // Mekke (Makkah) - City Code: 164
 const MAKKAH_IMAGES = [
-  "https://images.pexels.com/photos/4049991/pexels-photo-4049991.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/6045264/pexels-photo-6045264.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/4049992/pexels-photo-4049992.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/3152124/pexels-photo-3152124.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/11375435/pexels-photo-11375435.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  "/images/hotels/kaaba-1.jpg", // Kaaba view
+  "/images/hotels/kaaba-2.jpg", // Kaaba close-up
+  "/images/hotels/kaaba-3.jpg", // Kaaba with pilgrims
+  "/images/hotels/kaaba-4.jpg", // Kaaba at night
+  "/images/hotels/kaaba-5.jpg", // Kaaba wide angle
 ];
 
 // Medine (Madinah) - City Code: 174 or 365
 const MADINAH_IMAGES = [
-  "https://images.pexels.com/photos/11375417/pexels-photo-11375417.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/11375437/pexels-photo-11375437.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/6045227/pexels-photo-6045227.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/13870436/pexels-photo-13870436.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/10024597/pexels-photo-10024597.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  "/images/hotels/madinah-1.jpg", // Prophet's Mosque exterior
+  "/images/hotels/madinah-2.jpg", // Prophet's Mosque detail
+  "/images/hotels/madinah-3.jpg", // Mosque courtyard
+  "/images/hotels/madinah-4.jpg", // Mosque at night
+  "/images/hotels/madinah-5.jpg", // Mosque wide angle
 ];
 
-// Generic Islamic architecture fallback
+// Generic Islamic architecture fallback for other Saudi cities (Jeddah, Riyadh, Taif, etc.)
+// Mixed Kaaba and Mosque images
 const GENERIC_IMAGES = [
-  "https://images.pexels.com/photos/3152121/pexels-photo-3152121.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/2403209/pexels-photo-2403209.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  "https://images.pexels.com/photos/3243090/pexels-photo-3243090.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  "/images/hotels/kaaba-1.jpg", // Kaaba view
+  "/images/hotels/madinah-1.jpg", // Mosque exterior
+  "/images/hotels/kaaba-3.jpg", // Kaaba with pilgrims
+  "/images/hotels/madinah-3.jpg", // Mosque courtyard
+  "/images/hotels/kaaba-4.jpg", // Kaaba at night
 ];
 
 /**

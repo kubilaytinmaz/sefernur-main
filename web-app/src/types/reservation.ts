@@ -1,6 +1,6 @@
 // Converted from lib/app/data/models/reservation/reservation_model.dart
 
-export type ReservationType = "hotel" | "car" | "transfer" | "guide" | "tour";
+export type ReservationType = "hotel" | "car" | "transfer" | "guide" | "tour" | "transfer_tour";
 export type ReservationStatus =
   | "pending"
   | "confirmed"

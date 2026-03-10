@@ -1,5 +1,5 @@
 import { XMLParser } from "fast-xml-parser";
-import type { CancellationRule, NormalizedHotel, NormalizedRoom, XmlObject } from "./types";
+import type { CancellationRule, HotelFullAddress, NormalizedHotel, NormalizedRoom, XmlObject } from "./types";
 
 const parser = new XMLParser({
   ignoreAttributes: false,
@@ -338,6 +338,9 @@ function normalizeHotelNode(rawHotel: unknown): NormalizedHotel {
   const address = extractAddress(hotel) || "Adres bilgisi bulunamadı";
   const cityName = extractCityOnly(hotel) || "";
   
+  // Extract fullAddress object
+  const fullAddress = extractFullAddressObject(hotel);
+  
   // Rating/Stars
   const rawRating = getString(hotel, ["@_Stars", "rating", "stars"]);
   const stars = dotwRatingToStars(rawRating) || "";
@@ -371,6 +374,7 @@ function normalizeHotelNode(rawHotel: unknown): NormalizedHotel {
     hotelId,
     hotelName,
     address,
+    fullAddress,
     cityName,
     cityCode,
     countryName,
@@ -385,6 +389,28 @@ function normalizeHotelNode(rawHotel: unknown): NormalizedHotel {
     checkOutTime,
     description,
   };
+}
+
+/**
+ * Extract fullAddress object from hotel data
+ */
+function extractFullAddressObject(hotel: XmlObject): HotelFullAddress | undefined {
+  const fa = hotel["fullAddress"] ?? hotel["FullAddress"];
+  if (fa && typeof fa === "object" && !Array.isArray(fa)) {
+    const obj = fa as Record<string, unknown>;
+    const streetAddress = getString(obj, ["hotelStreetAddress", "HotelStreetAddress"]);
+    const city = getString(obj, ["hotelCity", "HotelCity"]);
+    const country = getString(obj, ["hotelCountry", "HotelCountry"]);
+    
+    if (streetAddress || city || country) {
+      return {
+        hotelStreetAddress: streetAddress,
+        hotelCity: city,
+        hotelCountry: country,
+      };
+    }
+  }
+  return undefined;
 }
 
 // ============================================================================

@@ -1,315 +1,387 @@
+/**
+ * Guides Page - Modern Redesign
+ * Rehber listesi sayfası - modern yeniden tasarım
+ */
+
 "use client";
 
-import { EmptyState, ErrorState, LoadingState } from "@/components/states/AsyncStates";
+import { EmptyState, ErrorState } from "@/components/states/AsyncStates";
 import { Badge } from "@/components/ui/Badge";
-import { formatTlUsdPairFromTl } from "@/lib/currency";
 import { getActiveGuides } from "@/lib/firebase/domain";
-import { GuideModel } from "@/types/guide";
-import { useQuery } from "@tanstack/react-query";
 import {
-    Award,
-    ChevronRight,
-    Languages,
-    MapPin,
-    Search,
-    SlidersHorizontal,
-    Star,
-    User,
-} from "lucide-react";
-import Link from "next/link";
-import { useMemo, useState } from "react";
+  GUIDE_FILTER_PRESETS,
+  GUIDE_VIEW_MODES,
+  type GuideSortOption,
+  type GuideViewMode,
+} from "@/lib/guides/constants";
+import { filterGuides, getActiveFilterCount, type GuideFilters as GuideFiltersType } from "@/lib/guides/filtering";
+import { sortGuides } from "@/lib/guides/sorting";
+import { useQuery } from "@tanstack/react-query";
+import { Award, Map, Star, X } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
 
-/* ────────── Filter options ────────── */
+import { getComparisonData, useGuideCompare } from "@/hooks/guides/useGuideCompare";
+import { useGuideFavorites } from "@/hooks/guides/useGuideFavorites";
+import { GuideCard } from "./components/GuideCard";
+import { GuideComparePanel } from "./components/GuideComparePanel";
+import {
+  ClearFiltersButton,
+  ExperienceFilter,
+  FilterPresetButtons,
+  FilterSection,
+  GuideFilters,
+  LanguageFilters,
+  PriceRangeFilter,
+  RatingFilter,
+  SpecialtyFilters,
+} from "./components/GuideFilters";
+import { GuideHero } from "./components/GuideHero";
+import { GuideSortBar } from "./components/GuideSortBar";
+import { GuideGridSkeleton, GuideListViewSkeleton } from "./components/skeletons/GuideCardSkeleton";
 
-const SPECIALTY_OPTIONS = [
-  { value: "", label: "Tümü" },
-  { value: "hac", label: "Hac" },
-  { value: "umre", label: "Umre" },
-  { value: "vip", label: "VIP" },
-  { value: "tarih", label: "Tarih" },
-  { value: "kultur", label: "Kültür" },
-  { value: "doga", label: "Doğa" },
-  { value: "gastro", label: "Gastronomi" },
-];
-
-const LANGUAGE_OPTIONS = [
-  { value: "", label: "Tümü" },
-  { value: "tr", label: "Türkçe" },
-  { value: "en", label: "İngilizce" },
-  { value: "ar", label: "Arapça" },
-  { value: "fr", label: "Fransızca" },
-  { value: "de", label: "Almanca" },
-  { value: "ru", label: "Rusça" },
-  { value: "fa", label: "Farsça" },
-  { value: "ur", label: "Urduca" },
-];
-
-/* ────────── Main Page ────────── */
+/* ═══════════════════════════════════════════
+    GUIDES PAGE
+    ═══════════════════════════════════════════ */
 
 export default function GuidesPage() {
-  const [queryText, setQueryText] = useState("");
-  const [selectedSpecialty, setSelectedSpecialty] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState("");
+  /* ── State ── */
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<GuideSortOption>("recommended");
+  const [viewMode, setViewMode] = useState<GuideViewMode>(GUIDE_VIEW_MODES.GRID);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
+  // Filter states
+  const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([]);
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
+  const [priceRange, setPriceRange] = useState<{ min?: number; max?: number }>({});
+  const [experienceRange, setExperienceRange] = useState<{ min?: number; max?: number }>({});
+  const [minRating, setMinRating] = useState<number | undefined>(undefined);
+  const [certifiedOnly, setCertifiedOnly] = useState(false);
+  const [popularOnly, setPopularOnly] = useState(false);
+
+  // Custom hooks
+  const { toggleFavorite, isFavorite } = useGuideFavorites();
+  const { compareIds, toggleCompare, isComparing, clearCompare, removeFromCompare } = useGuideCompare();
+
+  /* ── Data ── */
   const guidesQuery = useQuery({
     queryKey: ["guides", "active"],
     queryFn: () => getActiveGuides(),
   });
 
-  const filteredGuides = useMemo(() => {
-    const normalized = queryText.trim().toLowerCase();
-    return (guidesQuery.data ?? []).filter((guide) => {
-      // Text search
-      if (
-        normalized &&
-        ![guide.name, guide.bio, guide.city, ...guide.specialties, ...guide.languages]
-          .join(" ")
-          .toLowerCase()
-          .includes(normalized)
-      ) {
-        return false;
-      }
-      // Specialty filter
-      if (
-        selectedSpecialty &&
-        !guide.specialties
-          .map((s) => s.toLowerCase())
-          .some((s) => s === selectedSpecialty || s.includes(selectedSpecialty))
-      ) {
-        return false;
-      }
-      // Language filter
-      if (
-        selectedLanguage &&
-        !guide.languages
-          .map((l) => l.toLowerCase())
-          .some((l) => l === selectedLanguage || l.includes(selectedLanguage))
-      ) {
-        return false;
-      }
-      return true;
-    });
-  }, [guidesQuery.data, queryText, selectedSpecialty, selectedLanguage]);
+  /* ── Build filters object ── */
+  const filters = useMemo<GuideFiltersType>(
+    () => ({
+      searchQuery,
+      specialties: selectedSpecialties.length > 0 ? selectedSpecialties : undefined,
+      languages: selectedLanguages.length > 0 ? selectedLanguages : undefined,
+      priceMin: priceRange.min,
+      priceMax: priceRange.max !== Infinity ? priceRange.max : undefined,
+      experienceMin: experienceRange.min,
+      experienceMax: experienceRange.max !== Infinity ? experienceRange.max : undefined,
+      minRating,
+      certified: certifiedOnly || undefined,
+      popular: popularOnly || undefined,
+    }),
+    [
+      searchQuery,
+      selectedSpecialties,
+      selectedLanguages,
+      priceRange,
+      experienceRange,
+      minRating,
+      certifiedOnly,
+      popularOnly,
+    ]
+  );
 
-  const hasActiveFilters = selectedSpecialty !== "" || selectedLanguage !== "" || queryText.trim() !== "";
+  const activeFilterCount = useMemo(() => getActiveFilterCount(filters), [filters]);
+
+  /* ── Processed data ── */
+  const processedGuides = useMemo(() => {
+    const allGuides = guidesQuery.data ?? [];
+    const filtered = filterGuides(allGuides, filters);
+    return sortGuides(filtered, sortBy);
+  }, [guidesQuery.data, filters, sortBy]);
+
+  /* ── Comparison data ── */
+  const comparisonGuides = useMemo(() => {
+    return getComparisonData(processedGuides, compareIds);
+  }, [processedGuides, compareIds]);
+
+  /* ── Preset handler ── */
+  const applyPreset = useCallback(
+    (preset: typeof GUIDE_FILTER_PRESETS[number]) => {
+      if (preset.filters.specialties) {
+        setSelectedSpecialties([...preset.filters.specialties]);
+      }
+      if (preset.filters.languages) {
+        setSelectedLanguages([...preset.filters.languages]);
+      }
+      if (preset.filters.minRating !== undefined) {
+        setMinRating(preset.filters.minRating);
+      }
+    },
+    []
+  );
+
+  /* ── Clear all filters ── */
+  const clearAllFilters = useCallback(() => {
+    setSearchQuery("");
+    setSelectedSpecialties([]);
+    setSelectedLanguages([]);
+    setPriceRange({});
+    setExperienceRange({});
+    setMinRating(undefined);
+    setCertifiedOnly(false);
+    setPopularOnly(false);
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden border-b border-slate-200">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,#8b5cf620,transparent_50%),radial-gradient(circle_at_70%_80%,#c084fc20,transparent_50%)]" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-          <div className="flex items-center gap-2.5 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center">
-              <User className="w-5 h-5 text-violet-700" />
-            </div>
-            <Badge className="bg-violet-50 text-violet-700 border border-violet-200 text-xs font-medium">
-              {filteredGuides.length} Rehber Bulundu
-            </Badge>
-          </div>
-          <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900">
-            Rehberler
-          </h1>
-          <p className="mt-3 text-slate-600 max-w-2xl text-lg">
-            Dil, uzmanlık ve şehir bilgilerine göre profesyonel rehberleri karşılaştırın.
-          </p>
+      {/* ═══ Hero Section ═══ */}
+      <GuideHero
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        onPresetApply={applyPreset}
+        totalGuides={guidesQuery.data?.length ?? 0}
+      />
 
-          {/* Search Bar */}
-          <div className="mt-8">
-            <div className="relative">
-              <Search className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
-              <input
-                value={queryText}
-                onChange={(e) => setQueryText(e.target.value)}
-                placeholder="İsim, şehir veya uzmanlık ara..."
-                className="w-full h-12 pl-12 pr-4 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
-              />
-            </div>
-          </div>
+      {/* ═══ Content ═══ */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Sort Bar */}
+        <GuideSortBar
+          sortBy={sortBy}
+          viewMode={viewMode}
+          resultCount={processedGuides.length}
+          onSortChange={setSortBy}
+          onViewModeChange={setViewMode}
+          onFilterToggle={() => setFiltersOpen(!filtersOpen)}
+          activeFilterCount={activeFilterCount}
+        />
 
-          {/* Filter Bar */}
-          <div className="mt-3 flex flex-col sm:flex-row gap-3">
-            <div className="flex items-center gap-2 text-sm text-slate-500">
-              <SlidersHorizontal className="w-4 h-4" />
-              <span className="font-medium">Filtreler</span>
-            </div>
-
-            <select
-              value={selectedSpecialty}
-              onChange={(e) => setSelectedSpecialty(e.target.value)}
-              className="h-10 min-w-40 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-violet-500 cursor-pointer"
-            >
-              {SPECIALTY_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.value === "" ? "Tüm Uzmanlıklar" : opt.label}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={selectedLanguage}
-              onChange={(e) => setSelectedLanguage(e.target.value)}
-              className="h-10 min-w-36 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-violet-500 cursor-pointer"
-            >
-              {LANGUAGE_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.value === "" ? "Tüm Diller" : opt.label}
-                </option>
-              ))}
-            </select>
-
-            {hasActiveFilters ? (
-              <button
-                type="button"
-                onClick={() => {
-                  setQueryText("");
-                  setSelectedSpecialty("");
-                  setSelectedLanguage("");
-                }}
-                className="h-10 px-4 rounded-lg border border-slate-200 bg-white text-sm text-slate-500 hover:text-slate-700 hover:border-slate-300 transition-colors cursor-pointer"
+        {/* Active Filters Display */}
+        {activeFilterCount > 0 && (
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            <span className="text-xs font-medium text-slate-500">Aktif filtreler:</span>
+            {selectedSpecialties.map((s) => (
+              <Badge
+                key={s}
+                className="bg-violet-50 text-violet-700 border-violet-200 gap-1 cursor-pointer hover:bg-violet-100 transition-colors"
+                onClick={() => setSelectedSpecialties((prev) => prev.filter((sp) => sp !== s))}
               >
-                Filtreleri Temizle
-              </button>
-            ) : null}
-          </div>
-        </div>
-      </section>
-
-      {/* Content */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* States */}
-        {guidesQuery.isLoading ? (
-          <LoadingState title="Rehberler yükleniyor" description="Uygun rehber listesi getiriliyor..." />
-        ) : null}
-
-        {guidesQuery.isError ? (
-          <ErrorState
-            title="Rehber listesi alınamadı"
-            description="Lütfen daha sonra tekrar deneyin."
-            onRetry={() => guidesQuery.refetch()}
-          />
-        ) : null}
-
-        {!guidesQuery.isLoading && !guidesQuery.isError && filteredGuides.length === 0 ? (
-          <EmptyState
-            title="Rehber bulunamadı"
-            description="Arama terimini veya filtreleri değiştirerek tekrar deneyebilirsiniz."
-          />
-        ) : null}
-
-        {/* Guide Cards */}
-        {!guidesQuery.isLoading && !guidesQuery.isError && filteredGuides.length > 0 ? (
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
-            {filteredGuides.map((guide) => (
-              <GuideCard key={guide.id} guide={guide} />
+                {s}
+                <X className="w-3 h-3" />
+              </Badge>
             ))}
-          </div>
-        ) : null}
-      </section>
-    </div>
-  );
-}
-
-/* ────────── Guide Card ────────── */
-
-function GuideCard({ guide }: { guide: GuideModel }) {
-  const hasImage = guide.images.length > 0;
-
-  return (
-    <Link
-      href={`/guides/${guide.id}`}
-      className="group block rounded-2xl border border-slate-200 bg-white overflow-hidden hover:border-violet-300 transition-colors cursor-pointer"
-    >
-      {/* Image */}
-      <div className="relative h-48 bg-slate-100">
-        {hasImage ? (
-          <img
-            src={guide.images[0]}
-            alt={guide.name}
-            className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-violet-50 to-fuchsia-50">
-            <User className="w-16 h-16 text-violet-200" />
+            {selectedLanguages.map((l) => (
+              <Badge
+                key={l}
+                className="bg-blue-50 text-blue-700 border-blue-200 gap-1 cursor-pointer hover:bg-blue-100 transition-colors"
+                onClick={() => setSelectedLanguages((prev) => prev.filter((lang) => lang !== l))}
+              >
+                {l}
+                <X className="w-3 h-3" />
+              </Badge>
+            ))}
+            {minRating !== undefined && (
+              <Badge
+                className="bg-amber-50 text-amber-700 border-amber-200 gap-1 cursor-pointer hover:bg-amber-100 transition-colors"
+                onClick={() => setMinRating(undefined)}
+              >
+                <Star className="w-3 h-3" /> {minRating}+
+                <X className="w-3 h-3" />
+              </Badge>
+            )}
+            {certifiedOnly && (
+              <Badge
+                className="bg-emerald-50 text-emerald-700 border-emerald-200 gap-1 cursor-pointer hover:bg-emerald-100 transition-colors"
+                onClick={() => setCertifiedOnly(false)}
+              >
+                <Award className="w-3 h-3" /> Sertifikalı
+                <X className="w-3 h-3" />
+              </Badge>
+            )}
+            {(priceRange.min !== undefined || priceRange.max !== undefined) && (
+              <Badge
+                className="bg-slate-100 text-slate-700 border-slate-200 gap-1 cursor-pointer hover:bg-slate-200 transition-colors"
+                onClick={() => setPriceRange({})}
+              >
+                Fiyat aralığı
+                <X className="w-3 h-3" />
+              </Badge>
+            )}
+            <button
+              type="button"
+              onClick={clearAllFilters}
+              className="text-xs text-violet-600 hover:text-violet-700 font-medium cursor-pointer underline transition-colors"
+            >
+              Tümünü Temizle
+            </button>
           </div>
         )}
 
-        {/* Badges overlay */}
-        <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-          {guide.isPopular ? (
-            <Badge className="bg-amber-500 text-white border-0 gap-1 text-xs">
-              <Star className="w-3 h-3 fill-white" /> Popüler
-            </Badge>
-          ) : null}
-          {guide.specialties.slice(0, 2).map((sp) => (
-            <Badge key={sp} className="bg-white/90 text-violet-700 border-0 backdrop-blur-sm text-xs">
-              {sp}
-            </Badge>
-          ))}
-        </div>
+        {/* Main Layout: Filters + Content */}
+        <div className="flex gap-6">
+          {/* Filters Sidebar */}
+          <GuideFilters isOpen={filtersOpen} onClose={() => setFiltersOpen(false)}>
+            {/* Quick Presets */}
+            <FilterPresetButtons presets={GUIDE_FILTER_PRESETS} onSelectPreset={applyPreset} />
 
-        {/* Rating bottom-right */}
-        {guide.rating > 0 ? (
-          <div className="absolute bottom-3 right-3">
-            <Badge className="bg-black/50 text-white border-0 backdrop-blur-sm gap-1 text-xs">
-              <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-              {guide.rating.toFixed(1)}
-              {guide.reviewCount > 0 ? ` (${guide.reviewCount})` : ""}
-            </Badge>
+            {/* Specialty Filter */}
+            <FilterSection title="Uzmanlık Alanları" defaultOpen icon={<Map className="w-4 h-4" />}>
+              <SpecialtyFilters selected={selectedSpecialties} onChange={setSelectedSpecialties} />
+            </FilterSection>
+
+            {/* Language Filter */}
+            <FilterSection title="Diller" defaultOpen icon={<Map className="w-4 h-4" />}>
+              <LanguageFilters selected={selectedLanguages} onChange={setSelectedLanguages} />
+            </FilterSection>
+
+            {/* Price Filter */}
+            <FilterSection title="Günlük Ücret" defaultOpen={false} icon={<Award className="w-4 h-4" />}>
+              <PriceRangeFilter value={priceRange} onChange={setPriceRange} />
+            </FilterSection>
+
+            {/* Experience Filter */}
+            <FilterSection title="Deneyim" defaultOpen={false} icon={<Award className="w-4 h-4" />}>
+              <ExperienceFilter value={experienceRange} onChange={setExperienceRange} />
+            </FilterSection>
+
+            {/* Rating Filter */}
+            <FilterSection title="Minimum Puan" defaultOpen={false} icon={<Star className="w-4 h-4" />}>
+              <RatingFilter value={minRating} onChange={setMinRating} />
+            </FilterSection>
+
+            {/* Quick Toggles */}
+            <FilterSection title="Diğer" defaultOpen={false}>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 py-2 px-3 rounded-lg hover:bg-violet-50/50 cursor-pointer transition-colors group">
+                  <input
+                    type="checkbox"
+                    checked={certifiedOnly}
+                    onChange={(e) => setCertifiedOnly(e.target.checked)}
+                    className="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500 focus:ring-offset-0 transition-colors"
+                  />
+                  <span className="flex-1 text-sm text-slate-700 group-hover:text-slate-900 transition-colors">Sadece Sertifikalı</span>
+                </label>
+                <label className="flex items-center gap-2 py-2 px-3 rounded-lg hover:bg-violet-50/50 cursor-pointer transition-colors group">
+                  <input
+                    type="checkbox"
+                    checked={popularOnly}
+                    onChange={(e) => setPopularOnly(e.target.checked)}
+                    className="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500 focus:ring-offset-0 transition-colors"
+                  />
+                  <span className="flex-1 text-sm text-slate-700 group-hover:text-slate-900 transition-colors">Sadece Popüler</span>
+                </label>
+              </div>
+            </FilterSection>
+
+            {/* Clear Filters */}
+            <ClearFiltersButton onClick={clearAllFilters} disabled={activeFilterCount === 0} />
+          </GuideFilters>
+
+          {/* Content Area */}
+          <div className="flex-1 min-w-0 pb-20">
+            {/* Loading */}
+            {guidesQuery.isLoading && (
+              <>
+                {viewMode === GUIDE_VIEW_MODES.GRID ? (
+                  <GuideGridSkeleton count={6} />
+                ) : (
+                  <GuideListViewSkeleton count={6} />
+                )}
+              </>
+            )}
+
+            {/* Error */}
+            {guidesQuery.isError && (
+              <ErrorState
+                title="Rehber listesi alınamadı"
+                description="Lütfen daha sonra tekrar deneyin."
+                onRetry={() => guidesQuery.refetch()}
+              />
+            )}
+
+            {/* Empty State */}
+            {!guidesQuery.isLoading && !guidesQuery.isError && processedGuides.length === 0 && (
+              <EmptyState
+                title="Rehber bulunamadı"
+                description={
+                  activeFilterCount > 0
+                    ? "Filtrelerinizi değiştirerek tekrar deneyebilirsiniz."
+                    : "Henüz aktif rehber bulunmuyor."
+                }
+              />
+            )}
+
+            {/* Map View (placeholder) */}
+            {viewMode === GUIDE_VIEW_MODES.MAP &&
+              !guidesQuery.isLoading &&
+              !guidesQuery.isError &&
+              processedGuides.length > 0 && (
+                <div className="h-96 rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-sm flex items-center justify-center mb-6">
+                  <div className="text-center">
+                    <Map className="w-12 h-12 text-violet-200 mx-auto mb-3" />
+                    <h3 className="text-lg font-semibold text-slate-700">Harita Görünümü</h3>
+                    <p className="text-sm text-slate-500 mt-1">
+                      Harita özelliği yakında aktif olacaktır.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+            {/* Grid View */}
+            {viewMode === GUIDE_VIEW_MODES.GRID &&
+              !guidesQuery.isLoading &&
+              !guidesQuery.isError &&
+              processedGuides.length > 0 && (
+                <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
+                  {processedGuides.map((guide) => (
+                    <GuideCard
+                      key={guide.id}
+                      guide={guide}
+                      viewMode="grid"
+                      onFavoriteToggle={toggleFavorite}
+                      onCompareToggle={toggleCompare}
+                      isFavorite={isFavorite(guide.id)}
+                      isComparing={isComparing(guide.id)}
+                    />
+                  ))}
+                </div>
+              )}
+
+            {/* List View */}
+            {viewMode === GUIDE_VIEW_MODES.LIST &&
+              !guidesQuery.isLoading &&
+              !guidesQuery.isError &&
+              processedGuides.length > 0 && (
+                <div className="space-y-4">
+                  {processedGuides.map((guide) => (
+                    <GuideCard
+                      key={guide.id}
+                      guide={guide}
+                      viewMode="list"
+                      onFavoriteToggle={toggleFavorite}
+                      onCompareToggle={toggleCompare}
+                      isFavorite={isFavorite(guide.id)}
+                      isComparing={isComparing(guide.id)}
+                    />
+                  ))}
+                </div>
+              )}
           </div>
-        ) : null}
-      </div>
-
-      {/* Content */}
-      <div className="p-4 space-y-3">
-        <div className="flex items-start justify-between gap-2">
-          <h3 className="text-base font-semibold text-slate-900 group-hover:text-violet-700 transition-colors">
-            {guide.name}
-          </h3>
-          <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-violet-500 shrink-0 mt-1 transition-colors" />
         </div>
+      </section>
 
-        {/* Info chips */}
-        <div className="flex flex-wrap gap-2 text-xs text-slate-600">
-          {guide.city ? (
-            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50">
-              <MapPin className="w-3 h-3 text-violet-500" />
-              {guide.city}
-            </span>
-          ) : null}
-          {guide.languages.length > 0 ? (
-            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50">
-              <Languages className="w-3 h-3 text-violet-500" />
-              {guide.languages.slice(0, 3).join(", ")}
-              {guide.languages.length > 3 ? ` +${guide.languages.length - 3}` : ""}
-            </span>
-          ) : null}
-          {guide.yearsExperience > 0 ? (
-            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50">
-              <Award className="w-3 h-3 text-violet-500" />
-              {guide.yearsExperience} Yıl
-            </span>
-          ) : null}
-        </div>
-
-        {/* Price */}
-        <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-          <div>
-            <p className="text-[10px] text-slate-400 uppercase tracking-wider">Günlük Ücret</p>
-            <p className="text-lg font-bold text-violet-700">
-              {formatTlUsdPairFromTl(guide.dailyRate)}
-            </p>
-          </div>
-          {guide.certifications.length > 0 ? (
-            <span className="inline-flex items-center gap-1 text-[11px] text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200">
-              <Award className="w-3 h-3" />
-              Sertifikalı
-            </span>
-          ) : null}
-        </div>
-      </div>
-    </Link>
+      {/* Compare Panel */}
+      {comparisonGuides.length > 0 && (
+        <GuideComparePanel
+          guides={comparisonGuides}
+          onRemove={removeFromCompare}
+          onClear={clearCompare}
+        />
+      )}
+    </div>
   );
 }
-
-
