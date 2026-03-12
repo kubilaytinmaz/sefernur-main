@@ -28,6 +28,7 @@ const typeLabels: Record<ReservationType, string> = {
   hotel: "Otel",
   car: "Araç",
   transfer: "Transfer",
+  transfer_tour: "Transfer + Tur",
   guide: "Rehber",
   tour: "Tur",
 };

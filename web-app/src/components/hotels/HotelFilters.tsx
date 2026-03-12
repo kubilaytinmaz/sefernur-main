@@ -1,5 +1,6 @@
 "use client";
 
+import { CapacityFilter } from "@/components/hotels/CapacityFilter";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 import {
@@ -24,6 +25,9 @@ export interface HotelFilters {
   distance?: number; // max km
   boardBasis?: string[];
   freeCancellation?: boolean;
+  minCapacity?: number; // minimum guest capacity
+  maxCapacity?: number; // maximum guest capacity
+  minRooms?: number; // minimum room count
 }
 
 interface HotelFiltersProps {
@@ -491,6 +495,8 @@ function ActiveFiltersBadge({
     filters.distance,
     filters.boardBasis?.length,
     filters.freeCancellation,
+    filters.minCapacity,
+    filters.minRooms,
   ].filter(Boolean).length;
 
   if (count === 0) return null;
@@ -620,6 +626,18 @@ export function HotelFilters({
           />
         </label>
       </div>
+
+      {/* Capacity Filter */}
+      <CapacityFilter
+        minCapacity={localFilters.minCapacity}
+        maxCapacity={localFilters.maxCapacity}
+        minRooms={localFilters.minRooms}
+        onChange={(capacityFilters) => {
+          const newFilters = { ...localFilters, ...capacityFilters };
+          setLocalFilters(newFilters);
+          onFiltersChange(newFilters);
+        }}
+      />
 
       {/* Board Basis */}
       <CheckboxFilter

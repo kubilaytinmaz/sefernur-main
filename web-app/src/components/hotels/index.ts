@@ -12,3 +12,10 @@ export { HotelLocation } from "./HotelLocation";
 export { HotelReviews } from "./HotelReviews";
 export { SimilarHotels, type SimilarHotel } from "./SimilarHotels";
 
+// Room & Guest Filtering Components
+export { CapacityBadge } from "./CapacityBadge";
+export { CapacityFilter } from "./CapacityFilter";
+export { GuestPresetButtons } from "./GuestPresetButtons";
+export { GuestSummaryBar } from "./GuestSummaryBar";
+export { PricePerPerson } from "./PricePerPerson";
+

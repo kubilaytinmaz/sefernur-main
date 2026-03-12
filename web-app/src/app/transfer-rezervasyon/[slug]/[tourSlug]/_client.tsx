@@ -1,44 +1,54 @@
 /**
  * Transfer Rezervasyon Sayfası
  * SEO uyumlu Türkçe URL: /transfer-rezervasyon/[slug]/[tourSlug]
+ * Çoklu tur desteği: ?extraTours=id1,id2,id3
  */
 
 "use client";
 
 import { EmptyState, ErrorState, LoadingState } from "@/components/states/AsyncStates";
 import { TourDetailModal } from "@/components/transfers/TourDetailModal";
-import { BookingFormCard, PriceSummaryCard, TourInfoCard, VehicleInfoCard } from "@/components/transfers/booking";
+import { BookingFormCard, MultiTourSummaryCard, PriceSummaryCard, VehicleInfoCard } from "@/components/transfers/booking";
 import { getTransferById } from "@/lib/firebase/domain";
 import { parseSlugWithId } from "@/lib/transfers/booking";
-import { getServiceById } from "@/lib/transfers/popular-services-simple";
+import { getServiceById, type PopularService } from "@/lib/transfers/popular-services-simple";
 import type { PriceBreakdown } from "@/types/booking";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useMemo, useState } from "react";
 
 export default function BookingPageClient() {
-  // URL'den slug'ları al
-  const [vehicleSlug, setVehicleSlug] = useState("");
-  const [tourSlug, setTourSlug] = useState("");
+  // Next.js URL hook'ları
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // URL'den slug'ları ve query param'ları parse et (useMemo ile ilk render'da çalışır)
+  const urlData = useMemo(() => {
+    const segments = pathname.split("/").filter(Boolean);
+    // /transfer-rezervasyon/[slug]/[tourSlug]
+    const vehicleSlug = segments.length >= 2 ? segments[1] || "" : "";
+    const tourSlug = segments.length >= 3 ? segments[2] || "" : "";
+    
+    // Query param'dan ek turları al: ?extraTours=id1,id2,id3
+    const extraToursParam = searchParams.get("extraTours");
+    const extraTourIds = extraToursParam
+      ? extraToursParam.split(",").filter(Boolean)
+      : [];
+    
+    return { vehicleSlug, tourSlug, extraTourIds };
+  }, [pathname, searchParams]);
 
   // URL'den ID'leri çıkar
-  const { id: transferId } = parseSlugWithId(vehicleSlug);
-  const { id: tourId } = parseSlugWithId(tourSlug);
+  const { id: transferId } = parseSlugWithId(urlData.vehicleSlug);
+  const { id: tourId } = parseSlugWithId(urlData.tourSlug);
 
   // State
   const [currentPrice, setCurrentPrice] = useState<PriceBreakdown | null>(null);
   const [tourModalOpen, setTourModalOpen] = useState(false);
-
-  // URL'den slug'ları oku
-  useEffect(() => {
-    const segments = window.location.pathname.split("/").filter(Boolean);
-    // /transfer-rezervasyon/[slug]/[tourSlug]
-    if (segments.length >= 3 && segments[0] === "transfer-rezervasyon") {
-      setVehicleSlug(segments[1] || "");
-      setTourSlug(segments[2] || "");
-    }
-  }, []);
+  const [selectedTourIndex, setSelectedTourIndex] = useState(0);
+  const [passengerCount, setPassengerCount] = useState(1);
 
   // Transfer verisi
   const transferQuery = useQuery({
@@ -49,8 +59,28 @@ export default function BookingPageClient() {
 
   const transfer = transferQuery.data;
 
-  // Tur verisi (client-side)
-  const tour = tourId ? getServiceById(tourId) : undefined;
+  // Ana tur verisi (client-side)
+  const mainTour = tourId ? getServiceById(tourId) : undefined;
+
+  // Ek turların verileri (client-side)
+  const extraTours = useMemo(() => {
+    return urlData.extraTourIds
+      .map(id => getServiceById(id))
+      .filter(Boolean) as PopularService[];
+  }, [urlData.extraTourIds]);
+
+  // Tüm turlar (ana tur + ek turlar)
+  const allTours = useMemo(() => {
+    if (!mainTour) return extraTours;
+    return [mainTour, ...extraTours];
+  }, [mainTour, extraTours]);
+
+  // Tur isimleri özeti
+  const tourNamesSummary = useMemo(() => {
+    if (allTours.length === 0) return "";
+    if (allTours.length === 1) return allTours[0].name;
+    return allTours.map(t => t.name).join(" + ");
+  }, [allTours]);
 
   // Loading state
   if (transferQuery.isLoading) {
@@ -103,7 +133,7 @@ export default function BookingPageClient() {
             <div>
               <h1 className="text-lg font-semibold text-slate-900">Transfer Rezervasyonu</h1>
               <p className="text-xs text-slate-500">
-                {transfer.vehicleName} {tour ? `+ ${tour.name}` : ""}
+                {transfer.vehicleName}{tourNamesSummary ? ` + ${tourNamesSummary}` : ""}
               </p>
             </div>
           </div>
@@ -118,15 +148,26 @@ export default function BookingPageClient() {
             {/* Vehicle Info */}
             <VehicleInfoCard vehicle={transfer} />
 
-            {/* Tour Info */}
-            {tour && <TourInfoCard tour={tour} onShowDetail={() => setTourModalOpen(true)} />}
+            {/* Tours Info - Çoklu tur gösterimi */}
+            {allTours.length > 0 && (
+              <MultiTourSummaryCard
+                tours={allTours}
+                onShowTourDetail={(tour) => {
+                  const index = allTours.findIndex(t => t.id === tour.id);
+                  setSelectedTourIndex(index);
+                  setTourModalOpen(true);
+                }}
+                passengerCount={passengerCount}
+              />
+            )}
 
             {/* Price Summary */}
             {currentPrice && (
               <PriceSummaryCard
                 price={currentPrice}
-                passengerCount={1}
-                tourName={tour?.name}
+                passengerCount={passengerCount}
+                tourName={allTours.length > 1 ? `${allTours.length} Tur Paketi` : tourNamesSummary}
+                tourCount={allTours.length}
               />
             )}
           </div>
@@ -136,8 +177,10 @@ export default function BookingPageClient() {
             <div className="sticky top-24">
               <BookingFormCard
                 transfer={transfer}
-                tour={tour}
+                tour={mainTour}
+                extraTours={extraTours}
                 onPriceChange={setCurrentPrice}
+                onPassengerChange={setPassengerCount}
               />
             </div>
           </div>
@@ -145,11 +188,11 @@ export default function BookingPageClient() {
       </div>
 
       {/* Tour Detail Modal */}
-      {tour && (
+      {allTours.length > 0 && (
         <TourDetailModal
           open={tourModalOpen}
           onClose={() => setTourModalOpen(false)}
-          service={tour}
+          service={allTours[selectedTourIndex]}
         />
       )}
     </div>

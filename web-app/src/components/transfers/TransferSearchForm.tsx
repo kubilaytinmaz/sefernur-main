@@ -113,10 +113,10 @@ export function TransferSearchForm({
     if (!fromLocation || !toLocation) return null;
     
     const routes = getRoutesByLocations(fromLocation.id, toLocation.id);
-    if (routes.length === 0 || !routes[0].distance) return null;
+    if (routes.length === 0) return null;
 
     return estimateRoutePrice(
-      routes[0].distance.km,
+      routes[0].id,
       vehicleType || 'sedan',
       pickupTime
     );

@@ -1,15 +1,15 @@
 import { rolesFromFirestore, rolesToFirestore, UserModel } from "@/types/user";
 import {
-    collection,
-    doc,
-    getDoc,
-    getDocs,
-    query,
-    QueryConstraint,
-    setDoc,
-    Timestamp,
-    updateDoc,
-    where
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  QueryConstraint,
+  setDoc,
+  Timestamp,
+  updateDoc,
+  where
 } from "firebase/firestore";
 import { db } from "./config";
 
@@ -32,7 +32,11 @@ export const COLLECTIONS = {
   CARS: "cars",
   GUIDES: "guides",
   PROMOTIONS: "promotions",
+  POPULAR_SERVICES: "popularServices",
   SITE_SETTINGS: "siteSettings",
+  TRANSFER_PRICING: "transfer_pricing",
+  TRANSFER_LOCATIONS: "transfer_locations",
+  TRANSFER_ROUTES: "transfer_routes",
 } as const;
 
 // Helper to convert Firestore Timestamp to Date

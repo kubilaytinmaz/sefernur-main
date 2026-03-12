@@ -1,4 +1,5 @@
 // Transfer Lokasyonları - Mekke & Medine odaklı statik lokasyon verisi
+// Gerçek mesafeler ve fiyatlarla güncellenmiş
 
 export type LocationType = 'airport' | 'train_station' | 'city' | 'religious_site' | 'tour_destination';
 
@@ -41,7 +42,7 @@ export const LOCATIONS: Record<string, TransferLocation> = {
   },
   medina_airport: {
     id: 'medina_airport',
-    name: 'Medine Havalimanı',
+    name: 'Medine Havalimanı (MED)',
     city: 'Medine',
     type: 'airport',
     coordinates: { lat: 24.5534, lng: 39.7051 },
@@ -153,7 +154,7 @@ export const LOCATIONS: Record<string, TransferLocation> = {
 };
 
 // ─────────────────────────────────────────────────────────────
-// TRANSFER ROTALARI
+// TRANSFER ROTALARI (Gerçek mesafelerle)
 // ─────────────────────────────────────────────────────────────
 
 // 1️⃣ TRANSFERLER - Mekke Çıkışlı

@@ -5,13 +5,13 @@ import { Pagination } from "@/components/admin/Pagination";
 import { SearchInput } from "@/components/admin/SearchInput";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import {
-    getAllReservations,
-    type ReservationFilters,
+  getAllReservations,
+  type ReservationFilters,
 } from "@/lib/firebase/admin-domain";
 import {
-    ReservationModel,
-    ReservationStatus,
-    ReservationType,
+  ReservationModel,
+  ReservationStatus,
+  ReservationType,
 } from "@/types/reservation";
 import { CalendarCheck, Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -23,6 +23,7 @@ const typeLabels: Record<ReservationType, string> = {
   hotel: "Otel",
   tour: "Tur",
   transfer: "Transfer",
+  transfer_tour: "Transfer + Tur",
   guide: "Rehber",
   car: "Araç",
 };

@@ -1,5 +1,6 @@
 // Basitleştirilmiş Popüler Hizmetler - Transfer, Tur ve Rehberler
 // Tek liste, fiyatlar görünür, çoklu seçim destekli
+// Fiyatlar SAR'dan TL'ye çevrilmiş (1 SAR = 9.5 TL)
 
 export type ServiceType = 'transfer' | 'tour' | 'guide';
 
@@ -24,7 +25,7 @@ export interface PopularService {
   
   // Fiyat gösterimi
   price: {
-    display: string; // "150₺+" veya "200₺/kişi"
+    display: string; // "1.425₺+" veya "800₺"
     baseAmount: number; // Hesaplamalar için
     type: 'per_km' | 'per_person' | 'fixed';
   };
@@ -306,7 +307,7 @@ export const POPULAR_SERVICES: PopularService[] = [
     duration: { text: 'Tam gün (8 saat)', hours: 8 },
     distance: { km: 180, text: '180 km' },
     price: {
-      display: '1200₺',
+      display: '1.200₺',
       baseAmount: 1200,
       type: 'fixed',
     },

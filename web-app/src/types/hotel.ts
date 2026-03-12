@@ -43,3 +43,62 @@ export interface HotelModel {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+/* ────────── Hotel Capacity Types ────────── */
+
+export interface HotelCapacity {
+  maxAdults: number;
+  maxChildren: number;
+  maxOccupancy: number;
+  availableRooms: number;
+  canAccommodate: boolean;
+  requiredRooms: number;
+  roomTypes: RoomTypeCapacity[];
+}
+
+export interface RoomTypeCapacity {
+  roomTypeCode: string;
+  name: string;
+  maxAdults: number;
+  maxChildren: number;
+  maxOccupancy: number;
+  price: number;
+}
+
+export interface CapacityValidationResult {
+  valid: boolean;
+  error?: string;
+  warnings?: string[];
+}
+
+/* ────────── Price Types ────────── */
+
+export interface PriceBreakdown {
+  totalPrice: number;
+  pricePerNight: number;
+  pricePerPerson: number;
+  pricePerPersonPerNight: number;
+  nights: number;
+  guests: number;
+}
+
+export interface PriceComparisonResult {
+  cheapest: boolean;
+  savingsPercent?: number;
+  savingsAmount?: number;
+}
+
+/* ────────── Guest Configuration Types ────────── */
+
+export interface GuestPreset {
+  label: string;
+  description: string;
+  icon: string;
+  rooms: RoomConfig[];
+}
+
+export interface RoomConfig {
+  adults: number;
+  children: number;
+  childAges: number[];
+}

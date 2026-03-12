@@ -1,4 +1,5 @@
 // Transfer Fiyat Hesaplama Sistemi
+// Rota bazlı sabit fiyatlar (SAR'dan TL'ye çevrilmiş)
 import type { VehicleType } from "@/types/transfer";
 
 export interface TransferPricing {
@@ -9,54 +10,93 @@ export interface TransferPricing {
   luggageFee: number; // Fazla bagaj ücreti (standart 2 bagaj üzeri)
 }
 
-// Araç tipine göre fiyatlandırma
+// Araç tipine göre fiyatlandırma (varsayılan, rota bazlı override edilir)
 export const VEHICLE_PRICING: Record<VehicleType, TransferPricing> = {
   sedan: {
-    basePrice: 50,
+    basePrice: 1425, // JED-Mekke baz fiyatı
     pricePerKm: 2.5,
-    nightSurcharge: 30,
-    waitingFeePerHour: 50,
-    luggageFee: 10,
+    nightSurcharge: 200,
+    waitingFeePerHour: 100,
+    luggageFee: 50,
   },
   van: {
-    basePrice: 80,
+    basePrice: 1900, // JED-Mekke baz fiyatı
     pricePerKm: 3.5,
-    nightSurcharge: 50,
-    waitingFeePerHour: 75,
-    luggageFee: 15,
+    nightSurcharge: 300,
+    waitingFeePerHour: 150,
+    luggageFee: 50,
   },
   bus: {
-    basePrice: 200,
+    basePrice: 5000, // Büyük gruplar için
     pricePerKm: 5,
-    nightSurcharge: 100,
-    waitingFeePerHour: 150,
+    nightSurcharge: 500,
+    waitingFeePerHour: 200,
     luggageFee: 0, // Otobüste fazla bagaj ücreti yok
   },
   vip: {
-    basePrice: 150,
+    basePrice: 3000, // VIP araçlar
     pricePerKm: 4,
-    nightSurcharge: 75,
-    waitingFeePerHour: 100,
-    luggageFee: 20,
+    nightSurcharge: 400,
+    waitingFeePerHour: 200,
+    luggageFee: 100,
   },
   jeep: {
-    basePrice: 100,
+    basePrice: 2000,
     pricePerKm: 3,
-    nightSurcharge: 40,
-    waitingFeePerHour: 60,
-    luggageFee: 15,
+    nightSurcharge: 250,
+    waitingFeePerHour: 120,
+    luggageFee: 50,
   },
   coster: {
-    basePrice: 150,
+    basePrice: 2375, // Toyota Hiace baz fiyatı
     pricePerKm: 4,
-    nightSurcharge: 60,
-    waitingFeePerHour: 100,
-    luggageFee: 10,
+    nightSurcharge: 300,
+    waitingFeePerHour: 150,
+    luggageFee: 50,
   },
 };
 
+// Rota bazlı sabit fiyatlar (SAR'dan TL'ye çevrilmiş, 1 SAR = 9.5 TL)
+export interface RouteFixedPrice {
+  routeId: string;
+  sedan: number;
+  van: number;
+  coster: number; // Toyota Hiace
+}
+
+export const ROUTE_FIXED_PRICES: RouteFixedPrice[] = [
+  // Jeddah Havalimanı (JED) ↔ Mekke
+  { routeId: 'jeddah-airport-mecca', sedan: 1425, van: 1900, coster: 2375 },
+  { routeId: 'mecca-jeddah-airport', sedan: 1425, van: 1900, coster: 2375 },
+  
+  // Jeddah Havalimanı (JED) ↔ Medine
+  { routeId: 'jeddah-airport-medina', sedan: 3325, van: 3800, coster: 4275 },
+  { routeId: 'medina-jeddah-airport', sedan: 3325, van: 3800, coster: 4275 },
+  
+  // Mekke ↔ Medine
+  { routeId: 'mecca-medina', sedan: 2375, van: 2850, coster: 3325 },
+  { routeId: 'medina-mecca', sedan: 2375, van: 2850, coster: 3325 },
+  
+  // Medine Havalimanı (MED) ↔ Mekke (tahmini)
+  { routeId: 'medina-airport-mecca', sedan: 3500, van: 4000, coster: 4500 },
+  { routeId: 'mecca-medina-airport', sedan: 3500, van: 4000, coster: 4500 },
+  
+  // Medine Havalimanı (MED) ↔ Medine Şehir (tahmini)
+  { routeId: 'medina-airport-medina', sedan: 300, van: 400, coster: 500 },
+  { routeId: 'medina-medina-airport', sedan: 300, van: 400, coster: 500 },
+  
+  // Mekke Şehir İçi (tahmini)
+  { routeId: 'mecca-haram-to-hotel', sedan: 200, van: 300, coster: 400 },
+  { routeId: 'mecca-hotel-to-haram', sedan: 200, van: 300, coster: 400 },
+  
+  // Medine Şehir İçi (tahmini)
+  { routeId: 'medine-prophet-to-hotel', sedan: 200, van: 300, coster: 400 },
+  { routeId: 'medine-hotel-to-prophet', sedan: 200, van: 300, coster: 400 },
+];
+
 export interface PriceCalculationInput {
   vehicleType: VehicleType;
+  routeId?: string; // Rota ID'si (opsiyonel, rota bazlı fiyat için)
   distanceKm: number;
   isNightTime: boolean; // 00:00-06:00 arası mı?
   waitingHours?: number; // Bekleme süresi (saat)
@@ -75,18 +115,58 @@ export interface PriceCalculationResult {
 }
 
 /**
- * Transfer fiyatını hesaplar
+ * Rota bazlı sabit fiyatı getir
+ */
+export function getRouteFixedPrice(routeId: string, vehicleType: VehicleType): number | null {
+  const routePrice = ROUTE_FIXED_PRICES.find(r => r.routeId === routeId);
+  if (!routePrice) return null;
+  
+  switch (vehicleType) {
+    case 'sedan':
+      return routePrice.sedan;
+    case 'van':
+      return routePrice.van;
+    case 'coster':
+      return routePrice.coster;
+    case 'bus':
+      return routePrice.coster * 1.5; // Bus için %50 daha pahalı
+    case 'vip':
+      return routePrice.sedan * 2; // VIP için %100 daha pahalı
+    case 'jeep':
+      return routePrice.sedan * 1.3; // Jeep için %30 daha pahalı
+    default:
+      return routePrice.sedan;
+  }
+}
+
+/**
+ * Transfer fiyatını hesapla
  * @param input - Fiyat hesaplama parametreleri
  * @returns Detaylı fiyat hesaplaması
  */
 export function calculateTransferPrice(input: PriceCalculationInput): PriceCalculationResult {
   const pricing = VEHICLE_PRICING[input.vehicleType];
   
-  // Mesafe fiyatı
-  const distancePrice = input.distanceKm * pricing.pricePerKm;
+  // Önce rota bazlı sabit fiyatı kontrol et
+  let basePrice = pricing.basePrice;
+  let distancePrice = 0;
   
-  // Gece sürşarjı (00:00-06:00 arası)
-  const nightSurcharge = input.isNightTime ? pricing.nightSurcharge : 0;
+  if (input.routeId) {
+    const routePrice = getRouteFixedPrice(input.routeId, input.vehicleType);
+    if (routePrice) {
+      basePrice = routePrice;
+      distancePrice = 0; // Rota bazlı fiyat zaten mesafe dahil
+    } else {
+      // Rota bulunamazsa mesafe bazlı hesapla
+      distancePrice = input.distanceKm * pricing.pricePerKm;
+    }
+  } else {
+    // Rota ID yoksa mesafe bazlı hesapla
+    distancePrice = input.distanceKm * pricing.pricePerKm;
+  }
+  
+  // Gece sürşarjı (00:00-06:00 arası) - %20
+  const nightSurcharge = input.isNightTime ? Math.round(basePrice * 0.2) : 0;
   
   // Bekleme ücreti
   const waitingFee = (input.waitingHours || 0) * pricing.waitingFeePerHour;
@@ -95,16 +175,19 @@ export function calculateTransferPrice(input: PriceCalculationInput): PriceCalcu
   const luggageFee = (input.extraLuggage || 0) * pricing.luggageFee;
   
   // Toplam
-  const total = pricing.basePrice + distancePrice + nightSurcharge + waitingFee + luggageFee;
+  const total = basePrice + distancePrice + nightSurcharge + waitingFee + luggageFee;
   
   // Fatura detayları
   const breakdown: string[] = [
-    `Başlangıç ücreti: ${pricing.basePrice} TL`,
-    `Mesafe (${input.distanceKm} km × ${pricing.pricePerKm} TL): ${distancePrice.toFixed(0)} TL`,
+    `Transfer ücreti: ${basePrice} TL`,
   ];
   
+  if (distancePrice > 0) {
+    breakdown.push(`Mesafe (${input.distanceKm} km × ${pricing.pricePerKm} TL): ${distancePrice.toFixed(0)} TL`);
+  }
+  
   if (nightSurcharge > 0) {
-    breakdown.push(`Gece sürşarjı: ${nightSurcharge} TL`);
+    breakdown.push(`Gece sürşarjı (%20): ${nightSurcharge} TL`);
   }
   
   if (waitingFee > 0) {
@@ -116,7 +199,7 @@ export function calculateTransferPrice(input: PriceCalculationInput): PriceCalcu
   }
   
   return {
-    basePrice: pricing.basePrice,
+    basePrice,
     distancePrice,
     nightSurcharge,
     waitingFee,
@@ -144,20 +227,22 @@ export function isNightTime(timeString: string): boolean {
  * @returns Fiyat aralığı
  */
 export function estimateRoutePrice(
-  distanceKm: number,
+  routeId: string,
   vehicleType: VehicleType,
   pickupTime: string = '09:00'
 ): { min: number; max: number } {
   const baseCalc = calculateTransferPrice({
+    routeId,
     vehicleType,
-    distanceKm,
+    distanceKm: 0, // Rota bazlı fiyat kullanılacak
     isNightTime: isNightTime(pickupTime),
     passengerCount: 1,
   });
 
   const maxCalc = calculateTransferPrice({
+    routeId,
     vehicleType,
-    distanceKm,
+    distanceKm: 0,
     isNightTime: true,
     waitingHours: 1,
     extraLuggage: 2,
@@ -179,12 +264,44 @@ export function estimateRoutePrice(
 export function isVehicleSuitable(vehicleType: VehicleType, passengerCount: number): boolean {
   const capacities: Record<VehicleType, number> = {
     sedan: 4,
-    van: 8,
+    van: 7,
     bus: 50,
     vip: 4,
     jeep: 5,
-    coster: 15,
+    coster: 12,
   };
   
   return capacities[vehicleType] >= passengerCount;
+}
+
+/**
+ * Araç tipine göre kapasite getir
+ */
+export function getVehicleCapacity(vehicleType: VehicleType): number {
+  const capacities: Record<VehicleType, number> = {
+    sedan: 4,
+    van: 7,
+    bus: 50,
+    vip: 4,
+    jeep: 5,
+    coster: 12,
+  };
+  
+  return capacities[vehicleType];
+}
+
+/**
+ * Araç tipine göre bagaj kapasitesi getir
+ */
+export function getVehicleLuggageCapacity(vehicleType: VehicleType): number {
+  const capacities: Record<VehicleType, number> = {
+    sedan: 2,
+    van: 5,
+    bus: 20,
+    vip: 3,
+    jeep: 4,
+    coster: 8,
+  };
+  
+  return capacities[vehicleType];
 }

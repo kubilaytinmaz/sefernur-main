@@ -3,7 +3,7 @@
 import { FavoriteButton } from "@/components/favorites/FavoriteButton";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
-import { formatSarFromUsd, formatTlUsdPairFromUsd } from "@/lib/currency";
+import { formatTlUsdPairFromUsd } from "@/lib/currency";
 import { formatHotelAddress } from "@/lib/hotels/address-formatter";
 import { Building2, ChevronLeft, ChevronRight, MapPin, Star, Utensils } from "lucide-react";
 import Link from "next/link";
@@ -41,6 +41,7 @@ interface HotelCardProps {
   cityCode: number;
   viewMode?: "grid" | "list";
   showDistance?: boolean;
+  totalGuests?: number; // Total guests for per-person pricing
 }
 
 /* ────────── Helper Functions ────────── */
@@ -80,6 +81,7 @@ function GridCard({
   adults,
   cityCode,
   showDistance,
+  totalGuests,
 }: Omit<HotelCardProps, "viewMode">) {
   const nightCount = calculateNights(checkIn, checkOut);
   const imageUrl = getHotelImageUrl(hotel);
@@ -258,29 +260,28 @@ function GridCard({
 
           {/* Price */}
           <div className="pt-3 border-t border-slate-100">
-            <div className="flex items-end justify-between">
-              <div>
-                <p className="text-xs text-slate-500">Toplam {nightCount} gece</p>
+            <div className="flex items-end justify-between gap-3">
+              <div className="flex-1">
+                <p className="text-xs font-semibold text-slate-600 mb-1">
+                  {nightCount} gece toplam • {totalGuests || 2} kişi
+                </p>
                 <p className="text-xl font-bold text-emerald-700">
                   {formatTlUsdPairFromUsd(hotel.price)}
                 </p>
-                {nightCount > 1 && (
-                  <p className="text-xs text-slate-400">
-                    {formatTlUsdPairFromUsd(perNightPrice)}/gece
+                {totalGuests && totalGuests > 0 && (
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Kişi başı {formatTlUsdPairFromUsd(hotel.price / totalGuests)}
                   </p>
                 )}
-                <p className="text-[11px] text-slate-400 mt-0.5">
-                  {formatSarFromUsd(hotel.price)}
-                </p>
                </div>
               <button
                 onClick={(e) => {
                   e.preventDefault();
                   window.location.href = detailHref;
                 }}
-                className="px-4 py-2 text-sm font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors"
+                className="px-4 py-2.5 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors shadow-sm"
               >
-                Yer Durumuna Bak
+                Detaylar
               </button>
             </div>
           </div>
@@ -299,6 +300,7 @@ function ListCard({
   adults,
   cityCode,
   showDistance,
+  totalGuests,
 }: Omit<HotelCardProps, "viewMode">) {
   const nightCount = calculateNights(checkIn, checkOut);
   const imageUrl = getHotelImageUrl(hotel);
@@ -377,28 +379,27 @@ function ListCard({
               
                {/* Price */}
                <div className="text-right shrink-0">
-                 <p className="text-xs text-slate-500 mb-1">Toplam {nightCount} gece</p>
+                 <p className="text-xs font-semibold text-slate-600 mb-1">
+                   {nightCount} gece • {totalGuests || 2} kişi
+                 </p>
                  <p className="text-2xl font-bold text-emerald-700">
                    {formatTlUsdPairFromUsd(hotel.price)}
                  </p>
-                 {nightCount > 1 && (
-                   <p className="text-xs text-slate-400">
-                     {formatTlUsdPairFromUsd(perNightPrice)}/gece
+                 {totalGuests && totalGuests > 0 && (
+                   <p className="text-xs text-slate-500 mt-0.5">
+                     Kişi başı {formatTlUsdPairFromUsd(hotel.price / totalGuests)}
                    </p>
                  )}
-                 <p className="text-[11px] text-slate-400 mt-0.5">
-                   {formatSarFromUsd(hotel.price)}
-                 </p>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    window.location.href = detailHref;
-                  }}
-                  className="mt-2 px-4 py-2 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors"
-                >
-                  Rezervasyon
-                </button>
-              </div>
+                 <button
+                   onClick={(e) => {
+                     e.preventDefault();
+                     window.location.href = detailHref;
+                   }}
+                   className="mt-2 px-4 py-2 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors"
+                 >
+                   Detaylar
+                 </button>
+               </div>
             </div>
 
             {/* Rating & Amenities */}

@@ -588,7 +588,7 @@ export default function HotelDetailPage() {
   const checkOut = searchParams.get("checkOut") || DEFAULT_CHECK_OUT;
   const adults = Number(searchParams.get("adults") || "2");
   const cityCode = Number(searchParams.get("cityCode") || "164"); // Mekke default
-  const hotelNameFromUrl = searchParams.get("hotelName") || hotelId;
+  const hotelNameFromUrl = searchParams.get("hotelName") || "";
   const hotelAddressFromUrl = searchParams.get("hotelAddress") || "";
   // Validate image URL - reject Unsplash URLs, accept data URLs
   const rawImageParam = searchParams.get("image");
@@ -652,15 +652,25 @@ export default function HotelDetailPage() {
     if (apiName && apiName.trim() && !apiName.startsWith("Otel #")) {
       return apiName;
     }
-    return hotelNameFromUrl;
-  }, [hotelDetailQuery.data, hotelNameFromUrl]);
+    // Only use URL param if it's not empty and not the hotel ID
+    if (hotelNameFromUrl && hotelNameFromUrl !== hotelId) {
+      return hotelNameFromUrl;
+    }
+    // If API is loading, return empty to show skeleton
+    return "";
+  }, [hotelDetailQuery.data, hotelNameFromUrl, hotelId]);
 
   const hotelAddress = useMemo(() => {
     const apiAddress = hotelDetailQuery.data?.data?.address || hotelDetailQuery.data?.data?.fullAddress?.hotelStreetAddress;
     if (apiAddress && apiAddress.trim()) {
       return apiAddress;
     }
-    return hotelAddressFromUrl || "Adres bilgisi bulunamadı";
+    // Only use URL param if it's not empty
+    if (hotelAddressFromUrl && hotelAddressFromUrl.trim()) {
+      return hotelAddressFromUrl;
+    }
+    // If API is loading, return empty to show skeleton
+    return "";
   }, [hotelDetailQuery.data, hotelAddressFromUrl]);
 
   const stars = useMemo(() => {
@@ -668,7 +678,12 @@ export default function HotelDetailPage() {
     if (apiStars && Number(apiStars) > 0) {
       return Number(apiStars);
     }
-    return starsFromUrl;
+    // Only use URL param if it's valid
+    if (starsFromUrl > 0) {
+      return starsFromUrl;
+    }
+    // If API is loading, return 0 to hide stars
+    return 0;
   }, [hotelDetailQuery.data, starsFromUrl]);
 
   const nightCount = useMemo(() => {
@@ -939,11 +954,23 @@ export default function HotelDetailPage() {
             {/* Hotel Info Card */}
             <div className="lg:col-span-2 flex flex-col justify-center">
               <div className="bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 p-6 text-white">
-                <h1 className="text-2xl sm:text-3xl font-bold leading-tight mb-3">{hotelName}</h1>
-                {stars > 0 && <div className="mb-3"><StarRating count={stars} /></div>}
+                {/* Loading Skeleton for Hotel Name */}
+                {hotelDetailQuery.isLoading && !hotelName ? (
+                  <div className="space-y-3 mb-3">
+                    <div className="h-8 bg-white/20 rounded-lg animate-pulse w-3/4" />
+                    <div className="h-4 bg-white/20 rounded animate-pulse w-1/2" />
+                  </div>
+                ) : (
+                  <>
+                    <h1 className="text-2xl sm:text-3xl font-bold leading-tight mb-3">
+                      {hotelName || "Otel yükleniyor..."}
+                    </h1>
+                    {stars > 0 && <div className="mb-3"><StarRating count={stars} /></div>}
+                  </>
+                )}
                 <div className="flex items-start gap-2 text-white/80 text-sm mb-4">
                   <MapPin className="w-4 h-4 mt-0.5 shrink-0" />
-                  <span>{hotelAddress}</span>
+                  <span>{hotelAddress || "Adres yükleniyor..."}</span>
                 </div>
 
                 {/* Check-in/out info */}

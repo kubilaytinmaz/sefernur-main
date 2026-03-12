@@ -51,8 +51,20 @@ export function PopularServicesSection({
 
     // Müsait araçlardan en ucuz fiyatı bul
     const minPrice = Math.min(...availableVehicles.map(v => v.basePrice));
-    return `${minPrice}₺'den başlayan fiyatlar`;
-  }, [availableVehicles]);
+    
+    // Eğer bu tur seçiliyse, toplam fiyatı göster
+    if (selectedServiceIds.includes(service.id)) {
+      // Seçili turların toplam tur ücreti
+      const selectedTotal = selectedServiceIds.reduce((sum, id) => {
+        const svc = POPULAR_SERVICES.find(s => s.id === id);
+        return sum + (svc?.price.baseAmount ?? 0);
+      }, 0);
+      // En ucuz araç + toplam tur ücreti
+      return `${minPrice + selectedTotal}₺`;
+    }
+    
+    return `${minPrice}₺'den başlayan`;
+  }, [availableVehicles, selectedServiceIds]);
 
   // Seçim toggle işlemi
   const handleToggle = useCallback(
@@ -211,17 +223,16 @@ function ServiceCard({
 }: ServiceCardProps) {
 
   return (
-    <button
-      type="button"
+    <div
       onClick={() => onToggle(service.id)}
       className={cn(
-        "flex-shrink-0 w-56 text-left transition-all duration-200",
+        "flex-shrink-0 w-56 text-left transition-all duration-200 cursor-pointer",
         isSelected ? "scale-[1.02]" : "hover:scale-[1.01]"
       )}
     >
       <Card
         className={cn(
-          "h-full flex flex-col border-slate-200 transition-all cursor-pointer relative",
+          "h-full flex flex-col border-slate-200 transition-all relative",
           isSelected
             ? "border-cyan-500 ring-2 ring-cyan-200 shadow-lg bg-cyan-50"
             : "hover:border-cyan-300 hover:shadow-md bg-white"
@@ -329,7 +340,7 @@ function ServiceCard({
           </div>
         </CardContent>
       </Card>
-    </button>
+    </div>
   );
 }
 

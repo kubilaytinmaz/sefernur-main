@@ -1,13 +1,14 @@
 "use client";
 
 import { CampaignCards } from "@/components/CampaignCards";
+import { UpcomingUmrahTours } from "@/components/tours/UpcomingUmrahTours";
+import { CompactTransferCard } from "@/components/transfers/CompactTransferCard";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardContent } from "@/components/ui/Card";
 import { formatTlUsdPairFromTl } from "@/lib/currency";
 import {
   getActiveCampaigns,
   getActiveGuides,
-  getActiveTours,
   getActiveTransfers,
   getPlacesByCity,
   getTopReviews,
@@ -18,13 +19,11 @@ import {
   getMekkeWeather,
   getMonthLabels,
 } from "@/lib/weather";
-import { displayAddress } from "@/types/address";
+import "@/styles/animations.css";
 import type { GuideModel } from "@/types/guide";
 import type { PlaceModel } from "@/types/place";
 import type { UserReview } from "@/types/review";
 import { reviewTypeLabels } from "@/types/review";
-import type { TourModel } from "@/types/tour";
-import type { TransferModel } from "@/types/transfer";
 import { useQuery } from "@tanstack/react-query";
 import {
   ArrowRight,
@@ -33,7 +32,6 @@ import {
   Car,
   ChevronLeft,
   ChevronRight,
-  Clock,
   Compass,
   Hotel,
   MapPin,
@@ -44,8 +42,7 @@ import {
   Star,
   Sun,
   Thermometer,
-  UserCircle,
-  Users
+  UserCircle
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -66,10 +63,6 @@ export default function HomePage() {
   const campaignsQuery = useQuery({
     queryKey: ["home", "campaigns"],
     queryFn: () => getActiveCampaigns(8),
-  });
-  const toursQuery = useQuery({
-    queryKey: ["home", "tours"],
-    queryFn: () => getActiveTours(6),
   });
   const transfersQuery = useQuery({
     queryKey: ["home", "transfers"],
@@ -93,10 +86,6 @@ export default function HomePage() {
     queryFn: () => getTopReviews(6),
   });
 
-  const topTours = useMemo(
-    () => (toursQuery.data ?? []).slice(0, 3),
-    [toursQuery.data]
-  );
   const topTransfers = useMemo(
     () => (transfersQuery.data ?? []).slice(0, 3),
     [transfersQuery.data]
@@ -116,30 +105,62 @@ export default function HomePage() {
         medinePlaces={medinePlacesQuery.data ?? []}
         isLoading={mekkePlacesQuery.isLoading || medinePlacesQuery.isLoading}
       />
-      <DataSection
-        title="Öne Çıkan Turlar"
-        href="/tours"
-        isLoading={toursQuery.isLoading}
-        isError={toursQuery.isError}
-      >
-        <div className="grid md:grid-cols-3 gap-5">
-          {topTours.map((tour) => (
-            <TourCard key={tour.id} tour={tour} />
-          ))}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
+        <UpcomingUmrahTours limit={6} showTitle={true} />
+      </section>
+      {/* Modern Transfers Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <div className="w-1.5 h-12 rounded-full bg-gradient-to-b from-cyan-500 via-sky-500 to-blue-500" />
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
+                Öne Çıkan Transferler
+              </h2>
+              <p className="text-sm text-slate-500 mt-1">
+                Havalimanı, otel ve kutsal mekanlar arası güvenli transfer
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/transfers"
+            className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-50 to-sky-50 text-cyan-700 hover:from-cyan-100 hover:to-sky-100 font-medium text-sm transition-all duration-300 border border-cyan-200 hover:border-cyan-300 hover:shadow-md hover:shadow-cyan-500/10"
+          >
+            Tümünü Gör
+            <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
         </div>
-      </DataSection>
-      <DataSection
-        title="Öne Çıkan Transferler"
-        href="/transfers"
-        isLoading={transfersQuery.isLoading}
-        isError={transfersQuery.isError}
-      >
-        <div className="grid md:grid-cols-3 gap-5">
-          {topTransfers.map((transfer) => (
-            <TransferCard key={transfer.id} transfer={transfer} />
-          ))}
-        </div>
-      </DataSection>
+
+        {/* Loading State */}
+        {transfersQuery.isLoading ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="h-[300px] rounded-2xl bg-slate-200 animate-pulse" />
+            ))}
+          </div>
+        ) : null}
+
+        {/* Error State */}
+        {transfersQuery.isError ? (
+          <Card className="border-red-200 bg-red-50 hover:shadow-none">
+            <CardContent className="p-8 text-red-700">
+              Transfer verileri alınırken hata oluştu.
+            </CardContent>
+          </Card>
+        ) : null}
+
+        {/* Transfers Grid - 5 Card Horizontal Grid */}
+        {!transfersQuery.isLoading && !transfersQuery.isError && topTransfers.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {topTransfers.slice(0, 5).map((transfer, index) => (
+              <CompactTransferCard key={transfer.id} transfer={transfer} index={index} />
+            ))}
+          </div>
+        ) : null}
+      </section>
       <DataSection
         title="Öne Çıkan Rehberler"
         href="/guides"
@@ -686,97 +707,8 @@ function PlaceCityRow({ cityLabel, places }: { cityLabel: string; places: PlaceM
 }
 
 /* ═══════════════════════════════════════════════════════
-   5–7. TOUR / TRANSFER / GUIDE CARDS
+   5–6. GUIDE CARDS
    ═══════════════════════════════════════════════════════ */
-
-function TourCard({ tour }: { tour: TourModel }) {
-  const img = tour.images?.[0];
-  return (
-    <Link href={`/tours/${tour.id}`} className="group">
-      <Card className="border-slate-200 bg-white overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all">
-        <div className="relative h-48 overflow-hidden">
-          {img ? (
-            <Image src={img} alt={tour.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
-              <Compass className="w-10 h-10 text-emerald-400" />
-            </div>
-          )}
-          {tour.isPopular && (
-            <Badge className="absolute top-3 left-3 bg-amber-500 text-white border-0 text-xs">
-              Popüler
-            </Badge>
-          )}
-        </div>
-        <CardContent className="p-4">
-          <h3 className="font-semibold text-slate-900 line-clamp-1">{tour.title}</h3>
-          <div className="flex items-center gap-3 mt-2 text-xs text-slate-500">
-            {tour.durationDays > 0 && (
-              <span className="flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5" /> {tour.durationDays} gün
-              </span>
-            )}
-            {tour.airline && (
-              <span className="flex items-center gap-1">
-                <Plane className="w-3.5 h-3.5" /> {tour.airline}
-              </span>
-            )}
-          </div>
-          <div className="flex items-end justify-between mt-3">
-            <div>
-              <p className="text-xs text-slate-400">Başlangıç fiyatı</p>
-              <p className="text-lg font-bold text-emerald-700">
-                {formatTlUsdPairFromTl(tour.basePrice)}
-              </p>
-            </div>
-            {(tour.rating ?? 0) > 0 && (
-              <span className="flex items-center gap-1 text-sm text-amber-600 font-medium">
-                <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                {tour.rating?.toFixed(1)}
-              </span>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    </Link>
-  );
-}
-
-function TransferCard({ transfer }: { transfer: TransferModel }) {
-  const img = transfer.images?.[0];
-  return (
-    <Link href={`/transfers/${transfer.id}`} className="group">
-      <Card className="border-slate-200 bg-white overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all">
-        <div className="relative h-48 overflow-hidden">
-          {img ? (
-            <Image src={img} alt={transfer.vehicleType} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-cyan-100 to-cyan-200 flex items-center justify-center">
-              <Bus className="w-10 h-10 text-cyan-400" />
-            </div>
-          )}
-        </div>
-        <CardContent className="p-4">
-          <h3 className="font-semibold text-slate-900 line-clamp-1 capitalize">{transfer.vehicleName || transfer.vehicleType}</h3>
-          <p className="text-xs text-slate-500 mt-1 line-clamp-1">
-            {displayAddress(transfer.fromAddress)} → {displayAddress(transfer.toAddress)}
-          </p>
-          <div className="flex items-end justify-between mt-3">
-            <div>
-              <p className="text-xs text-slate-400">Fiyat</p>
-              <p className="text-lg font-bold text-cyan-700">
-                {formatTlUsdPairFromTl(transfer.basePrice)}
-              </p>
-            </div>
-            <span className="text-xs text-slate-500 flex items-center gap-1">
-              <Users className="w-3.5 h-3.5" /> {transfer.capacity} kişi
-            </span>
-          </div>
-        </CardContent>
-      </Card>
-    </Link>
-  );
-}
 
 function GuideCard({ guide }: { guide: GuideModel }) {
   const img = guide.images?.[0];

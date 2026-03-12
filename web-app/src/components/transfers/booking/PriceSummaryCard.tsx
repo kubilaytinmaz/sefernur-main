@@ -16,9 +16,10 @@ interface PriceSummaryCardProps {
   price: PriceBreakdown;
   passengerCount: number;
   tourName?: string;
+  tourCount?: number; // Çoklu tur sayısı
 }
 
-export function PriceSummaryCard({ price, passengerCount, tourName }: PriceSummaryCardProps) {
+export function PriceSummaryCard({ price, passengerCount, tourName, tourCount }: PriceSummaryCardProps) {
   const [showBreakdown, setShowBreakdown] = useState(false);
 
   const hasDiscount = price.couponDiscount > 0 || price.earlyBirdDiscount > 0;
@@ -60,13 +61,20 @@ export function PriceSummaryCard({ price, passengerCount, tourName }: PriceSumma
             <div className="flex items-center justify-between py-2 border-b border-emerald-100">
               <div>
                 <p className="text-sm font-medium text-slate-800">
-                  Tur Ücreti
-                  {tourName && <span className="text-xs text-slate-500 ml-1">({tourName})</span>}
+                  {tourCount && tourCount > 1
+                    ? `Turlar (${tourCount} adet)`
+                    : "Tur Ücreti"
+                  }
+                  {tourName && tourCount === 1 && (
+                    <span className="text-xs text-slate-500 ml-1">({tourName})</span>
+                  )}
                 </p>
                 <p className="text-xs text-slate-500">
                   {price.tourPricePerPerson > 0
                     ? `${formatTlUsdPairFromTl(price.tourPricePerPerson)} / kişi`
-                    : "Sabit fiyat"}
+                    : tourCount && tourCount > 1
+                      ? `${tourCount} tur için toplam`
+                      : "Sabit fiyat"}
                 </p>
               </div>
               <p className="text-sm font-semibold text-slate-900">

@@ -4,15 +4,15 @@
  */
 
 import type {
-    CalculatePriceInput,
-    CalculatePriceResult,
-    ContactInfo,
-    DateTimeInfo,
-    FormError,
-    PassengerInfo,
-    PriceBreakdown,
-    ValidateFormInput,
-    ValidateFormResult,
+  CalculatePriceInput,
+  CalculatePriceResult,
+  ContactInfo,
+  DateTimeInfo,
+  FormError,
+  PassengerInfo,
+  PriceBreakdown,
+  ValidateFormInput,
+  ValidateFormResult,
 } from "@/types/booking";
 import type { TransferModel } from "@/types/transfer";
 import type { PopularService } from "./popular-services-simple";
@@ -316,8 +316,26 @@ export function createReservationSubtitle(
 
 /**
  * URL'den slug'ı parse et ve ID'yi çıkar
+ * Tire içeren ID'leri (tour-*, guide-*, transfer-*) doğru parse eder
  */
 export function parseSlugWithId(slug: string): { slug: string; id: string } {
+  // Tur ID formatları: tour-*, guide-*, transfer-*
+  // Bu formatlara göre ID'yi bul
+
+  // Önce bilinen prefix'leri kontrol et
+  const knownPrefixes = ['tour-', 'guide-', 'transfer-'];
+
+  for (const prefix of knownPrefixes) {
+    const prefixIndex = slug.lastIndexOf(prefix);
+    if (prefixIndex !== -1) {
+      // Prefix bulundu, sonrası ID'dir
+      const id = slug.substring(prefixIndex);
+      const slugPart = slug.substring(0, prefixIndex - 1); // -1 tire için
+      return { slug: slugPart, id };
+    }
+  }
+
+  // Fallback: Eski davranış (son tire)
   const parts = slug.split("-");
   const id = parts[parts.length - 1];
   const slugPart = parts.slice(0, -1).join("-");

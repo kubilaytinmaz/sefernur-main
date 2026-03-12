@@ -11,48 +11,48 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { formatTlUsdPairFromTl } from "@/lib/currency";
 import { createReservation } from "@/lib/firebase/reservations";
 import {
-    calculateBookingPrice,
-    createReservationSubtitle,
-    createReservationTitle,
-    getDefaultContact,
-    getDefaultDateTime,
-    getDefaultPassengers,
-    getReservationType,
-    getTotalPassengers,
-    validateBookingForm,
+  calculateBookingPrice,
+  createReservationSubtitle,
+  createReservationTitle,
+  getDefaultContact,
+  getDefaultDateTime,
+  getDefaultPassengers,
+  getReservationType,
+  getTotalPassengers,
+  validateBookingForm,
 } from "@/lib/transfers/booking";
 import type { PopularService } from "@/lib/transfers/popular-services-simple";
 import { useAuthStore } from "@/store/auth";
 import type {
-    AddressInfo,
-    ContactInfo,
-    DateTimeInfo,
-    FlightInfo,
-    FormError,
-    PassengerInfo,
-    PriceBreakdown,
+  AddressInfo,
+  ContactInfo,
+  DateTimeInfo,
+  FlightInfo,
+  FormError,
+  PassengerInfo,
+  PriceBreakdown,
 } from "@/types/booking";
 import type { TransferModel } from "@/types/transfer";
 import { vehicleTypeLabels } from "@/types/transfer";
 import { useMutation } from "@tanstack/react-query";
 import {
-    Calendar,
-    CheckCircle2,
-    ChevronDown,
-    ChevronUp,
-    Clock,
-    FileText,
-    Mail,
-    MapPin,
-    MessageCircle,
-    Minus,
-    Phone,
-    Plane,
-    Plus,
-    Send,
-    User,
-    Users,
-    XCircle
+  Calendar,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  FileText,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Minus,
+  Phone,
+  Plane,
+  Plus,
+  Send,
+  User,
+  Users,
+  XCircle
 } from "lucide-react";
 import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
@@ -62,7 +62,9 @@ import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 interface BookingFormCardProps {
   transfer: TransferModel;
   tour?: PopularService;
+  extraTours?: PopularService[];
   onPriceChange?: (price: PriceBreakdown) => void;
+  onPassengerChange?: (count: number) => void;
 }
 
 /* ────────── Section Toggle ────────── */
@@ -117,7 +119,7 @@ function FieldError({ errors, field }: { errors: FormError[]; field: string }) {
 
 /* ────────── Main Form ────────── */
 
-export function BookingFormCard({ transfer, tour, onPriceChange }: BookingFormCardProps) {
+export function BookingFormCard({ transfer, tour, extraTours = [], onPriceChange, onPassengerChange }: BookingFormCardProps) {
   const user = useAuthStore((state) => state.user);
   const vehicleLabel = vehicleTypeLabels[transfer.vehicleType] || transfer.vehicleType;
 
@@ -153,26 +155,65 @@ export function BookingFormCard({ transfer, tour, onPriceChange }: BookingFormCa
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitErrorMsg, setSubmitErrorMsg] = useState("");
 
-  // ── Price Calculation ──
-  const priceResult = useMemo(
-    () =>
-      calculateBookingPrice({
-        transfer,
-        tour,
-        dateTime,
-        passengers,
-        luggageCount,
-        childSeatNeeded,
-        couponCode: couponCode.trim() || undefined,
-      }),
-    [transfer, tour, dateTime, passengers, luggageCount, childSeatNeeded, couponCode]
-  );
+  // Tüm turları birleştir (ana tur + ek turlar)
+  const allTours = useMemo(() => {
+    const tours: PopularService[] = [];
+    if (tour) tours.push(tour);
+    tours.push(...extraTours);
+    return tours;
+  }, [tour, extraTours]);
+
+  // ── Price Calculation ── (çoklu tur desteği)
+  const priceResult = useMemo(() => {
+    // Ana tur ile temel fiyat hesapla
+    const baseResult = calculateBookingPrice({
+      transfer,
+      tour,
+      dateTime,
+      passengers,
+      luggageCount,
+      childSeatNeeded,
+      couponCode: couponCode.trim() || undefined,
+    });
+
+    // Ek turların fiyatlarını topla
+    if (extraTours.length > 0) {
+      let extraTourTotal = 0;
+      for (const extraTour of extraTours) {
+        if (extraTour.price.type === "per_person") {
+          extraTourTotal += extraTour.price.baseAmount * getTotalPassengers(passengers);
+        } else {
+          extraTourTotal += extraTour.price.baseAmount;
+        }
+      }
+
+      // Ek tur fiyatlarını mevcut sonuca ekle
+      baseResult.price.tourPrice += extraTourTotal;
+      baseResult.price.subtotal += extraTourTotal;
+      baseResult.price.total += extraTourTotal;
+
+      // Breakdown'a ek turları ekle
+      for (const extraTour of extraTours) {
+        const price = extraTour.price.type === "per_person"
+          ? extraTour.price.baseAmount * getTotalPassengers(passengers)
+          : extraTour.price.baseAmount;
+        baseResult.price.breakdown.push(`Ek tur (${extraTour.name}): ${price}₺`);
+      }
+    }
+
+    return baseResult;
+  }, [transfer, tour, extraTours, dateTime, passengers, luggageCount, childSeatNeeded, couponCode]);
 
   useEffect(() => {
     onPriceChange?.(priceResult.price);
   }, [priceResult.price, onPriceChange]);
 
   const totalPassengers = getTotalPassengers(passengers);
+
+  // Yolcu sayısı değiştiğinde parent'a bildir
+  useEffect(() => {
+    onPassengerChange?.(totalPassengers);
+  }, [totalPassengers, onPassengerChange]);
 
   // ── Mutation ──
   const reservationMutation = useMutation({
@@ -183,10 +224,14 @@ export function BookingFormCard({ transfer, tour, onPriceChange }: BookingFormCa
 
       return createReservation({
         userId: user.id,
-        type: getReservationType(tour),
+        type: getReservationType(tour || extraTours[0]),
         itemId: transfer.id || "",
-        title: createReservationTitle(transfer, tour),
-        subtitle: createReservationSubtitle(transfer, tour, passengers, dateTime),
+        title: allTours.length > 1
+          ? `${transfer.vehicleName || vehicleLabel} + ${allTours.length} Tur`
+          : createReservationTitle(transfer, tour),
+        subtitle: allTours.length > 1
+          ? `${allTours.map(t => t.name).join(' + ')} • ${dateTime.pickupDate.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })} • ${getTotalPassengers(passengers)} Yolcu`
+          : createReservationSubtitle(transfer, tour, passengers, dateTime),
         imageUrl: transfer.images[0] || "",
         startDate: dateTime.pickupDate,
         endDate: dateTime.returnDate || dateTime.pickupDate,
@@ -199,7 +244,7 @@ export function BookingFormCard({ transfer, tour, onPriceChange }: BookingFormCa
         userEmail: contact.email,
         notes: [
           notes.trim(),
-          tour ? `Tur: ${tour.name}` : "",
+          allTours.length > 0 ? `Turlar: ${allTours.map(t => t.name).join(', ')}` : "",
           addresses.pickup ? `Alış: ${addresses.pickup}` : "",
           addresses.dropoff ? `Bırakış: ${addresses.dropoff}` : "",
           flightInfo?.flightNumber ? `Uçuş: ${flightInfo.flightNumber}` : "",
@@ -271,10 +316,10 @@ export function BookingFormCard({ transfer, tour, onPriceChange }: BookingFormCa
               <span className="text-slate-500">Araç</span>
               <span className="font-medium text-slate-900">{vehicleLabel}</span>
             </div>
-            {tour && (
+            {allTours.length > 0 && (
               <div className="flex justify-between text-sm">
-                <span className="text-slate-500">Tur</span>
-                <span className="font-medium text-slate-900">{tour.name}</span>
+                <span className="text-slate-500">{allTours.length > 1 ? 'Turlar' : 'Tur'}</span>
+                <span className="font-medium text-slate-900">{allTours.map(t => t.name).join(' + ')}</span>
               </div>
             )}
             <div className="flex justify-between text-sm">
@@ -676,7 +721,12 @@ export function BookingFormCard({ transfer, tour, onPriceChange }: BookingFormCa
                 </div>
                 {priceResult.price.tourPrice > 0 && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-600">Tur ({tour?.name})</span>
+                    <span className="text-slate-600">
+                      {allTours.length > 1
+                        ? `Turlar (${allTours.length} adet)`
+                        : `Tur (${tour?.name || allTours[0]?.name})`
+                      }
+                    </span>
                     <span className="font-medium text-slate-900">
                       {formatTlUsdPairFromTl(priceResult.price.tourPrice)}
                     </span>

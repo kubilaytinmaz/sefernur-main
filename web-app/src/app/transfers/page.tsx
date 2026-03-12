@@ -164,7 +164,7 @@ export default function TransfersPage() {
               <TransferCard
                 key={transfer.id}
                 transfer={transfer}
-                selectedService={selectedServices[0]}
+                selectedServices={selectedServices}
               />
             ))}
           </div>
@@ -178,60 +178,92 @@ export default function TransfersPage() {
 
 function TransferCard({
   transfer,
-  selectedService
+  selectedServices
 }: {
   transfer: TransferModel;
-  selectedService: PopularService | undefined;
+  selectedServices: PopularService[];
 }) {
   const firstImage = transfer.images?.[0];
   const vehicleLabel = vehicleTypeLabels[transfer.vehicleType] || transfer.vehicleType;
   
-  // Seçili hizmete göre fiyat hesaplama
+  // Seçili hizmetlere göre toplam fiyat hesaplama (çoklu seçim destekli)
   const displayPrice = useMemo(() => {
-    if (!selectedService) {
+    if (selectedServices.length === 0) {
       return transfer.basePrice;
     }
 
-    if (selectedService.type === 'transfer') {
-      // Transfer seçiliyse: Mesafe bazlı fiyat hesaplama
-      const distanceKm = selectedService.distance?.km || 0;
-      if (distanceKm > 0) {
-        const priceCalc = calculateTransferPrice({
-          vehicleType: transfer.vehicleType,
-          distanceKm,
-          isNightTime: false,
-          waitingHours: 0,
-          extraLuggage: 0,
-          passengerCount: 1,
-        });
-        return priceCalc.total;
-      }
-      return selectedService.price.baseAmount;
-    } else {
-      // Tur/Rehber seçiliyse: Baz transfer fiyatı + tur/rehber ücreti
-      // Şehir içi kısa transfer ücreti + kişi başı tur ücreti
-      const baseTransferPrice = transfer.basePrice;
-      const tourPrice = selectedService.price.baseAmount;
-      return baseTransferPrice + tourPrice;
-    }
-  }, [selectedService, transfer]);
+    // Baz transfer fiyatı her zaman dahil
+    let totalPrice = transfer.basePrice;
 
-  // Fiyat değişim göstergesi
+    // Her seçili hizmetin fiyatını ekle
+    for (const service of selectedServices) {
+      if (service.type === 'transfer') {
+        // Transfer hizmeti: Mesafe bazlı fiyat hesaplama
+        const distanceKm = service.distance?.km || 0;
+        if (distanceKm > 0) {
+          const priceCalc = calculateTransferPrice({
+            vehicleType: transfer.vehicleType,
+            distanceKm,
+            isNightTime: false,
+            waitingHours: 0,
+            extraLuggage: 0,
+            passengerCount: 1,
+          });
+          // Transfer seçildiğinde, baz fiyatı çıkarıp mesafe bazlı fiyat koy
+          totalPrice = totalPrice - transfer.basePrice + priceCalc.total;
+        } else {
+          totalPrice = totalPrice - transfer.basePrice + service.price.baseAmount;
+        }
+      } else {
+        // Tur/Rehber: Hizmet ücretini ekle
+        totalPrice += service.price.baseAmount;
+      }
+    }
+
+    return totalPrice;
+  }, [selectedServices, transfer]);
+
+  // Fiyat değişim göstergesi - çoklu seçim destekli
   const priceLabel = useMemo(() => {
-    if (!selectedService) return 'Başlangıç';
-    if (selectedService.type === 'transfer') return 'Seçili Rota';
-    return 'Transfer + ' + (selectedService.type === 'tour' ? 'Tur' : 'Rehber');
-  }, [selectedService]);
+    if (selectedServices.length === 0) return 'Başlangıç';
+    if (selectedServices.length === 1) {
+      const svc = selectedServices[0];
+      if (svc.type === 'transfer') return 'Seçili Rota';
+      return 'Transfer + ' + (svc.type === 'tour' ? 'Tur' : 'Rehber');
+    }
+    // Çoklu seçim
+    return `Transfer + ${selectedServices.length} Hizmet`;
+  }, [selectedServices]);
+
+  // Seçili hizmet isimleri özeti
+  const servicesSummary = useMemo(() => {
+    if (selectedServices.length === 0) return null;
+    if (selectedServices.length === 1) return selectedServices[0].name;
+    return selectedServices.map(s => s.name).join(' + ');
+  }, [selectedServices]);
 
   // SEO uyumlu Türkçe URL oluştur
   const vehicleName = transfer.vehicleName || vehicleLabel;
   const vehicleSlug = `${createSlug(vehicleName)}-${transfer.id}`;
-  const tourSlug = selectedService ? `${createSlug(selectedService.name)}-${selectedService.id}` : null;
   
-  // Booking URL: Tur varsa tur ile, yoksa sadece araç
-  const bookingUrl = tourSlug
-    ? `/transfer-rezervasyon/${vehicleSlug}/${tourSlug}`
-    : `/transfer-rezervasyon/${vehicleSlug}/tursuz`;
+  // Booking URL: İlk seçili tur veya tursuz
+  // Çoklu tur seçiminde tüm turları query param olarak gönder
+  const bookingUrl = useMemo(() => {
+    if (selectedServices.length === 0) {
+      return `/transfer-rezervasyon/${vehicleSlug}/tursuz`;
+    }
+    // İlk turu slug olarak kullan
+    const firstService = selectedServices[0];
+    const tourSlug = `${createSlug(firstService.name)}-${firstService.id}`;
+    const baseUrl = `/transfer-rezervasyon/${vehicleSlug}/${tourSlug}`;
+    
+    // Birden fazla tur seçilmişse, ek turları query param olarak ekle
+    if (selectedServices.length > 1) {
+      const extraTourIds = selectedServices.slice(1).map(s => s.id).join(',');
+      return `${baseUrl}?extraTours=${extraTourIds}`;
+    }
+    return baseUrl;
+  }, [selectedServices, vehicleSlug]);
 
   return (
     <Link href={bookingUrl}>
@@ -347,9 +379,9 @@ function TransferCard({
               <p className="text-base font-bold text-cyan-700 leading-tight">
                 {formatTlUsdPairFromTl(displayPrice)}
               </p>
-              {selectedService && (
-                <p className="text-[9px] text-slate-400 mt-0.5">
-                  {selectedService.name}
+              {servicesSummary && (
+                <p className="text-[9px] text-slate-400 mt-0.5 max-w-[140px] line-clamp-2 text-right">
+                  {servicesSummary}
                 </p>
               )}
             </div>

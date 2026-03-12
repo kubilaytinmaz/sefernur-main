@@ -1,7 +1,7 @@
 /**
  * Admin Panel – Firestore CRUD & aggregation functions
  *
- * Covers: Reservations, Users, Contact Messages, Visa Applications, Dashboard Stats
+ * Covers: Reservations, Users, Contact Messages, Visa Applications, Dashboard Stats, Popular Services, Transfer Pricing
  */
 
 import { AddressModel } from "@/types/address";
@@ -11,28 +11,42 @@ import { ContactMessageModel, ContactSubject } from "@/types/contact";
 import { GuideModel } from "@/types/guide";
 import { HotelCategory, HotelModel, RoomType } from "@/types/hotel";
 import { PlaceCity, PlaceModel } from "@/types/place";
+import { PopularServiceModel } from "@/types/popular-service";
 import { PromotionModel, PromotionTargetType } from "@/types/promotion";
 import { ReservationModel, ReservationStatus, ReservationType } from "@/types/reservation";
 import { DEFAULT_SITE_SETTINGS, SiteSettings } from "@/types/site-settings";
 import { TourCategory, TourModel } from "@/types/tour";
 import { TransferModel, VehicleAmenity, VehicleType } from "@/types/transfer";
+import {
+  LocationFilters,
+  RouteFilters,
+  TransferLocationModel,
+  TransferLocationType,
+  TransferRouteCategory,
+  TransferRouteModel,
+} from "@/types/transfer-location";
+import {
+  RoutePricingModel,
+  TransferPricingDocument,
+  VehiclePricingModel,
+} from "@/types/transfer-pricing";
 import { rolesFromFirestore, rolesToFirestore, RoleType, UserModel } from "@/types/user";
 import { VisaApplicationModel, VisaStatus } from "@/types/visa";
 import {
-    addDoc,
-    collection,
-    deleteDoc,
-    doc,
-    getDoc,
-    getDocs,
-    limit,
-    query,
-    QueryConstraint,
-    serverTimestamp,
-    setDoc,
-    Timestamp,
-    updateDoc,
-    where
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  query,
+  QueryConstraint,
+  serverTimestamp,
+  setDoc,
+  Timestamp,
+  updateDoc,
+  where
 } from "firebase/firestore";
 import { db, storage } from "./config";
 import { COLLECTIONS } from "./firestore";
@@ -79,6 +93,14 @@ function sortByCreatedAtDesc<T extends { createdAt?: Date }>(items: T[]): T[] {
   return [...items].sort((a, b) => {
     const aTime = a.createdAt?.getTime() ?? 0;
     const bTime = b.createdAt?.getTime() ?? 0;
+    return bTime - aTime;
+  });
+}
+
+function sortByUpdatedAtDesc<T extends { updatedAt?: Date }>(items: T[]): T[] {
+  return [...items].sort((a, b) => {
+    const aTime = a.updatedAt?.getTime() ?? 0;
+    const bTime = b.updatedAt?.getTime() ?? 0;
     return bTime - aTime;
   });
 }
@@ -1225,4 +1247,828 @@ export async function uploadSiteLogo(file: File): Promise<string> {
   const fileRef = storageRef(storage, `site/logo.${ext}`);
   await upload(fileRef, file, { contentType: file.type });
   return getUrl(fileRef);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// ─── POPULAR SERVICES MANAGEMENT ────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+
+function mapPopularService(id: string, d: Record<string, unknown>): PopularServiceModel {
+  const distanceObj = d.distance as Record<string, unknown> | undefined;
+  const durationObj = d.duration as Record<string, unknown>;
+  const priceObj = d.price as Record<string, unknown>;
+  const routeObj = d.route as Record<string, unknown> | undefined;
+  const tourDetailsObj = d.tourDetails as Record<string, unknown> | undefined;
+  
+  return {
+    id,
+    type: (readString(d.type) || "tour") as PopularServiceModel["type"],
+    name: readString(d.name),
+    nameEn: readString(d.nameEn) || undefined,
+    nameTr: readString(d.nameTr) || undefined,
+    description: readString(d.description),
+    descriptionEn: readString(d.descriptionEn) || undefined,
+    descriptionTr: readString(d.descriptionTr) || undefined,
+    icon: readString(d.icon),
+    distance: distanceObj ? {
+      km: readNumber(distanceObj.km),
+      text: readString(distanceObj.text),
+    } : undefined,
+    duration: {
+      text: readString(durationObj.text),
+      hours: readNumber(durationObj.hours),
+    },
+    price: {
+      display: readString(priceObj.display),
+      baseAmount: readNumber(priceObj.baseAmount),
+      type: (readString(priceObj.type) || "fixed") as PopularServiceModel["price"]["type"],
+    },
+    route: routeObj ? {
+      from: readString(routeObj.from),
+      to: readString(routeObj.to),
+      stops: readStringArray(routeObj.stops),
+    } : undefined,
+    tourDetails: tourDetailsObj ? {
+      highlights: readStringArray(tourDetailsObj.highlights),
+      includes: readStringArray(tourDetailsObj.includes),
+      minParticipants: readNumber(tourDetailsObj.minParticipants),
+      maxParticipants: readNumber(tourDetailsObj.maxParticipants),
+      fullDescription: readString(tourDetailsObj.fullDescription) || undefined,
+      stopsDescription: Array.isArray(tourDetailsObj.stopsDescription)
+        ? (tourDetailsObj.stopsDescription as { stopName: string; description: string }[])
+        : undefined,
+    } : undefined,
+    isPopular: d.isPopular === true,
+    order: readNumber(d.order) || 0,
+    createdAt: asDate(d.createdAt),
+    updatedAt: asDate(d.updatedAt),
+  };
+}
+
+export interface PopularServiceFilters {
+  type?: PopularServiceModel["type"];
+  isPopular?: boolean;
+  minPrice?: number;
+  maxPrice?: number;
+  search?: string;
+}
+
+export async function getAllPopularServices(
+  filters?: PopularServiceFilters,
+): Promise<PopularServiceModel[]> {
+  const constraints: QueryConstraint[] = [];
+  
+  const items = await fetchAll(COLLECTIONS.POPULAR_SERVICES, constraints, mapPopularService);
+  
+  let filtered = items;
+  
+  // Apply filters
+  if (filters?.type) {
+    filtered = filtered.filter((s) => s.type === filters.type);
+  }
+  if (filters?.isPopular !== undefined) {
+    filtered = filtered.filter((s) => s.isPopular === filters.isPopular);
+  }
+  if (filters?.minPrice !== undefined) {
+    filtered = filtered.filter((s) => s.price.baseAmount >= filters.minPrice!);
+  }
+  if (filters?.maxPrice !== undefined) {
+    filtered = filtered.filter((s) => s.price.baseAmount <= filters.maxPrice!);
+  }
+  if (filters?.search) {
+    const term = filters.search.toLowerCase();
+    filtered = filtered.filter((s) =>
+      s.name.toLowerCase().includes(term) ||
+      s.description.toLowerCase().includes(term) ||
+      s.nameEn?.toLowerCase().includes(term) ||
+      s.nameTr?.toLowerCase().includes(term),
+    );
+  }
+  
+  // Sort by order
+  return filtered.sort((a, b) => a.order - b.order);
+}
+
+export async function getPopularServiceById(id: string): Promise<PopularServiceModel | null> {
+  const snap = await getDoc(doc(db, COLLECTIONS.POPULAR_SERVICES, id));
+  if (!snap.exists()) return null;
+  return mapPopularService(snap.id, snap.data() as Record<string, unknown>);
+}
+
+export async function createPopularService(
+  data: Omit<PopularServiceModel, "id" | "createdAt" | "updatedAt">,
+): Promise<string> {
+  const ref = await addDoc(collection(db, COLLECTIONS.POPULAR_SERVICES), {
+    ...data,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+  return ref.id;
+}
+
+export async function updatePopularService(
+  id: string,
+  data: Partial<PopularServiceModel>,
+): Promise<void> {
+  const { id: _id, createdAt: _ca, ...rest } = data;
+  void _id; void _ca;
+  await updateDoc(doc(db, COLLECTIONS.POPULAR_SERVICES, id), {
+    ...rest,
+    updatedAt: serverTimestamp(),
+  });
+}
+
+export async function deletePopularService(id: string): Promise<void> {
+  await deleteDoc(doc(db, COLLECTIONS.POPULAR_SERVICES, id));
+}
+
+export async function reorderPopularServices(
+  order: { id: string; order: number }[],
+): Promise<void> {
+  const { writeBatch } = await import("firebase/firestore");
+  const b = writeBatch(db);
+  
+  for (const item of order) {
+    const ref = doc(db, COLLECTIONS.POPULAR_SERVICES, item.id);
+    b.update(ref, { order: item.order, updatedAt: serverTimestamp() });
+  }
+  
+  await b.commit();
+}
+
+export async function getPopularServiceStats(): Promise<{
+  total: number;
+  popular: number;
+  byType: Record<string, number>;
+}> {
+  const all = await getAllPopularServices();
+  
+  return {
+    total: all.length,
+    popular: all.filter((s) => s.isPopular).length,
+    byType: {
+      transfer: all.filter((s) => s.type === "transfer").length,
+      tour: all.filter((s) => s.type === "tour").length,
+      guide: all.filter((s) => s.type === "guide").length,
+    },
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// ─── TRANSFER PRICING MANAGEMENT ─────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+
+function mapVehiclePricing(id: string, d: Record<string, unknown>): VehiclePricingModel {
+  return {
+    id,
+    type: "vehicle_type" as const,
+    vehicleType: (readString(d.vehicleType) || "sedan") as VehicleType,
+    basePrice: readNumber(d.basePrice),
+    pricePerKm: readNumber(d.pricePerKm),
+    nightSurcharge: readNumber(d.nightSurcharge),
+    waitingFeePerHour: readNumber(d.waitingFeePerHour),
+    luggageFee: readNumber(d.luggageFee),
+    updatedAt: asDate(d.updatedAt) ?? new Date(),
+    updatedBy: readString(d.updatedBy),
+  };
+}
+
+function mapRoutePricing(id: string, d: Record<string, unknown>): RoutePricingModel {
+  const pricesObj = d.prices as Record<string, unknown> | undefined;
+  return {
+    id,
+    type: "route" as const,
+    routeId: readString(d.routeId),
+    routeName: readString(d.routeName),
+    fromCity: readString(d.fromCity),
+    toCity: readString(d.toCity),
+    distanceKm: readNumber(d.distanceKm),
+    prices: {
+      sedan: readNumber(pricesObj?.sedan),
+      van: readNumber(pricesObj?.van),
+      coster: readNumber(pricesObj?.coster),
+      bus: pricesObj?.bus ? readNumber(pricesObj.bus) : undefined,
+      vip: pricesObj?.vip ? readNumber(pricesObj.vip) : undefined,
+      jeep: pricesObj?.jeep ? readNumber(pricesObj.jeep) : undefined,
+    },
+    updatedAt: asDate(d.updatedAt) ?? new Date(),
+    updatedBy: readString(d.updatedBy),
+  };
+}
+
+// ─── Vehicle Pricing Functions ────────────────────────────────────────────
+
+export async function getAllVehiclePricing(): Promise<VehiclePricingModel[]> {
+  const constraints: QueryConstraint[] = [where("type", "==", "vehicle_type")];
+  const items = await fetchAll(COLLECTIONS.TRANSFER_PRICING, constraints, mapVehiclePricing);
+  return sortByUpdatedAtDesc(items);
+}
+
+export async function getVehiclePricingByType(
+  vehicleType: VehicleType,
+): Promise<VehiclePricingModel | null> {
+  const constraints: QueryConstraint[] = [
+    where("type", "==", "vehicle_type"),
+    where("vehicleType", "==", vehicleType),
+  ];
+  const items = await fetchAll(COLLECTIONS.TRANSFER_PRICING, constraints, mapVehiclePricing);
+  return items.length > 0 ? items[0] : null;
+}
+
+export async function updateVehiclePricing(
+  vehicleType: VehicleType,
+  data: Partial<Omit<VehiclePricingModel, "id" | "type" | "vehicleType">>,
+  updatedBy: string,
+): Promise<void> {
+  const existing = await getVehiclePricingByType(vehicleType);
+  const docId = existing?.id || vehicleType;
+  
+  const docData = {
+    type: "vehicle_type",
+    vehicleType,
+    ...data,
+    updatedAt: serverTimestamp(),
+    updatedBy,
+  };
+
+  if (existing) {
+    await updateDoc(doc(db, COLLECTIONS.TRANSFER_PRICING, docId), docData);
+  } else {
+    await setDoc(doc(db, COLLECTIONS.TRANSFER_PRICING, docId), docData);
+  }
+}
+
+// ─── Route Pricing Functions ──────────────────────────────────────────────
+
+export async function getAllRoutePricing(): Promise<RoutePricingModel[]> {
+  const constraints: QueryConstraint[] = [where("type", "==", "route")];
+  const items = await fetchAll(COLLECTIONS.TRANSFER_PRICING, constraints, mapRoutePricing);
+  return sortByUpdatedAtDesc(items);
+}
+
+export async function getRoutePricingById(routeId: string): Promise<RoutePricingModel | null> {
+  const constraints: QueryConstraint[] = [
+    where("type", "==", "route"),
+    where("routeId", "==", routeId),
+  ];
+  const items = await fetchAll(COLLECTIONS.TRANSFER_PRICING, constraints, mapRoutePricing);
+  return items.length > 0 ? items[0] : null;
+}
+
+export async function createRoutePricing(
+  data: Omit<RoutePricingModel, "id" | "type" | "updatedAt" | "updatedBy">,
+  updatedBy: string,
+): Promise<string> {
+  const docData = {
+    type: "route",
+    ...data,
+    updatedAt: serverTimestamp(),
+    updatedBy,
+  };
+  const ref = await addDoc(collection(db, COLLECTIONS.TRANSFER_PRICING), docData);
+  return ref.id;
+}
+
+export async function updateRoutePricing(
+  routeId: string,
+  data: Partial<Omit<RoutePricingModel, "id" | "type" | "routeId" | "updatedAt" | "updatedBy">>,
+  updatedBy: string,
+): Promise<void> {
+  const existing = await getRoutePricingById(routeId);
+  if (!existing) {
+    throw new Error(`Route pricing not found: ${routeId}`);
+  }
+  
+  const docData = {
+    ...data,
+    updatedAt: serverTimestamp(),
+    updatedBy,
+  };
+  
+  await updateDoc(doc(db, COLLECTIONS.TRANSFER_PRICING, existing.id), docData);
+}
+
+export async function deleteRoutePricing(routeId: string): Promise<void> {
+  const existing = await getRoutePricingById(routeId);
+  if (!existing) {
+    throw new Error(`Route pricing not found: ${routeId}`);
+  }
+  await deleteDoc(doc(db, COLLECTIONS.TRANSFER_PRICING, existing.id));
+}
+
+// ─── All Transfer Pricing Functions ───────────────────────────────────────
+
+export async function getAllTransferPricing(): Promise<TransferPricingDocument[]> {
+  const items = await fetchAll(
+    COLLECTIONS.TRANSFER_PRICING,
+    [],
+    (id, d) => {
+      const type = readString(d.type);
+      if (type === "vehicle_type") {
+        return mapVehiclePricing(id, d);
+      } else if (type === "route") {
+        return mapRoutePricing(id, d);
+      }
+      throw new Error(`Unknown pricing type: ${type}`);
+    },
+  );
+  return sortByUpdatedAtDesc(items);
+}
+
+export async function getTransferPricingStats(): Promise<{
+  vehicleTypes: number;
+  routes: number;
+}> {
+  const all = await getAllTransferPricing();
+  return {
+    vehicleTypes: all.filter((p) => p.type === "vehicle_type").length,
+    routes: all.filter((p) => p.type === "route").length,
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// ─── TRANSFER LOCATION MANAGEMENT ────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+
+function mapTransferLocation(id: string, d: Record<string, unknown>): TransferLocationModel {
+  const coordsObj = d.coordinates as Record<string, unknown> | undefined;
+  return {
+    id,
+    name: readString(d.name),
+    nameEn: readString(d.nameEn),
+    nameTr: readString(d.nameTr),
+    type: (readString(d.type) || "city") as TransferLocationType,
+    city: readString(d.city),
+    country: readString(d.country),
+    address: readString(d.address) || undefined,
+    coordinates: {
+      latitude: readNumber(coordsObj?.latitude),
+      longitude: readNumber(coordsObj?.longitude),
+    },
+    icon: readString(d.icon),
+    description: readString(d.description) || undefined,
+    descriptionEn: readString(d.descriptionEn) || undefined,
+    descriptionTr: readString(d.descriptionTr) || undefined,
+    isPopular: d.isPopular === true,
+    usageCount: readNumber(d.usageCount),
+    createdAt: asDate(d.createdAt),
+    updatedAt: asDate(d.updatedAt),
+  };
+}
+
+export async function getAllTransferLocations(
+  filters?: LocationFilters,
+): Promise<TransferLocationModel[]> {
+  const constraints: QueryConstraint[] = [];
+
+  if (filters?.type) constraints.push(where("type", "==", filters.type));
+  if (filters?.isPopular !== undefined) constraints.push(where("isPopular", "==", filters.isPopular));
+
+  const items = await fetchAll(COLLECTIONS.TRANSFER_LOCATIONS, constraints, mapTransferLocation);
+
+  let filtered = items;
+
+  if (filters?.city) {
+    const cityTerm = filters.city.toLowerCase();
+    filtered = filtered.filter((l) => l.city.toLowerCase().includes(cityTerm));
+  }
+  if (filters?.search) {
+    const term = filters.search.toLowerCase();
+    filtered = filtered.filter(
+      (l) =>
+        l.name.toLowerCase().includes(term) ||
+        l.nameEn.toLowerCase().includes(term) ||
+        l.nameTr.toLowerCase().includes(term) ||
+        l.city.toLowerCase().includes(term),
+    );
+  }
+
+  return sortByCreatedAtDesc(filtered);
+}
+
+export async function getTransferLocationById(id: string): Promise<TransferLocationModel | null> {
+  const snap = await getDoc(doc(db, COLLECTIONS.TRANSFER_LOCATIONS, id));
+  if (!snap.exists()) return null;
+  return mapTransferLocation(snap.id, snap.data() as Record<string, unknown>);
+}
+
+export async function createTransferLocation(
+  data: Omit<TransferLocationModel, "id" | "createdAt" | "updatedAt">,
+): Promise<string> {
+  const ref = await addDoc(collection(db, COLLECTIONS.TRANSFER_LOCATIONS), {
+    ...data,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+  return ref.id;
+}
+
+export async function updateTransferLocation(
+  id: string,
+  data: Partial<TransferLocationModel>,
+): Promise<void> {
+  const { id: _id, createdAt: _ca, ...rest } = data;
+  void _id; void _ca;
+  await updateDoc(doc(db, COLLECTIONS.TRANSFER_LOCATIONS, id), {
+    ...rest,
+    updatedAt: serverTimestamp(),
+  });
+}
+
+export async function deleteTransferLocation(id: string): Promise<void> {
+  await deleteDoc(doc(db, COLLECTIONS.TRANSFER_LOCATIONS, id));
+}
+
+export async function getTransferLocationStats(): Promise<{
+  total: number;
+  popular: number;
+  byType: Record<string, number>;
+}> {
+  const all = await getAllTransferLocations();
+  const byType: Record<string, number> = {};
+  for (const loc of all) {
+    byType[loc.type] = (byType[loc.type] || 0) + 1;
+  }
+  return {
+    total: all.length,
+    popular: all.filter((l) => l.isPopular).length,
+    byType,
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// ─── TRANSFER ROUTE MANAGEMENT ───────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+
+function mapTransferRoute(id: string, d: Record<string, unknown>): TransferRouteModel {
+  return {
+    id,
+    fromLocationId: readString(d.fromLocationId),
+    toLocationId: readString(d.toLocationId),
+    viaLocationIds: readStringArray(d.viaLocationIds) || undefined,
+    category: (readString(d.category) || "transfer") as TransferRouteCategory,
+    subCategory: readString(d.subCategory) || undefined,
+    distanceKm: readNumber(d.distanceKm),
+    durationMinutes: readNumber(d.durationMinutes),
+    icon: readString(d.icon),
+    description: readString(d.description),
+    descriptionEn: readString(d.descriptionEn) || undefined,
+    descriptionTr: readString(d.descriptionTr) || undefined,
+    isPopular: d.isPopular === true,
+    usageCount: readNumber(d.usageCount),
+    createdAt: asDate(d.createdAt),
+    updatedAt: asDate(d.updatedAt),
+  };
+}
+
+export async function getAllTransferRoutes(
+  filters?: RouteFilters,
+): Promise<TransferRouteModel[]> {
+  const constraints: QueryConstraint[] = [];
+
+  if (filters?.category) constraints.push(where("category", "==", filters.category));
+  if (filters?.isPopular !== undefined) constraints.push(where("isPopular", "==", filters.isPopular));
+  if (filters?.fromLocationId) constraints.push(where("fromLocationId", "==", filters.fromLocationId));
+  if (filters?.toLocationId) constraints.push(where("toLocationId", "==", filters.toLocationId));
+
+  const items = await fetchAll(COLLECTIONS.TRANSFER_ROUTES, constraints, mapTransferRoute);
+
+  let filtered = items;
+
+  if (filters?.search) {
+    const term = filters.search.toLowerCase();
+    filtered = filtered.filter(
+      (r) =>
+        r.description.toLowerCase().includes(term) ||
+        r.descriptionEn?.toLowerCase().includes(term) ||
+        r.descriptionTr?.toLowerCase().includes(term),
+    );
+  }
+
+  return sortByCreatedAtDesc(filtered);
+}
+
+export async function getTransferRouteById(id: string): Promise<TransferRouteModel | null> {
+  const snap = await getDoc(doc(db, COLLECTIONS.TRANSFER_ROUTES, id));
+  if (!snap.exists()) return null;
+  return mapTransferRoute(snap.id, snap.data() as Record<string, unknown>);
+}
+
+export async function createTransferRoute(
+  data: Omit<TransferRouteModel, "id" | "createdAt" | "updatedAt">,
+): Promise<string> {
+  const ref = await addDoc(collection(db, COLLECTIONS.TRANSFER_ROUTES), {
+    ...data,
+    viaLocationIds: data.viaLocationIds ?? [],
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+  return ref.id;
+}
+
+export async function updateTransferRoute(
+  id: string,
+  data: Partial<TransferRouteModel>,
+): Promise<void> {
+  const { id: _id, createdAt: _ca, ...rest } = data;
+  void _id; void _ca;
+  await updateDoc(doc(db, COLLECTIONS.TRANSFER_ROUTES, id), {
+    ...rest,
+    updatedAt: serverTimestamp(),
+  });
+}
+
+export async function deleteTransferRoute(id: string): Promise<void> {
+  await deleteDoc(doc(db, COLLECTIONS.TRANSFER_ROUTES, id));
+}
+
+export async function getTransferRouteStats(): Promise<{
+  total: number;
+  popular: number;
+  byCategory: Record<string, number>;
+}> {
+  const all = await getAllTransferRoutes();
+  const byCategory: Record<string, number> = {};
+  for (const route of all) {
+    byCategory[route.category] = (byCategory[route.category] || 0) + 1;
+  }
+  return {
+    total: all.length,
+    popular: all.filter((r) => r.isPopular).length,
+    byCategory,
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// ─── TRANSFER REPORTING ────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+
+export interface TransferReportFilters {
+  startDate?: Date;
+  endDate?: Date;
+  transferId?: string;
+  vehicleType?: VehicleType;
+}
+
+export interface TransferReportData {
+  summary: {
+    totalReservations: number;
+    totalRevenue: number;
+    avgBookingValue: number;
+    avgRating: number;
+    conversionRate: number;
+    cancellationRate: number;
+  };
+  monthlyTrend: Array<{ month: string; label: string; reservations: number; revenue: number }>;
+  vehicleTypeUsage: Array<{ type: VehicleType; label: string; count: number; percentage: number }>;
+  popularRoutes: Array<{ route: string; count: number; revenue: number }>;
+  dailyDistribution: Array<{ day: string; count: number }>;
+  hourlyDistribution: Array<{ hour: string; count: number }>;
+  revenueByVehicleType: Array<{ type: VehicleType; label: string; revenue: number }>;
+  revenueByRoute: Array<{ route: string; revenue: number }>;
+  topPerformingTransfers: Array<{ id: string; name: string; count: number; revenue: number }>;
+  cancellationReasons: Array<{ reason: string; count: number; percentage: number }>;
+  customerStats: {
+    totalCustomers: number;
+    returningCustomers: number;
+    avgValuePerCustomer: number;
+  };
+}
+
+const DAY_LABELS_TR = ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"];
+
+function displayAddressHelper(address: AddressModel): string {
+  if (!address) return "";
+  const parts = [address.address, address.city, address.country].filter(Boolean);
+  return parts.join(", ");
+}
+
+export async function getTransferReports(
+  filters?: TransferReportFilters,
+): Promise<TransferReportData> {
+  // Get all transfer reservations
+  const allReservations = await getAllReservations();
+  let transferReservations = allReservations.filter(
+    (r) => r.type === "transfer" || r.type === "transfer_tour",
+  );
+
+  // Apply date filters
+  if (filters?.startDate) {
+    transferReservations = transferReservations.filter((r) => r.startDate >= filters.startDate!);
+  }
+  if (filters?.endDate) {
+    transferReservations = transferReservations.filter((r) => r.startDate <= filters.endDate!);
+  }
+  if (filters?.transferId) {
+    transferReservations = transferReservations.filter((r) => r.itemId === filters.transferId);
+  }
+
+  // Get all transfers for additional data
+  const allTransfers = await getAllTransfers();
+
+  // Filter by vehicle type if needed
+  let filteredTransfers = allTransfers;
+  if (filters?.vehicleType) {
+    filteredTransfers = allTransfers.filter((t) => t.vehicleType === filters.vehicleType);
+    const filteredTransferIds = new Set(filteredTransfers.map((t) => t.id));
+    transferReservations = transferReservations.filter((r) => filteredTransferIds.has(r.itemId));
+  }
+
+  // Calculate summary stats
+  const confirmedReservations = transferReservations.filter(
+    (r) => r.status === "confirmed" || r.status === "completed",
+  );
+  const cancelledReservations = transferReservations.filter((r) => r.status === "cancelled");
+  const totalRevenue = confirmedReservations.reduce((sum, r) => sum + r.price, 0);
+  const avgBookingValue = confirmedReservations.length > 0
+    ? totalRevenue / confirmedReservations.length
+    : 0;
+
+  // Calculate average rating from transfers
+  const avgRating = allTransfers.length > 0
+    ? allTransfers.reduce((sum, t) => sum + t.rating, 0) / allTransfers.length
+    : 0;
+
+  // Conversion rate (confirmed / total)
+  const conversionRate = transferReservations.length > 0
+    ? (confirmedReservations.length / transferReservations.length) * 100
+    : 0;
+
+  // Cancellation rate
+  const cancellationRate = transferReservations.length > 0
+    ? (cancelledReservations.length / transferReservations.length) * 100
+    : 0;
+
+  // Monthly trend (last 12 months)
+  const now = new Date();
+  const monthlyTrend: TransferReportData["monthlyTrend"] = [];
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    const label = MONTH_LABELS_TR[d.getMonth()];
+
+    const monthReservations = transferReservations.filter((r) => {
+      const rMonth = `${r.startDate.getFullYear()}-${String(r.startDate.getMonth() + 1).padStart(2, "0")}`;
+      return rMonth === key;
+    });
+
+    monthlyTrend.push({
+      month: key,
+      label,
+      reservations: monthReservations.length,
+      revenue: monthReservations
+        .filter((r) => r.status === "confirmed" || r.status === "completed")
+        .reduce((sum, r) => sum + r.price, 0),
+    });
+  }
+
+  // Vehicle type usage
+  const vehicleTypeMap = new Map<VehicleType, { count: number; revenue: number }>();
+  for (const reservation of confirmedReservations) {
+    const transfer = allTransfers.find((t) => t.id === reservation.itemId);
+    if (transfer) {
+      const current = vehicleTypeMap.get(transfer.vehicleType) || { count: 0, revenue: 0 };
+      current.count++;
+      current.revenue += reservation.price;
+      vehicleTypeMap.set(transfer.vehicleType, current);
+    }
+  }
+
+  const vehicleTypeLabelsMap: Record<VehicleType, string> = {
+    sedan: "Sedan",
+    van: "Van / Minibüs",
+    bus: "Otobüs",
+    vip: "VIP",
+    jeep: "Jeep",
+    coster: "Coster",
+  };
+
+  const totalVehicleCount = Array.from(vehicleTypeMap.values()).reduce((sum, v) => sum + v.count, 0);
+  const vehicleTypeUsage: TransferReportData["vehicleTypeUsage"] = Array.from(vehicleTypeMap.entries()).map(
+    ([type, data]) => ({
+      type,
+      label: vehicleTypeLabelsMap[type] || type,
+      count: data.count,
+      percentage: totalVehicleCount > 0 ? (data.count / totalVehicleCount) * 100 : 0,
+    }),
+  );
+
+  const revenueByVehicleType: TransferReportData["revenueByVehicleType"] = Array.from(vehicleTypeMap.entries()).map(
+    ([type, data]) => ({
+      type,
+      label: vehicleTypeLabelsMap[type] || type,
+      revenue: data.revenue,
+    }),
+  );
+
+  // Popular routes
+  const routeMap = new Map<string, { count: number; revenue: number }>();
+  for (const reservation of confirmedReservations) {
+    const transfer = allTransfers.find((t) => t.id === reservation.itemId);
+    if (transfer) {
+      const route = `${displayAddressHelper(transfer.fromAddress)} → ${displayAddressHelper(transfer.toAddress)}`;
+      const current = routeMap.get(route) || { count: 0, revenue: 0 };
+      current.count++;
+      current.revenue += reservation.price;
+      routeMap.set(route, current);
+    }
+  }
+
+  const popularRoutes: TransferReportData["popularRoutes"] = Array.from(routeMap.entries())
+    .map(([route, data]) => ({ route, count: data.count, revenue: data.revenue }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 10);
+
+  const revenueByRoute: TransferReportData["revenueByRoute"] = Array.from(routeMap.entries())
+    .map(([route, data]) => ({ route, revenue: data.revenue }))
+    .sort((a, b) => b.revenue - a.revenue)
+    .slice(0, 10);
+
+  // Daily distribution
+  const dailyDistribution: TransferReportData["dailyDistribution"] = DAY_LABELS_TR.map((day, idx) => ({
+    day,
+    count: transferReservations.filter((r) => r.startDate.getDay() === idx).length,
+  }));
+
+  // Hourly distribution
+  const hourlyDistribution: TransferReportData["hourlyDistribution"] = Array.from({ length: 24 }, (_, i) => ({
+    hour: `${String(i).padStart(2, "0")}:00`,
+    count: transferReservations.filter((r) => r.createdAt.getHours() === i).length,
+  }));
+
+  // Top performing transfers
+  const transferPerformanceMap = new Map<string, { name: string; count: number; revenue: number }>();
+  for (const reservation of confirmedReservations) {
+    const transfer = allTransfers.find((t) => t.id === reservation.itemId);
+    if (transfer) {
+      const current = transferPerformanceMap.get(transfer.id) || {
+        name: transfer.vehicleName,
+        count: 0,
+        revenue: 0,
+      };
+      current.count++;
+      current.revenue += reservation.price;
+      transferPerformanceMap.set(transfer.id, current);
+    }
+  }
+
+  const topPerformingTransfers: TransferReportData["topPerformingTransfers"] = Array.from(
+    transferPerformanceMap.entries(),
+  )
+    .map(([id, data]) => ({ id, ...data }))
+    .sort((a, b) => b.revenue - a.revenue)
+    .slice(0, 10);
+
+  // Cancellation reasons
+  const reasonMap = new Map<string, number>();
+  for (const reservation of cancelledReservations) {
+    const reason = readString((reservation.meta as Record<string, unknown>)?.cancellationReason) || "Belirtilmemiş";
+    reasonMap.set(reason, (reasonMap.get(reason) || 0) + 1);
+  }
+
+  const cancellationReasons: TransferReportData["cancellationReasons"] = Array.from(reasonMap.entries())
+    .map(([reason, count]) => ({
+      reason,
+      count,
+      percentage: cancelledReservations.length > 0 ? (count / cancelledReservations.length) * 100 : 0,
+    }))
+    .sort((a, b) => b.count - a.count);
+
+  // Customer stats
+  const customerIds = new Set(transferReservations.map((r) => r.userId));
+  const returningCustomerIds = new Set(
+    transferReservations
+      .filter((r) => {
+        const customerBookings = transferReservations.filter((cr) => cr.userId === r.userId);
+        return customerBookings.length > 1;
+      })
+      .map((r) => r.userId),
+  );
+
+  const customerStats = {
+    totalCustomers: customerIds.size,
+    returningCustomers: returningCustomerIds.size,
+    avgValuePerCustomer: customerIds.size > 0 ? totalRevenue / customerIds.size : 0,
+  };
+
+  return {
+    summary: {
+      totalReservations: transferReservations.length,
+      totalRevenue,
+      avgBookingValue,
+      avgRating,
+      conversionRate,
+      cancellationRate,
+    },
+    monthlyTrend,
+    vehicleTypeUsage,
+    popularRoutes,
+    dailyDistribution,
+    hourlyDistribution,
+    revenueByVehicleType,
+    revenueByRoute,
+    topPerformingTransfers,
+    cancellationReasons,
+    customerStats,
+  };
 }
