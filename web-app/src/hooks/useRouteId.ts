@@ -32,12 +32,13 @@ export function useRouteId(segmentIndex = -1): string {
   const [id, setId] = useState(getIdFromPathname);
 
   useEffect(() => {
-    // Only update if the segment index changes
+    // Update when component mounts or when URL changes
     const newId = getIdFromPathname();
     if (newId !== id) {
       setId(newId);
     }
-  }, [segmentIndex]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty array - only run once on mount
 
   return id;
 }

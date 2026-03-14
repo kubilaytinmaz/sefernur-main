@@ -4,6 +4,7 @@ import { Column, DataTable } from "@/components/admin/DataTable";
 import { Pagination } from "@/components/admin/Pagination";
 import { SearchInput } from "@/components/admin/SearchInput";
 import { StatCard } from "@/components/admin/StatCard";
+import { formatTlSarPair, sarToTry } from "@/lib/currency";
 import { deleteTransfer, getAllTransfers, updateTransfer } from "@/lib/firebase/admin-domain";
 import { displayAddress } from "@/types/address";
 import { TransferModel, amenityLabels, vehicleTypeLabels } from "@/types/transfer";
@@ -144,10 +145,13 @@ export default function AdminTransfersPage() {
   const load = async () => {
     setLoading(true);
     try {
+      console.log("📋 Loading transfers from Firebase...");
       const items = await getAllTransfers();
+      console.log("📦 Loaded transfers:", items.length);
+      console.log("🔑 Transfer IDs:", items.map(t => ({ id: t.id, name: t.vehicleName })));
       setData(items);
     } catch (err) {
-      console.error(err);
+      console.error("❌ Error loading transfers:", err);
     } finally {
       setLoading(false);
     }
@@ -421,7 +425,11 @@ export default function AdminTransfersPage() {
     {
       key: "price",
       header: "Fiyat",
-      render: (t) => <span className="font-medium">₺{t.basePrice.toLocaleString("tr-TR")}</span>,
+      render: (t) => {
+        // TL'ye çevir ve SAR ile birlikte göster
+        const priceTl = sarToTry(t.basePrice);
+        return <span className="font-medium">{formatTlSarPair(priceTl, t.basePrice)}</span>;
+      },
     },
     {
       key: "capacity",

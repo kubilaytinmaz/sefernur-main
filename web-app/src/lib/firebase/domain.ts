@@ -8,18 +8,18 @@ import { DailyProgram, TourModel } from "@/types/tour";
 import { TransferModel, VehicleAmenity, VehicleType } from "@/types/transfer";
 import { VisaApplicationModel } from "@/types/visa";
 import {
-    addDoc,
-    collection,
-    deleteDoc,
-    doc,
-    getDoc,
-    getDocs,
-    limit,
-    orderBy,
-    query,
-    QueryConstraint,
-    Timestamp,
-    where,
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  QueryConstraint,
+  Timestamp,
+  where,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { db, storage } from "./config";
@@ -121,11 +121,40 @@ function mapTransferDoc(id: string, data: Record<string, unknown>): TransferMode
     return { address: "-" };
   }
 
-  const validVehicleTypes: VehicleType[] = ["sedan", "van", "bus", "vip", "jeep", "coster"];
+  // Akıllı araç tipi tespiti
+  function inferVehicleType(capacity: number, vehicleName: string, rawType: string): VehicleType {
+    const validVehicleTypes: VehicleType[] = ["sedan", "van", "bus", "vip", "jeep", "coster"];
+    
+    // Önce raw type'ı kontrol et
+    if (validVehicleTypes.includes(rawType as VehicleType)) {
+      return rawType as VehicleType;
+    }
+    
+    // Geçersizse, araç isminden türet
+    const nameLower = vehicleName.toLowerCase();
+    if (nameLower.includes('vip') || nameLower.includes('luxury') || nameLower.includes('lüks')) return 'vip';
+    if (nameLower.includes('jeep') || nameLower.includes('suv') || nameLower.includes('4x4')) return 'jeep';
+    if (nameLower.includes('bus') || nameLower.includes('otobüs') || nameLower.includes('otobus')) return 'bus';
+    if (nameLower.includes('coster') || nameLower.includes('hiace') || nameLower.includes('coaster')) return 'coster';
+    if (nameLower.includes('van') || nameLower.includes('minibüs') || nameLower.includes('minibus')) return 'van';
+    if (nameLower.includes('sedan') || nameLower.includes('camry') || nameLower.includes('accord')) return 'sedan';
+    
+    // İsimden de bulunamazsa kapasiteden türet
+    if (capacity <= 4) return 'sedan';
+    if (capacity <= 7) return 'van';
+    if (capacity <= 15) return 'coster';
+    return 'bus';
+  }
+
   const rawVehicle = readString(data.vehicleType);
-  const vehicleType: VehicleType = validVehicleTypes.includes(rawVehicle as VehicleType)
-    ? (rawVehicle as VehicleType)
-    : "sedan";
+  const capacity = readNumber(data.capacity || data.maxPassengers);
+  const vehicleName = readString(data.vehicleName);
+  const vehicleType: VehicleType = inferVehicleType(capacity, vehicleName, rawVehicle);
+  
+  // Geliştirme ortamında geçersiz tipleri logla
+  if (process.env.NODE_ENV === 'development' && rawVehicle && rawVehicle !== vehicleType) {
+    console.warn(`[Transfer ${id}] Geçersiz vehicleType: "${rawVehicle}" → "${vehicleType}" (kapasite: ${capacity}, isim: "${vehicleName}")`);
+  }
 
   return {
     id,

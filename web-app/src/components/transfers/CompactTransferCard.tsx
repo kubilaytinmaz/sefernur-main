@@ -9,15 +9,18 @@
 
 import { Badge } from "@/components/ui/Badge";
 import { formatTlUsdPairFromTl } from "@/lib/currency";
+import { VEHICLE_PRICING } from "@/lib/transfers/pricing";
 import { displayAddress } from "@/types/address";
-import { vehicleTypeLabels, type TransferModel } from "@/types/transfer";
+import { vehicleTypeLabels, type TransferModel, type VehicleType } from "@/types/transfer";
 import {
   ArrowRight,
   Briefcase,
   Bus,
   Car,
   ChevronRight,
+  Crown,
   MapPin,
+  Mountain,
   Sparkles,
   Star,
   Truck,
@@ -32,13 +35,28 @@ interface CompactTransferCardProps {
   index?: number;
 }
 
+/** Araç tipine göre renk şeması */
+const vehicleColorMap: Record<VehicleType, { badge: string; gradient: string }> = {
+  sedan: { badge: "bg-cyan-600/90", gradient: "from-cyan-400 via-sky-500 to-blue-600" },
+  van: { badge: "bg-indigo-600/90", gradient: "from-indigo-400 via-violet-500 to-purple-600" },
+  bus: { badge: "bg-emerald-600/90", gradient: "from-emerald-400 via-green-500 to-teal-600" },
+  vip: { badge: "bg-amber-600/90", gradient: "from-amber-400 via-yellow-500 to-orange-600" },
+  jeep: { badge: "bg-orange-600/90", gradient: "from-orange-400 via-red-500 to-rose-600" },
+  coster: { badge: "bg-teal-600/90", gradient: "from-teal-400 via-cyan-500 to-sky-600" },
+};
+
 function VehicleIcon({ type, className }: { type: string; className?: string }) {
   switch (type) {
     case "bus":
+      return <Bus className={className} />;
     case "coster":
       return <Bus className={className} />;
     case "van":
       return <Truck className={className} />;
+    case "vip":
+      return <Crown className={className} />;
+    case "jeep":
+      return <Mountain className={className} />;
     default:
       return <Car className={className} />;
   }
@@ -47,6 +65,16 @@ function VehicleIcon({ type, className }: { type: string; className?: string }) 
 export function CompactTransferCard({ transfer, index = 0 }: CompactTransferCardProps) {
   const img = transfer.images?.[0];
   const vehicleLabel = vehicleTypeLabels[transfer.vehicleType] || transfer.vehicleType;
+  const colors = vehicleColorMap[transfer.vehicleType] || vehicleColorMap.sedan;
+  
+  // Araç ismi ve label aynıysa tekrar gösterme
+  const displayName = transfer.vehicleName || vehicleLabel;
+  const showTypeLabel = transfer.vehicleName ? true : false; // İsim varsa tipi de ayrıca göster
+  
+  // Başlangıç fiyatı: ya transfer'in kendi fiyatı ya da araç tipinin baz fiyatı
+  const startingPrice = transfer.basePrice > 0 
+    ? transfer.basePrice 
+    : VEHICLE_PRICING[transfer.vehicleType]?.basePrice ?? 0;
 
   return (
     <Link
@@ -54,17 +82,17 @@ export function CompactTransferCard({ transfer, index = 0 }: CompactTransferCard
       className="group block"
       style={{ animationDelay: `${index * 80}ms` }}
     >
-      <div className="relative h-full min-h-[260px] md:min-h-[280px] rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-xl hover:shadow-cyan-900/15">
+      <div className="relative h-full min-h-[260px] md:min-h-[280px] rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-xl">
         {/* Background Image */}
         {img ? (
           <Image
             src={img}
-            alt={transfer.vehicleName || vehicleLabel}
+            alt={displayName}
             fill
             className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
           />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 via-sky-500 to-blue-600 flex items-center justify-center">
+          <div className={`absolute inset-0 bg-gradient-to-br ${colors.gradient} flex items-center justify-center`}>
             <VehicleIcon type={transfer.vehicleType} className="w-16 h-16 text-white/30" />
           </div>
         )}
@@ -79,16 +107,23 @@ export function CompactTransferCard({ transfer, index = 0 }: CompactTransferCard
         {/* Top Badges */}
         <div className="absolute top-2.5 left-2.5 right-2.5 z-10 flex justify-between items-start">
           <div className="flex flex-col gap-1">
-            {/* Vehicle Type Badge */}
-            <Badge className="bg-cyan-600/90 backdrop-blur-md text-white border-0 text-[9px] gap-0.5 shadow-md">
-              <VehicleIcon type={transfer.vehicleType} className="w-2 h-2" />
+            {/* Vehicle Type Badge - Araç tipine göre renkli */}
+            <Badge className={`${colors.badge} backdrop-blur-md text-white border-0 text-[9px] gap-0.5 shadow-md`}>
+              <VehicleIcon type={transfer.vehicleType} className="w-2.5 h-2.5" />
               {vehicleLabel}
             </Badge>
 
-            {/* Capacity Badge */}
+            {/* Capacity + Luggage Badge */}
             <Badge className="bg-white/90 backdrop-blur-md text-slate-800 border-0 text-[9px] gap-0.5 shadow-md">
               <Users className="w-2 h-2" />
-              {transfer.capacity}
+              {transfer.capacity} Kişi
+              {transfer.luggageCapacity > 0 && (
+                <>
+                  <span className="mx-0.5 text-slate-400">•</span>
+                  <Briefcase className="w-2 h-2" />
+                  {transfer.luggageCapacity}
+                </>
+              )}
             </Badge>
           </div>
 
@@ -114,9 +149,14 @@ export function CompactTransferCard({ transfer, index = 0 }: CompactTransferCard
         {/* Content - Bottom */}
         <div className="absolute bottom-0 left-0 right-0 p-3 z-10">
           {/* Vehicle Name */}
-          <h3 className="text-xs md:text-sm font-bold text-white mb-1 line-clamp-1 leading-tight tracking-tight group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:bg-clip-text group-hover:from-cyan-300 group-hover:to-sky-300 transition-all capitalize">
-            {transfer.vehicleName || vehicleLabel}
+          <h3 className="text-xs md:text-sm font-bold text-white mb-0.5 line-clamp-1 leading-tight tracking-tight group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:bg-clip-text group-hover:from-cyan-300 group-hover:to-sky-300 transition-all capitalize">
+            {displayName}
           </h3>
+
+          {/* Vehicle Type (sadece isim farklıysa göster) */}
+          {showTypeLabel && (
+            <p className="text-[9px] text-cyan-200/70 mb-1">{vehicleLabel}</p>
+          )}
 
           {/* Route - Simplified */}
           <div className="flex items-center gap-1 mb-1.5">
@@ -126,22 +166,18 @@ export function CompactTransferCard({ transfer, index = 0 }: CompactTransferCard
             <span className="text-[9px] text-cyan-100 truncate flex-1">{displayAddress(transfer.toAddress)}</span>
           </div>
 
-          {/* Specs Row - Compact */}
+          {/* Specs Row - Compact (kapasite badge'de gösterildiği için tekrar etmiyor) */}
           <div className="flex items-center gap-1.5 mb-1.5 text-[9px] text-white/60">
-            <div className="flex items-center gap-0.5">
-              <Users className="w-2 h-2 text-cyan-300" />
-              <span>{transfer.capacity}</span>
-            </div>
-            {transfer.luggageCapacity > 0 && (
-              <div className="flex items-center gap-0.5">
-                <Briefcase className="w-2 h-2 text-cyan-300" />
-                <span>{transfer.luggageCapacity}</span>
-              </div>
-            )}
             {transfer.durationMinutes > 0 && (
               <div className="flex items-center gap-0.5">
                 <Zap className="w-2 h-2 text-cyan-300" />
-                <span>{transfer.durationMinutes}dk</span>
+                <span>{transfer.durationMinutes} dk</span>
+              </div>
+            )}
+            {transfer.company && (
+              <div className="flex items-center gap-0.5">
+                <span className="text-white/40">•</span>
+                <span>{transfer.company}</span>
               </div>
             )}
           </div>
@@ -150,10 +186,10 @@ export function CompactTransferCard({ transfer, index = 0 }: CompactTransferCard
           <div className="flex items-end justify-between pt-1.5 border-t border-white/10">
             <div>
               <p className="text-[7px] text-cyan-300 uppercase tracking-wider mb-0.5">
-                Fiyat
+                Başlayan Fiyat
               </p>
               <p className="text-xs md:text-sm font-bold text-white leading-tight">
-                {formatTlUsdPairFromTl(transfer.basePrice)}
+                {formatTlUsdPairFromTl(startingPrice)}
               </p>
             </div>
             <div className="w-6 h-6 rounded-full bg-gradient-to-r from-cyan-500 to-sky-500 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
@@ -167,8 +203,8 @@ export function CompactTransferCard({ transfer, index = 0 }: CompactTransferCard
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
         </div>
 
-        {/* Glow Effect on Hover */}
-        <div className="absolute inset-0 rounded-2xl transition-shadow duration-500 group-hover:shadow-[0_8px_40px_-8px_rgba(6,182,212,0.3)]" />
+        {/* Glow Effect on Hover - pointer-events-none ile çakışmayı önle */}
+        <div className="absolute inset-0 rounded-2xl transition-shadow duration-500 group-hover:shadow-[0_8px_40px_-8px_rgba(6,182,212,0.3)] pointer-events-none" />
       </div>
     </Link>
   );

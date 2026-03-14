@@ -37,7 +37,7 @@ export interface PopularRoute {
 
 export const POPULAR_ROUTES: PopularRoute[] = [
   // ═══════════════════════════════════════════════════════
-  // HAVAALANI TRANSFERLERİ
+  // POPÜLER ROTALAR
   // ═══════════════════════════════════════════════════════
   {
     id: 'jeddah-airport-mecca',
@@ -66,84 +66,6 @@ export const POPULAR_ROUTES: PopularRoute[] = [
     description: 'Havalimanından Mekke otelinize konforlu transfer',
   },
   {
-    id: 'mecca-jeddah-airport',
-    name: 'Mekke → Cidde Havalimanı',
-    from: {
-      city: 'Mekke',
-      location: 'Otel / Harem',
-      coordinates: { lat: 21.4225, lng: 39.8262 },
-    },
-    to: {
-      city: 'Cidde',
-      location: 'Kral Abdulaziz Uluslararası Havalimanı (JED)',
-      coordinates: { lat: 21.6796, lng: 39.1565 },
-    },
-    distance: { km: 75, text: '75 km' },
-    duration: { minutes: 75, text: '60-90 dakika' },
-    basePrice: 1425, // 150 SAR
-    prices: {
-      sedan: 1425,
-      van: 1900,
-      coster: 2375,
-    },
-    category: 'airport',
-    isPopular: true,
-    icon: '✈️',
-    description: 'Mekke\'den havalimanına güvenli transfer',
-  },
-  {
-    id: 'jeddah-airport-medina',
-    name: 'Cidde Havalimanı → Medine',
-    from: {
-      city: 'Cidde',
-      location: 'Kral Abdulaziz Uluslararası Havalimanı (JED)',
-      coordinates: { lat: 21.6796, lng: 39.1565 },
-    },
-    to: {
-      city: 'Medine',
-      location: 'Mescid-i Nebevi / Oteller',
-      coordinates: { lat: 24.4672, lng: 39.6157 },
-    },
-    distance: { km: 420, text: '420 km' },
-    duration: { minutes: 280, text: '4-4.5 saat' },
-    basePrice: 3325, // 350 SAR
-    prices: {
-      sedan: 3325,
-      van: 3800,
-      coster: 4275,
-    },
-    category: 'airport',
-    isPopular: true,
-    icon: '✈️',
-    description: 'Havalimanından Medine\'ye direkt transfer',
-  },
-  {
-    id: 'medina-jeddah-airport',
-    name: 'Medine → Cidde Havalimanı',
-    from: {
-      city: 'Medine',
-      location: 'Otel / Mescid-i Nebevi',
-      coordinates: { lat: 24.4672, lng: 39.6157 },
-    },
-    to: {
-      city: 'Cidde',
-      location: 'Kral Abdulaziz Uluslararası Havalimanı (JED)',
-      coordinates: { lat: 21.6796, lng: 39.1565 },
-    },
-    distance: { km: 420, text: '420 km' },
-    duration: { minutes: 280, text: '4-4.5 saat' },
-    basePrice: 3325, // 350 SAR
-    prices: {
-      sedan: 3325,
-      van: 3800,
-      coster: 4275,
-    },
-    category: 'airport',
-    isPopular: true,
-    icon: '✈️',
-    description: 'Medine\'den uçağınızı kaçırmayın',
-  },
-  {
     id: 'medina-airport-medina',
     name: 'Medine Havalimanı → Medine Şehir',
     from: {
@@ -169,36 +91,6 @@ export const POPULAR_ROUTES: PopularRoute[] = [
     icon: '✈️',
     description: 'Medine havalimanından şehir merkezine',
   },
-  {
-    id: 'medina-medina-airport',
-    name: 'Medine Şehir → Medine Havalimanı',
-    from: {
-      city: 'Medine',
-      location: 'Mescid-i Nebevi / Oteller',
-      coordinates: { lat: 24.4672, lng: 39.6157 },
-    },
-    to: {
-      city: 'Medine',
-      location: 'Prens Muhammed bin Abdulaziz Havalimanı (MED)',
-      coordinates: { lat: 24.5534, lng: 39.7051 },
-    },
-    distance: { km: 15, text: '15 km' },
-    duration: { minutes: 20, text: '15-25 dakika' },
-    basePrice: 300,
-    prices: {
-      sedan: 300,
-      van: 400,
-      coster: 500,
-    },
-    category: 'airport',
-    isPopular: true,
-    icon: '✈️',
-    description: 'Medine şehir merkezinden havalimanına',
-  },
-
-  // ═══════════════════════════════════════════════════════
-  // ŞEHİRLERARASI TRANSFERLER
-  // ═══════════════════════════════════════════════════════
   {
     id: 'mecca-medina',
     name: 'Mekke → Medine',
@@ -250,60 +142,6 @@ export const POPULAR_ROUTES: PopularRoute[] = [
     isPopular: true,
     icon: '🕌',
     description: 'Medine\'den Mekke\'ye güvenli yolculuk',
-  },
-
-  // ═══════════════════════════════════════════════════════
-  // ŞEHİR İÇİ TRANSFERLER
-  // ═══════════════════════════════════════════════════════
-  {
-    id: 'mecca-haram-to-hotel',
-    name: 'Mekke Harem → Otel',
-    from: {
-      city: 'Mekke',
-      location: 'Harem (Kabe-i Muazzama)',
-      coordinates: { lat: 21.4225, lng: 39.8262 },
-    },
-    to: {
-      city: 'Mekke',
-      location: 'Otel (Adres belirtilecek)',
-    },
-    distance: { km: 5, text: '0-10 km' },
-    duration: { minutes: 15, text: '5-30 dakika' },
-    basePrice: 200,
-    prices: {
-      sedan: 200,
-      van: 300,
-      coster: 400,
-    },
-    category: 'local',
-    isPopular: true,
-    icon: '🏨',
-    description: 'Harem\'den otelinize kısa mesafe transfer',
-  },
-  {
-    id: 'medine-prophet-to-hotel',
-    name: 'Medine Mescid-i Nebevi → Otel',
-    from: {
-      city: 'Medine',
-      location: 'Mescid-i Nebevi',
-      coordinates: { lat: 24.4672, lng: 39.6157 },
-    },
-    to: {
-      city: 'Medine',
-      location: 'Otel (Adres belirtilecek)',
-    },
-    distance: { km: 5, text: '0-10 km' },
-    duration: { minutes: 10, text: '5-20 dakika' },
-    basePrice: 200,
-    prices: {
-      sedan: 200,
-      van: 300,
-      coster: 400,
-    },
-    category: 'local',
-    isPopular: true,
-    icon: '🏨',
-    description: 'Mescid-i Nebevi\'den otelinize konforlu transfer',
   },
 ];
 

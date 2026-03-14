@@ -5,7 +5,7 @@
 import { DatePicker } from "@/components/transfers/DatePicker";
 import { LocationSelector } from "@/components/transfers/LocationSelector";
 import { Button } from "@/components/ui/Button";
-import { POPULAR_ROUTES, type PopularRoute } from "@/lib/transfers/popular-routes";
+import { usePopularRoutes } from "@/hooks/usePopularRoutes";
 import { estimateRoutePrice, isNightTime } from "@/lib/transfers/pricing";
 import {
   getDestinationsByFromLocation,
@@ -13,6 +13,7 @@ import {
   LOCATIONS,
   TransferLocation
 } from "@/lib/transfers/transfer-locations";
+import type { PopularRouteModel } from "@/types/popular-route";
 import type { VehicleType } from "@/types/transfer";
 import { vehicleTypeLabels } from "@/types/transfer";
 import { Car, ChevronDown, Clock, Info, MapPin, Minus, Plus, Users } from "lucide-react";
@@ -39,6 +40,9 @@ export function TransferSearchForm({
   onSearch, 
   loading = false
 }: TransferSearchFormProps) {
+  // Firebase'den popüler rotaları çek
+  const { data: popularRoutes = [] } = usePopularRoutes();
+  
   const [fromLocation, setFromLocation] = useState<TransferLocation | null>(null);
   const [toLocation, setToLocation] = useState<TransferLocation | null>(null);
   const [pickupDate, setPickupDate] = useState<Date>(new Date());
@@ -47,7 +51,7 @@ export function TransferSearchForm({
   const [vehicleType, setVehicleType] = useState<VehicleType | undefined>(undefined);
 
   // Popüler rota seçimi
-  const [selectedPopularRoute, setSelectedPopularRoute] = useState<PopularRoute | null>(null);
+  const [selectedPopularRoute, setSelectedPopularRoute] = useState<PopularRouteModel | null>(null);
 
   // Dropdown state'leri
   const [timeDropdownOpen, setTimeDropdownOpen] = useState(false);
@@ -73,7 +77,7 @@ export function TransferSearchForm({
   };
 
   // Popüler rota seçimi
-  const handlePopularRouteSelect = (route: PopularRoute) => {
+  const handlePopularRouteSelect = (route: PopularRouteModel) => {
     setSelectedPopularRoute(route);
     const from = Object.values(LOCATIONS).find(
       loc => loc.city === route.from.city || loc.name.includes(route.from.city)
@@ -139,7 +143,7 @@ export function TransferSearchForm({
             Popüler Rotalar
           </h4>
           <div className="flex flex-wrap gap-1.5">
-            {POPULAR_ROUTES.filter(r => r.isPopular).map((route) => (
+            {popularRoutes.filter(r => r.isPopular).map((route) => (
               <button
                 key={route.id}
                 onClick={() => handlePopularRouteSelect(route)}

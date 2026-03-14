@@ -1,5 +1,6 @@
 // Transfer Fiyat Hesaplama Sistemi
 // Rota bazlı sabit fiyatlar (SAR'dan TL'ye çevrilmiş)
+import type { PopularServiceModel } from "@/types/popular-service";
 import type { VehicleType } from "@/types/transfer";
 
 export interface TransferPricing {
@@ -304,4 +305,62 @@ export function getVehicleLuggageCapacity(vehicleType: VehicleType): number {
   };
   
   return capacities[vehicleType];
+}
+
+/**
+ * Turlardan yola çıkarak araç tipi için saatlik kiralama fiyatını hesapla (SAR cinsinden)
+ * Formül: Her turun (vehiclePrices[araçTipi] / duration.hours) oranını hesapla,
+ * en düşük değeri döndür.
+ *
+ * @param tours - Popüler turlar listesi
+ * @param vehicleType - Araç tipi
+ * @returns SAR cinsinden saatlik fiyat, tur yoksa null
+ */
+export function calculateHourlyRateFromTours(
+  tours: PopularServiceModel[],
+  vehicleType: VehicleType
+): number | null {
+  if (!tours || tours.length === 0) return null;
+
+  let minRate = Infinity;
+
+  for (const tour of tours) {
+    const hours = tour.duration?.hours;
+    if (!hours || hours <= 0) continue;
+
+    // Araç tipine özel fiyat varsa onu kullan, yoksa baseAmount
+    let tourPrice: number | undefined;
+    if (tour.vehiclePrices) {
+      tourPrice = tour.vehiclePrices[vehicleType as keyof typeof tour.vehiclePrices] ?? undefined;
+    }
+    if (tourPrice == null || tourPrice <= 0) {
+      tourPrice = tour.price?.baseAmount;
+    }
+    if (!tourPrice || tourPrice <= 0) continue;
+
+    const rate = Math.round(tourPrice / hours);
+    if (rate < minRate) {
+      minRate = rate;
+    }
+  }
+
+  return minRate === Infinity ? null : minRate;
+}
+
+/**
+ * Tüm araç tipleri için saatlik fiyat haritası oluştur (SAR cinsinden)
+ * @param tours - Popüler turlar listesi
+ * @returns Her araç tipi için SAR cinsinden saatlik fiyat
+ */
+export function calculateAllHourlyRates(
+  tours: PopularServiceModel[]
+): Record<VehicleType, number | null> {
+  const vehicleTypes: VehicleType[] = ["sedan", "van", "bus", "vip", "jeep", "coster"];
+  const rates: Record<string, number | null> = {};
+
+  for (const vt of vehicleTypes) {
+    rates[vt] = calculateHourlyRateFromTours(tours, vt);
+  }
+
+  return rates as Record<VehicleType, number | null>;
 }

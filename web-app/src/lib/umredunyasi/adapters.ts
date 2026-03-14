@@ -7,9 +7,9 @@
 
 import { UMREDUNYASI_CONFIG } from "./constants";
 import type {
-    SefernurTourPreview,
-    UmreDunyasiCategory,
-    UmreDunyasiTour,
+  SefernurTourPreview,
+  UmreDunyasiCategory,
+  UmreDunyasiTour,
 } from "./types";
 
 /**
@@ -52,10 +52,10 @@ export function toSefernurTourPreview(
  *
  * @example
  * getTourUrl('ekonomik-umre-2026-mart')
- * // => 'https://umredunyasi.com/tours/ekonomik-umre-2026-mart'
+ * // => 'https://umredunyasi.com/umre-turlari/ekonomik-umre-2026-mart'
  */
 export function getTourUrl(slug: string): string {
-  return `${UMREDUNYASI_CONFIG.siteURL}/tours/${slug}`;
+  return `${UMREDUNYASI_CONFIG.siteURL}/umre-turlari/${slug}`;
 }
 
 /**

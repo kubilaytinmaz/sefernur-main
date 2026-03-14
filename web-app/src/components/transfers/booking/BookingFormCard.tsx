@@ -21,7 +21,6 @@ import {
   getTotalPassengers,
   validateBookingForm,
 } from "@/lib/transfers/booking";
-import type { PopularService } from "@/lib/transfers/popular-services-simple";
 import { useAuthStore } from "@/store/auth";
 import type {
   AddressInfo,
@@ -32,6 +31,7 @@ import type {
   PassengerInfo,
   PriceBreakdown,
 } from "@/types/booking";
+import type { PopularServiceModel } from "@/types/popular-service";
 import type { TransferModel } from "@/types/transfer";
 import { vehicleTypeLabels } from "@/types/transfer";
 import { useMutation } from "@tanstack/react-query";
@@ -61,8 +61,8 @@ import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 interface BookingFormCardProps {
   transfer: TransferModel;
-  tour?: PopularService;
-  extraTours?: PopularService[];
+  tour?: PopularServiceModel;
+  extraTours?: PopularServiceModel[];
   onPriceChange?: (price: PriceBreakdown) => void;
   onPassengerChange?: (count: number) => void;
 }
@@ -157,7 +157,7 @@ export function BookingFormCard({ transfer, tour, extraTours = [], onPriceChange
 
   // Tüm turları birleştir (ana tur + ek turlar)
   const allTours = useMemo(() => {
-    const tours: PopularService[] = [];
+    const tours: PopularServiceModel[] = [];
     if (tour) tours.push(tour);
     tours.push(...extraTours);
     return tours;

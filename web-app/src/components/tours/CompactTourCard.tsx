@@ -1,29 +1,21 @@
 /**
- * CompactTourCard - Modern Compact Card for Tours
- * 
- * Smaller tour card for grid layout with glassmorphism effects
- * and smooth hover animations.
+ * CompactTourCard - Clean, Minimal Tour Card
+ *
+ * Sadeleştirilmiş tur kartı: Başlık, fiyat, süre ve gece bilgisi.
+ * Gereksiz açıklama, firma adı, not ve tarih bilgileri kaldırıldı.
  */
 
 "use client";
 
 import { Badge } from "@/components/ui/Badge";
-import { formatTlUsdPairFromTl } from "@/lib/currency";
-import {
-  formatShortDate,
-  getSefernurNote,
-  getTotalNights,
-  getTourUrl,
-} from "@/lib/umredunyasi";
+import { formatTlUsdPairFromTl, formatTlUsdPairFromUsd } from "@/lib/currency";
+import { getTotalNights, getTourUrl } from "@/lib/umredunyasi";
 import {
   Building2,
-  CalendarDays,
   Clock3,
   ExternalLink,
   Moon,
   Sparkles,
-  Star,
-  Users,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -36,7 +28,6 @@ interface CompactTourCardProps {
 export function CompactTourCard({ tour, index = 0 }: CompactTourCardProps) {
   const firstImage = tour.images?.[0];
   const totalNights = getTotalNights(tour);
-  const sefernurNote = getSefernurNote(tour);
 
   return (
     <Link
@@ -46,7 +37,7 @@ export function CompactTourCard({ tour, index = 0 }: CompactTourCardProps) {
       className="group block"
       style={{ animationDelay: `${index * 80}ms` }}
     >
-      <div className="relative h-full min-h-[340px] md:min-h-[380px] rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-xl hover:shadow-emerald-900/15">
+      <div className="relative h-full min-h-[280px] md:min-h-[320px] rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-xl hover:shadow-emerald-900/15">
         {/* Background Image */}
         {firstImage ? (
           <Image
@@ -61,9 +52,8 @@ export function CompactTourCard({ tour, index = 0 }: CompactTourCardProps) {
           </div>
         )}
 
-        {/* Multi-layer Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent group-hover:from-black/90 transition-all duration-500" />
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/20 via-transparent to-teal-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent group-hover:from-black/90 transition-all duration-500" />
 
         {/* Top Accent Line */}
         <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -71,12 +61,6 @@ export function CompactTourCard({ tour, index = 0 }: CompactTourCardProps) {
         {/* Top Badges */}
         <div className="absolute top-3 left-3 right-3 z-10 flex justify-between items-start">
           <div className="flex flex-col gap-1.5">
-            {/* External Link Badge */}
-            <Badge className="bg-emerald-600/90 backdrop-blur-md text-white border-0 text-[10px] gap-1 shadow-md">
-              UmreDunyasi
-              <ExternalLink className="w-2.5 h-2.5" />
-            </Badge>
-
             {/* Duration Badge */}
             <Badge className="bg-white/90 backdrop-blur-md text-slate-800 border-0 text-[10px] gap-1 shadow-md">
               <Clock3 className="w-2.5 h-2.5" />
@@ -93,10 +77,10 @@ export function CompactTourCard({ tour, index = 0 }: CompactTourCardProps) {
           )}
         </div>
 
-        {/* Nights Badge - Floating */}
+        {/* Nights Badge */}
         {totalNights > 0 && (
-          <div className="absolute top-3 right-3 mt-14">
-            <Badge className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white border-0 text-[10px] gap-1 shadow-lg">
+          <div className="absolute top-12 left-3">
+            <Badge className="bg-emerald-600/80 backdrop-blur-md text-white border-0 text-[10px] gap-1 shadow-md">
               <Moon className="w-2.5 h-2.5" />
               {tour.makkahNights ? `Mekke ${tour.makkahNights}` : ""}
               {tour.makkahNights && tour.madinahNights ? " · " : ""}
@@ -108,59 +92,20 @@ export function CompactTourCard({ tour, index = 0 }: CompactTourCardProps) {
         {/* Content - Bottom */}
         <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
           {/* Title */}
-          <h3 className="text-base md:text-lg font-bold text-white mb-2 line-clamp-2 leading-snug tracking-tight group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:bg-clip-text group-hover:from-emerald-300 group-hover:to-teal-300 transition-all">
+          <h3 className="text-base md:text-lg font-bold text-white mb-3 line-clamp-2 leading-snug tracking-tight group-hover:text-emerald-200 transition-colors duration-300">
             {tour.title}
           </h3>
 
-          {/* Firm Info */}
-          {tour.firm && (
-            <div className="flex items-center gap-1.5 mb-2">
-              <Users className="w-3 h-3 text-emerald-300" />
-              <p className="text-xs text-emerald-100">{tour.firm.name}</p>
-              {tour.firm.isVerified && (
-                <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-              )}
-            </div>
-          )}
-
-          {/* Description */}
-          <p className="text-xs text-white/70 line-clamp-2 mb-3 leading-relaxed min-h-[2.5em]">
-            {tour.description || "Tur detayları için tıklayın."}
-          </p>
-
-          {/* Info Row */}
-          <div className="flex items-center gap-3 mb-3 text-xs text-white/60">
-            {tour.startDate && (
-              <div className="flex items-center gap-1">
-                <CalendarDays className="w-3 h-3 text-emerald-300" />
-                {formatShortDate(tour.startDate)}
-              </div>
-            )}
-            {tour.hotelStars && (
-              <span className="flex items-center gap-1">
-                <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-                {tour.hotelStars}★
-              </span>
-            )}
-          </div>
-
-          {/* Sefernur Note - Compact */}
-          {sefernurNote && (
-            <div className="mb-3 p-2 bg-emerald-950/50 backdrop-blur-md rounded-lg border border-emerald-500/20">
-              <p className="text-[10px] text-emerald-200 leading-tight line-clamp-1">
-                <strong className="text-emerald-300">Not:</strong> {sefernurNote}
-              </p>
-            </div>
-          )}
-
           {/* Price & CTA */}
-          <div className="flex items-end justify-between pt-2 border-t border-white/10">
+          <div className="flex items-end justify-between pt-2 border-t border-white/15">
             <div>
-              <p className="text-[9px] text-emerald-300 uppercase tracking-wider mb-0.5">
+              <p className="text-[9px] text-emerald-300/80 uppercase tracking-wider mb-0.5">
                 Başlangıç
               </p>
               <p className="text-lg font-bold text-white leading-tight">
-                {formatTlUsdPairFromTl(Number(tour.price))}
+                {tour.priceCurrency === "USD" || tour.currency === "USD"
+                  ? formatTlUsdPairFromUsd(Number(tour.price))
+                  : formatTlUsdPairFromTl(Number(tour.price))}
               </p>
             </div>
             <div className="w-8 h-8 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">

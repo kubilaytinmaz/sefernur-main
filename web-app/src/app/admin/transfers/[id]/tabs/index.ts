@@ -6,4 +6,5 @@ export { PricingTab } from "./PricingTab";
 export { ReservationsTab } from "./ReservationsTab";
 export { ReviewsTab } from "./ReviewsTab";
 export { RouteTab } from "./RouteTab";
+export { ToursPricingTab } from "./ToursPricingTab";
 

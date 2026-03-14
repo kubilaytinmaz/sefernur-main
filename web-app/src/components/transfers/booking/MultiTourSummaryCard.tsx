@@ -9,24 +9,24 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { formatTlUsdPairFromTl } from "@/lib/currency";
-import type { PopularService } from "@/lib/transfers/popular-services-simple";
 import { cn } from "@/lib/utils";
+import type { PopularServiceModel } from "@/types/popular-service";
 import {
-    ChevronDown,
-    ChevronUp,
-    Clock,
-    Info,
-    MapPin,
-    Plus,
-    X
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  Info,
+  MapPin,
+  Plus,
+  X
 } from "lucide-react";
 import { useMemo, useState } from "react";
 
 interface MultiTourSummaryCardProps {
-  tours: PopularService[];
+  tours: PopularServiceModel[];
   onRemoveTour?: (tourId: string) => void;
   onAddTour?: () => void;
-  onShowTourDetail?: (tour: PopularService) => void;
+  onShowTourDetail?: (tour: PopularServiceModel) => void;
   passengerCount?: number;
 }
 
@@ -150,11 +150,11 @@ export function MultiTourSummaryCard({
 /* ────────── Tek Tur Item ────────── */
 
 interface TourItemProps {
-  tour: PopularService;
+  tour: PopularServiceModel;
   index: number;
   passengerCount: number;
   onRemove?: (tourId: string) => void;
-  onShowDetail?: (tour: PopularService) => void;
+  onShowDetail?: (tour: PopularServiceModel) => void;
 }
 
 function TourItem({

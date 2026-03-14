@@ -11,6 +11,7 @@ import { ContactMessageModel, ContactSubject } from "@/types/contact";
 import { GuideModel } from "@/types/guide";
 import { HotelCategory, HotelModel, RoomType } from "@/types/hotel";
 import { PlaceCity, PlaceModel } from "@/types/place";
+import { PopularRouteModel } from "@/types/popular-route";
 import { PopularServiceModel } from "@/types/popular-service";
 import { PromotionModel, PromotionTargetType } from "@/types/promotion";
 import { ReservationModel, ReservationStatus, ReservationType } from "@/types/reservation";
@@ -46,7 +47,8 @@ import {
   setDoc,
   Timestamp,
   updateDoc,
-  where
+  where,
+  writeBatch
 } from "firebase/firestore";
 import { db, storage } from "./config";
 import { COLLECTIONS } from "./firestore";
@@ -872,8 +874,11 @@ export async function getAllTransfers(opts?: { maxResults?: number }): Promise<T
 }
 
 export async function getTransferById(id: string): Promise<TransferModel | null> {
-  const snap = await getDoc(doc(db, COLLECTIONS.TRANSFERS, id));
-  if (!snap.exists()) return null;
+  const ref = doc(db, COLLECTIONS.TRANSFERS, id);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) {
+    return null;
+  }
   return mapTransfer(snap.id, snap.data() as Record<string, unknown>);
 }
 
@@ -1346,7 +1351,7 @@ export async function getAllPopularServices(
   }
   
   // Sort by order
-  return filtered.sort((a, b) => a.order - b.order);
+  return filtered.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 }
 
 export async function getPopularServiceById(id: string): Promise<PopularServiceModel | null> {
@@ -1410,6 +1415,141 @@ export async function getPopularServiceStats(): Promise<{
       transfer: all.filter((s) => s.type === "transfer").length,
       tour: all.filter((s) => s.type === "tour").length,
       guide: all.filter((s) => s.type === "guide").length,
+    },
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// ─── POPULAR ROUTES MANAGEMENT ───────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+
+function mapPopularRoute(id: string, d: Record<string, unknown>): PopularRouteModel {
+  const distanceObj = d.distance as Record<string, unknown> | undefined;
+  const durationObj = d.duration as Record<string, unknown> | undefined;
+  const fromObj = d.from as Record<string, unknown> | undefined;
+  const toObj = d.to as Record<string, unknown> | undefined;
+  const pricesObj = d.prices as Record<string, unknown> | undefined;
+
+  return {
+    id,
+    name: readString(d.name),
+    icon: readString(d.icon) || "🚗",
+    from: {
+      locationId: readString(fromObj?.locationId),
+      city: readString(fromObj?.city),
+      name: readString(fromObj?.name),
+    },
+    to: {
+      locationId: readString(toObj?.locationId),
+      city: readString(toObj?.city),
+      name: readString(toObj?.name),
+    },
+    distance: {
+      km: readNumber(distanceObj?.km),
+      text: readString(distanceObj?.text),
+    },
+    duration: {
+      minutes: readNumber(durationObj?.minutes),
+      text: readString(durationObj?.text),
+    },
+    basePrice: readNumber(d.basePrice),
+    prices: pricesObj ? {
+      sedan: readNumber(pricesObj.sedan),
+      van: readNumber(pricesObj.van),
+      coster: readNumber(pricesObj.coster),
+      bus: readNumber(pricesObj.bus),
+      vip: readNumber(pricesObj.vip),
+      jeep: readNumber(pricesObj.jeep),
+    } : undefined,
+    category: (readString(d.category) || "local") as PopularRouteModel["category"],
+    isPopular: d.isPopular === true,
+    order: readNumber(d.order),
+    createdAt: asDate(d.createdAt) ?? new Date(),
+    updatedAt: asDate(d.updatedAt) ?? new Date(),
+  };
+}
+
+export interface PopularRouteFilters {
+  category?: PopularRouteModel["category"];
+  isPopular?: boolean;
+}
+
+export async function getAllPopularRoutes(
+  filters?: PopularRouteFilters,
+): Promise<PopularRouteModel[]> {
+  const constraints: QueryConstraint[] = [];
+  const items = await fetchAll(COLLECTIONS.POPULAR_ROUTES, constraints, mapPopularRoute);
+
+  let result = items;
+  if (filters?.category) {
+    result = result.filter((r) => r.category === filters.category);
+  }
+  if (filters?.isPopular !== undefined) {
+    result = result.filter((r) => r.isPopular === filters.isPopular);
+  }
+
+  return result.sort((a, b) => a.order - b.order);
+}
+
+export async function getPopularRouteByIdAdmin(id: string): Promise<PopularRouteModel | null> {
+  const snap = await getDoc(doc(db, COLLECTIONS.POPULAR_ROUTES, id));
+  if (!snap.exists()) return null;
+  return mapPopularRoute(snap.id, snap.data() as Record<string, unknown>);
+}
+
+export async function createPopularRoute(
+  data: Omit<PopularRouteModel, "id" | "createdAt" | "updatedAt">,
+): Promise<string> {
+  const ref = await addDoc(collection(db, COLLECTIONS.POPULAR_ROUTES), {
+    ...data,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+  return ref.id;
+}
+
+export async function updatePopularRoute(
+  id: string,
+  data: Partial<PopularRouteModel>,
+): Promise<void> {
+  const { id: _id, createdAt: _ca, ...rest } = data as PopularRouteModel;
+  await updateDoc(doc(db, COLLECTIONS.POPULAR_ROUTES, id), {
+    ...rest,
+    updatedAt: serverTimestamp(),
+  });
+}
+
+export async function deletePopularRoute(id: string): Promise<void> {
+  await deleteDoc(doc(db, COLLECTIONS.POPULAR_ROUTES, id));
+}
+
+export async function reorderPopularRoutes(
+  order: { id: string; order: number }[],
+): Promise<void> {
+  const batch = writeBatch(db);
+  for (const item of order) {
+    batch.update(doc(db, COLLECTIONS.POPULAR_ROUTES, item.id), {
+      order: item.order,
+      updatedAt: serverTimestamp(),
+    });
+  }
+  await batch.commit();
+}
+
+export async function getPopularRouteStats(): Promise<{
+  total: number;
+  popular: number;
+  byCategory: Record<string, number>;
+}> {
+  const all = await getAllPopularRoutes();
+
+  return {
+    total: all.length,
+    popular: all.filter((r) => r.isPopular).length,
+    byCategory: {
+      airport: all.filter((r) => r.category === "airport").length,
+      intercity: all.filter((r) => r.category === "intercity").length,
+      local: all.filter((r) => r.category === "local").length,
     },
   };
 }

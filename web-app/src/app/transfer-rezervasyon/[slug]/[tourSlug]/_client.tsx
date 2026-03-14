@@ -9,10 +9,11 @@
 import { EmptyState, ErrorState, LoadingState } from "@/components/states/AsyncStates";
 import { TourDetailModal } from "@/components/transfers/TourDetailModal";
 import { BookingFormCard, MultiTourSummaryCard, PriceSummaryCard, VehicleInfoCard } from "@/components/transfers/booking";
+import { usePopularServiceById, usePopularTours } from "@/hooks/usePopularServices";
 import { getTransferById } from "@/lib/firebase/domain";
 import { parseSlugWithId } from "@/lib/transfers/booking";
-import { getServiceById, type PopularService } from "@/lib/transfers/popular-services-simple";
 import type { PriceBreakdown } from "@/types/booking";
+import type { PopularServiceModel } from "@/types/popular-service";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -59,15 +60,17 @@ export default function BookingPageClient() {
 
   const transfer = transferQuery.data;
 
-  // Ana tur verisi (client-side)
-  const mainTour = tourId ? getServiceById(tourId) : undefined;
+  // Ana tur verisi (Local JSON)
+  const { data: mainTour } = usePopularServiceById(tourId);
 
-  // Ek turların verileri (client-side)
+  // Ek turların verileri (Local JSON)
+  const { data: allServices } = usePopularTours();
   const extraTours = useMemo(() => {
+    if (!allServices) return [];
     return urlData.extraTourIds
-      .map(id => getServiceById(id))
-      .filter(Boolean) as PopularService[];
-  }, [urlData.extraTourIds]);
+      .map(id => allServices.find(s => s.id === id))
+      .filter(Boolean) as PopularServiceModel[];
+  }, [urlData.extraTourIds, allServices]);
 
   // Tüm turlar (ana tur + ek turlar)
   const allTours = useMemo(() => {
@@ -177,7 +180,7 @@ export default function BookingPageClient() {
             <div className="sticky top-24">
               <BookingFormCard
                 transfer={transfer}
-                tour={mainTour}
+                tour={mainTour ?? undefined}
                 extraTours={extraTours}
                 onPriceChange={setCurrentPrice}
                 onPassengerChange={setPassengerCount}

@@ -137,21 +137,18 @@ export function UpcomingUmrahTours({
                 {title || "Yaklaşan Umre Turları"}
               </h2>
               <p className="text-sm text-slate-500 mt-1">
-                {description ||
-                  "UmreDunyasi güvencesiyle yaklaşan umre turları"}
+                {description || "En uygun fiyatlı paketleri keşfedin"}
               </p>
             </div>
           </div>
           {showViewAll && (
             <Link
-              href="https://umredunyasi.com/tours"
-              target="_blank"
-              rel="nofollow noopener noreferrer"
+              href="/tours"
               className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 hover:from-emerald-100 hover:to-teal-100 font-medium text-sm transition-all duration-300 border border-emerald-200 hover:border-emerald-300 hover:shadow-md hover:shadow-emerald-500/10"
             >
               Tümünü Gör
               <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </Link>
           )}

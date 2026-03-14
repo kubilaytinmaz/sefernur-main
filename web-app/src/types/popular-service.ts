@@ -3,6 +3,7 @@
  * Transfer, Tur ve Rehber hizmetleri için ortak veri yapısı
  */
 
+
 export type ServiceType = "transfer" | "tour" | "guide";
 export type PriceType = "per_km" | "per_person" | "fixed";
 
@@ -36,6 +37,16 @@ export interface PopularServiceModel {
     type: PriceType;
   };
 
+  // Araç bazlı fiyatlar (her araç tipi için farklı fiyat)
+  vehiclePrices?: {
+    sedan?: number;
+    van?: number;
+    bus?: number;
+    vip?: number;
+    jeep?: number;
+    coster?: number;
+  };
+
   // Güzergah bilgisi (araç kartlarında gösterilecek)
   route?: {
     from: string;
@@ -54,7 +65,7 @@ export interface PopularServiceModel {
   };
 
   isPopular: boolean;
-  order: number;
+  order?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }

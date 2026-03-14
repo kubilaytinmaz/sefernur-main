@@ -3,6 +3,7 @@
  * Fiyat hesaplama, validasyon ve veri işleme
  */
 
+import { sarToTry } from "@/lib/currency";
 import type {
   CalculatePriceInput,
   CalculatePriceResult,
@@ -14,8 +15,8 @@ import type {
   ValidateFormInput,
   ValidateFormResult,
 } from "@/types/booking";
+import type { PopularServiceModel } from "@/types/popular-service";
 import type { TransferModel } from "@/types/transfer";
-import type { PopularService } from "./popular-services-simple";
 import { calculateTransferPrice, isNightTime } from "./pricing";
 
 /**
@@ -60,12 +61,28 @@ export function calculateBookingPrice(input: CalculatePriceInput): CalculatePric
   let tourPricePerPerson = 0;
 
   if (tour) {
+    // Önce araç bazlı fiyatı kontrol et (SAR cinsinden)
+    const vehicleType = transfer.vehicleType;
+    let baseTourPriceSar = tour.price.baseAmount;
+
+    // Eğer tur için bu araç tipine özel fiyat varsa kullan
+    if (tour.vehiclePrices && vehicleType in tour.vehiclePrices) {
+      const vehiclePrice = tour.vehiclePrices[vehicleType as keyof typeof tour.vehiclePrices];
+      if (vehiclePrice && vehiclePrice > 0) {
+        baseTourPriceSar = vehiclePrice;
+      }
+    }
+
+    // SAR'ı TL'ye çevir
+    const baseTourPriceTry = sarToTry(baseTourPriceSar);
+
+    // Fiyat tipine göre hesapla
     if (tour.price.type === "per_person") {
-      tourPricePerPerson = tour.price.baseAmount;
+      tourPricePerPerson = baseTourPriceTry;
       tourPrice = tourPricePerPerson * getTotalPassengers(passengers);
     } else {
-      tourPrice = tour.price.baseAmount;
-      tourPricePerPerson = tour.price.baseAmount / getTotalPassengers(passengers);
+      tourPrice = baseTourPriceTry;
+      tourPricePerPerson = baseTourPriceTry / getTotalPassengers(passengers);
     }
   }
 
@@ -282,7 +299,7 @@ export function getDefaultContact(user?: { name?: string; phone?: string; email?
  */
 export function createReservationTitle(
   transfer: TransferModel,
-  tour?: PopularService
+  tour?: PopularServiceModel
 ): string {
   const vehicleName = transfer.vehicleName || transfer.vehicleType;
   if (tour) {
@@ -296,7 +313,7 @@ export function createReservationTitle(
  */
 export function createReservationSubtitle(
   transfer: TransferModel,
-  tour: PopularService | undefined,
+  tour: PopularServiceModel | undefined,
   passengers: PassengerInfo,
   dateTime: DateTimeInfo
 ): string {
@@ -346,7 +363,7 @@ export function parseSlugWithId(slug: string): { slug: string; id: string } {
 /**
  * Transfer ve tur için rezervasyon tipi belirle
  */
-export function getReservationType(tour?: PopularService): "transfer" | "tour" | "transfer_tour" {
+export function getReservationType(tour?: PopularServiceModel): "transfer" | "tour" | "transfer_tour" {
   if (tour) {
     return "transfer_tour";
   }

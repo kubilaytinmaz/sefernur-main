@@ -1,0 +1,287 @@
+{
+  "services": [
+    {
+      "id": "tour-mecca-city",
+      "type": "tour",
+      "name": "Mekke Şehir Turu",
+      "nameEn": "Mecca City Tour",
+      "nameTr": "Mekke Şehir Turu",
+      "description": "Mekke'nin tarihi ve dini mekanlarını kapsayan kapsamlı bir şehir turu",
+      "icon": "🕌",
+      "duration": { "text": "4-6 saat", "hours": 5 },
+      "distance": { "km": 50, "text": "50 km" },
+      "price": { "display": "250 SAR", "baseAmount": 250, "type": "fixed", "currency": "SAR" },
+      "vehiclePrices": {
+        "sedan": 250,
+        "van": 250,
+        "bus": 750,
+        "vip": 400,
+        "jeep": 450,
+        "coster": 450
+      },
+      "route": {
+        "from": "Mekke Otel",
+        "to": "Mekke Şehir Merkezi",
+        "stops": ["Cebeli Nur", "Cebeli Sevr", "Mina", "Arafat", "Müzdelife"]
+      },
+      "tourDetails": {
+        "highlights": [
+          "Cebeli Nur Mağarası",
+          "Cebeli Sevr",
+          "Mina Vadisi",
+          "Arafat Meydanı",
+          "Müzdelife"
+        ],
+        "includes": ["Araç", "Rehber", "Su"],
+        "minParticipants": 1,
+        "maxParticipants": 45,
+        "fullDescription": "Mekke'nin kutsal mekanlarını ziyaret edin. Hz. Muhammed'in vahiy aldığı Hira Mağarası, Sevr Mağarası ve hac ibadetinin yapıldığı Mina, Arafat ve Müzdelife mekanlarını gezin.",
+        "stopsDescription": [
+          { "stopName": "Cebeli Nur", "description": "Hz. Muhammed'e ilk vahyin geldiği Hira Mağarası" },
+          { "stopName": "Cebeli Sevr", "description": "Hicret sırasında sığınılan mağara" },
+          { "stopName": "Mina", "description": "Hac ibadetinin yapıldığı vadi" },
+          { "stopName": "Arafat", "description": "Haccın en önemli rüknü olan vakfe meydanı" },
+          { "stopName": "Müzdelife", "description": "Hac ibadeti esnasında konaklanan alan" }
+        ]
+      },
+      "isPopular": true,
+      "order": 1
+    },
+    {
+      "id": "tour-medina-city",
+      "type": "tour",
+      "name": "Medine Şehir Turu",
+      "nameEn": "Medina City Tour",
+      "nameTr": "Medine Şehir Turu",
+      "description": "Medine'nin tarihi ve dini mekanlarını kapsayan şehir turu",
+      "icon": "🕌",
+      "duration": { "text": "4-6 saat", "hours": 5 },
+      "distance": { "km": 60, "text": "60 km" },
+      "price": { "display": "230 SAR", "baseAmount": 230, "type": "fixed", "currency": "SAR" },
+      "vehiclePrices": {
+        "sedan": 230,
+        "van": 230,
+        "bus": 700,
+        "vip": 350,
+        "jeep": 400,
+        "coster": 400
+      },
+      "route": {
+        "from": "Medine Otel",
+        "to": "Medine Şehir Merkezi"
+      },
+      "tourDetails": {
+        "highlights": ["Kuba Mescidi", "Uhud Dağı", "Hendek Savaşı Alanı"],
+        "includes": ["Araç", "Rehber", "Su"],
+        "minParticipants": 1,
+        "maxParticipants": 45
+      },
+      "isPopular": true,
+      "order": 2
+    },
+    {
+      "id": "tour-taif",
+      "type": "tour",
+      "name": "Taif Turu",
+      "nameEn": "Taif Tour",
+      "nameTr": "Taif Turu",
+      "description": "Taif şehrinin doğal güzellikleri ve tarihi mekanlarını keşfedin",
+      "icon": "🏞️",
+      "duration": { "text": "8 saat", "hours": 8 },
+      "distance": { "km": 120, "text": "120 km" },
+      "price": { "display": "350 SAR", "baseAmount": 350, "type": "fixed", "currency": "SAR" },
+      "vehiclePrices": {
+        "sedan": 350,
+        "van": 350,
+        "bus": 1000,
+        "vip": 800,
+        "jeep": 500,
+        "coster": 500
+      },
+      "route": {
+        "from": "Mekke",
+        "to": "Taif",
+        "stops": ["Taif Gül Bahçeleri", "Şifa Parkı"]
+      },
+      "tourDetails": {
+        "highlights": ["Gül bahçeleri", "Bal üretimi", "Serin iklim"],
+        "includes": ["Araç", "Rehber", "Öğle yemeği", "Su"],
+        "minParticipants": 1,
+        "maxParticipants": 45,
+        "fullDescription": "Mekke'nin serin yayla şehri Taif'i ziyaret edin. Gül bahçeleri, bal üretimi ve tarihi mekanları keşfedin.",
+        "stopsDescription": [
+          { "stopName": "Taif Gül Bahçeleri", "description": "Ünlü Taif güllerinin yetiştirildiği bahçeler" },
+          { "stopName": "Şifa Parkı", "description": "Doğal güzellikleriyle ünlü park alanı" }
+        ]
+      },
+      "isPopular": true,
+      "order": 3
+    },
+    {
+      "id": "tour-jeddah",
+      "type": "tour",
+      "name": "Cidde Şehir Turu",
+      "nameEn": "Jeddah City Tour",
+      "nameTr": "Cidde Şehir Turu",
+      "description": "Cidde'nin modern ve tarihi yüzünü keşfedin",
+      "icon": "🏙️",
+      "duration": { "text": "6 saat", "hours": 6 },
+      "distance": { "km": 80, "text": "80 km" },
+      "price": { "display": "350 SAR", "baseAmount": 350, "type": "fixed", "currency": "SAR" },
+      "vehiclePrices": {
+        "sedan": 350,
+        "van": 350,
+        "bus": 1000,
+        "vip": 800,
+        "jeep": 550,
+        "coster": 550
+      },
+      "route": {
+        "from": "Cidde",
+        "to": "Tarihi Cidde (Al-Balad)"
+      },
+      "tourDetails": {
+        "highlights": ["Al-Balad (Eski Şehir)", "Kızıldeniz Sahili", "King Fahd Fıskiyesi"],
+        "includes": ["Araç", "Rehber", "Su"],
+        "minParticipants": 1,
+        "maxParticipants": 45
+      },
+      "isPopular": true,
+      "order": 4
+    },
+    {
+      "id": "tour-hudaybiyah",
+      "type": "tour",
+      "name": "Hudeybiye Umre Mescidi",
+      "nameEn": "Hudaybiyah Umrah Mosque",
+      "nameTr": "Hudeybiye Umre Mescidi",
+      "description": "Hudeybiye Antlaşması'nın yapıldığı tarihi mescidi ziyaret",
+      "icon": "🕌",
+      "duration": { "text": "2-3 saat", "hours": 2.5 },
+      "distance": { "km": 25, "text": "25 km" },
+      "price": { "display": "150 SAR", "baseAmount": 150, "type": "fixed", "currency": "SAR" },
+      "vehiclePrices": {
+        "sedan": 150,
+        "van": 150,
+        "bus": 700,
+        "vip": 400,
+        "jeep": 250,
+        "coster": 250
+      },
+      "route": {
+        "from": "Mekke",
+        "to": "Hudeybiye Mescidi"
+      },
+      "tourDetails": {
+        "highlights": ["Hudeybiye Antlaşması yeri", "Umre ibadetine başlangıç noktası"],
+        "includes": ["Araç", "Rehber"],
+        "minParticipants": 1,
+        "maxParticipants": 45
+      },
+      "isPopular": false,
+      "order": 5
+    },
+    {
+      "id": "tour-cirane",
+      "type": "tour",
+      "name": "Cirane Umre Mescidi",
+      "nameEn": "Cirane Umrah Mosque",
+      "nameTr": "Cirane Umre Mescidi",
+      "description": "Hz. Muhammed'in umre yaptığı tarihi mescit",
+      "icon": "🕌",
+      "duration": { "text": "2-3 saat", "hours": 2.5 },
+      "distance": { "km": 20, "text": "20 km" },
+      "price": { "display": "150 SAR", "baseAmount": 150, "type": "fixed", "currency": "SAR" },
+      "vehiclePrices": {
+        "sedan": 150,
+        "van": 150,
+        "bus": 700,
+        "vip": 400,
+        "jeep": 250,
+        "coster": 250
+      },
+      "route": {
+        "from": "Mekke",
+        "to": "Cirane Mescidi"
+      },
+      "tourDetails": {
+        "highlights": ["Hz. Muhammed'in umre yaptığı yer"],
+        "includes": ["Araç", "Rehber"],
+        "minParticipants": 1,
+        "maxParticipants": 45
+      },
+      "isPopular": false,
+      "order": 6
+    },
+    {
+      "id": "tour-aisha-tenim",
+      "type": "tour",
+      "name": "Aişe Tenim Umre Mescidi",
+      "nameEn": "Aisha Tenim Umrah Mosque",
+      "nameTr": "Aişe Tenim Umre Mescidi",
+      "description": "İhrama girilen mescit - umre başlangıcı",
+      "icon": "🕌",
+      "duration": { "text": "1-2 saat", "hours": 1.5 },
+      "distance": { "km": 7, "text": "7 km" },
+      "price": { "display": "70 SAR", "baseAmount": 70, "type": "fixed", "currency": "SAR" },
+      "vehiclePrices": {
+        "sedan": 70,
+        "van": 100,
+        "bus": 500,
+        "vip": 300,
+        "jeep": 200,
+        "coster": 200
+      },
+      "route": {
+        "from": "Mekke",
+        "to": "Tenim Mescidi"
+      },
+      "tourDetails": {
+        "highlights": ["İhrama giriş noktası", "Umre başlangıcı"],
+        "includes": ["Araç", "Rehber"],
+        "minParticipants": 1,
+        "maxParticipants": 45
+      },
+      "isPopular": false,
+      "order": 7
+    },
+    {
+      "id": "tour-badr",
+      "type": "tour",
+      "name": "Mekke - Bedir - Medine Turu",
+      "nameEn": "Mecca - Badr - Medina Tour",
+      "nameTr": "Mekke - Bedir - Medine Turu",
+      "description": "Bedir Savaşı alanını ziyaret ederek Mekke'den Medine'ye yolculuk",
+      "icon": "⚔️",
+      "duration": { "text": "6-8 saat", "hours": 7 },
+      "distance": { "km": 450, "text": "450 km" },
+      "price": { "display": "550 SAR", "baseAmount": 550, "type": "fixed", "currency": "SAR" },
+      "vehiclePrices": {
+        "sedan": 550,
+        "van": 600,
+        "bus": 1500,
+        "vip": 1000,
+        "jeep": 800,
+        "coster": 800
+      },
+      "route": {
+        "from": "Mekke",
+        "to": "Medine",
+        "stops": ["Bedir Savaş Alanı"]
+      },
+      "tourDetails": {
+        "highlights": ["Bedir Savaşı tarihi alanı", "Şehitlik ziyareti"],
+        "includes": ["Araç", "Rehber", "Öğle yemeği", "Su"],
+        "minParticipants": 1,
+        "maxParticipants": 45,
+        "fullDescription": "İslam tarihinin en önemli savaşlarından Bedir Savaşı'nın yapıldığı alanı ziyaret ederek Mekke'den Medine'ye yolculuk yapın.",
+        "stopsDescription": [
+          { "stopName": "Bedir Savaş Alanı", "description": "İslam tarihinin dönüm noktası olan Bedir Savaşı'nın yapıldığı alan" }
+        ]
+      },
+      "isPopular": true,
+      "order": 8
+    }
+  ],
+  "lastUpdated": "2026-03-14T12:30:00.000Z"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "migration-scripts",
+  "version": "1.0.0",
+  "description": "Firebase migration scripts for popular routes and services",
+  "main": "index.js",
+  "scripts": {
+    "migrate:routes": "node migrate-popular-routes.js",
+    "migrate:services": "node migrate-popular-services.js",
+    "migrate:all": "node migrate-popular-routes.js && node migrate-popular-services.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  }
+}

@@ -33,6 +33,7 @@ export const COLLECTIONS = {
   GUIDES: "guides",
   PROMOTIONS: "promotions",
   POPULAR_SERVICES: "popularServices",
+  POPULAR_ROUTES: "popularRoutes",
   SITE_SETTINGS: "siteSettings",
   TRANSFER_PRICING: "transfer_pricing",
   TRANSFER_LOCATIONS: "transfer_locations",

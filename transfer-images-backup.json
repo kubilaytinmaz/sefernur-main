@@ -1,0 +1,128 @@
+{
+  "backupDate": "2025-03-12T11:58:00.000Z",
+  "backupDescription": "Transfer araçlarının mevcut görselleri yedeği - değişiklik öncesi",
+  "totalTransfers": 10,
+  "transfers": [
+    {
+      "id": "4hyqrBjFAmIiaqYdt6cA",
+      "vehicleType": "sedan",
+      "company": "CARNİVAL",
+      "capacity": 6,
+      "basePrice": 300,
+      "route": "Medine Bölgesi → Mekke Bölgesi",
+      "durationMinutes": 120,
+      "images": [
+        "https://firebasestorage.googleapis.com/v0/b/sefernur-app.firebasestorage.app/o/transfers%2Fuploads%2F1771059212069_scaled_indir%20(4).jpg?alt=media&token=d776dd21-d887-45b2-9a43-06b54e4a9f48"
+      ]
+    },
+    {
+      "id": "G9QqxFOramgNrCPJA9Js",
+      "vehicleType": "sedan",
+      "company": "Binek",
+      "capacity": 4,
+      "basePrice": 100,
+      "route": "Mekke Bölgesi → Mekke Bölgesi",
+      "durationMinutes": 60,
+      "images": [
+        "https://firebasestorage.googleapis.com/v0/b/sefernur-app.firebasestorage.app/o/transfers%2Fuploads%2F1771057180252_scaled_72726567-6f2b-4ebd-bdea-122d88266d85_600x340.jpg?alt=media&token=9af10ede-46f8-4c1b-8b14-809897c1ec04"
+      ]
+    },
+    {
+      "id": "Ii7HEEUBKfZdBL7eapuH",
+      "vehicleType": "bus",
+      "company": "Sefernur",
+      "capacity": 7,
+      "basePrice": 1000,
+      "route": "Mekke Bölgesi → Medine Bölgesi",
+      "durationMinutes": 120,
+      "images": [
+        "https://firebasestorage.googleapis.com/v0/b/sefernur-app.firebasestorage.app/o/transfers%2Fuploads%2F1755013670738_scaled_1000102337.jpg?alt=media&token=5e0f2d3e-869a-4747-a2ab-9ff68a8aea12"
+      ]
+    },
+    {
+      "id": "KKfPFSj9Sa5v35uh80cR",
+      "vehicleType": "vip",
+      "company": "GMC YUKON",
+      "capacity": 5,
+      "basePrice": 600,
+      "route": "Mekke Bölgesi → Medine Bölgesi",
+      "durationMinutes": 120,
+      "images": [
+        "https://firebasestorage.googleapis.com/v0/b/sefernur-app.firebasestorage.app/o/transfers%2Fuploads%2F1771057320319_scaled_images%20(1).jpg?alt=media&token=f66c574a-75e4-4a68-b107-d1bf0095c2b3"
+      ]
+    },
+    {
+      "id": "LYzf1gcar8CW3H1ARt0u",
+      "vehicleType": "bus",
+      "company": "COSTER",
+      "capacity": 16,
+      "basePrice": 400,
+      "route": "Mekke Bölgesi → Mekke Bölgesi",
+      "durationMinutes": 120,
+      "images": [
+        "https://firebasestorage.googleapis.com/v0/b/sefernur-app.firebasestorage.app/o/transfers%2Fuploads%2F1771057221050_scaled_images.jpg?alt=media&token=bb93dc29-c30f-4168-9378-43b59899a78f"
+      ]
+    },
+    {
+      "id": "Qu8Kh0tRrpQT8Av5EN1W",
+      "vehicleType": "van",
+      "company": "STARİA",
+      "capacity": 8,
+      "basePrice": 350,
+      "route": "Cidde → Mekke Bölgesi",
+      "durationMinutes": 60,
+      "images": [
+        "https://firebasestorage.googleapis.com/v0/b/sefernur-app.firebasestorage.app/o/transfers%2Fuploads%2F1771059105856_scaled_indir%20(3).jpg?alt=media&token=2b1ddea1-cdc8-447f-894e-d55cec8d6e9d"
+      ]
+    },
+    {
+      "id": "UFkzE5w4uiYlxKxqTvMP",
+      "vehicleType": "bus",
+      "company": "Makkah Buss",
+      "capacity": 55,
+      "basePrice": 10000,
+      "route": "Mekke Bölgesi → Medine Bölgesi",
+      "durationMinutes": 200,
+      "isPopular": true,
+      "images": [
+        "https://firebasestorage.googleapis.com/v0/b/sefernur-app.firebasestorage.app/o/transfers%2Fuploads%2F1756720060494_scaled_292200304_2282886971860507_7623158704882886803_n.jpg?alt=media&token=60b5e23f-aab3-441d-9162-d5650c0b191a"
+      ]
+    },
+    {
+      "id": "VXiU3BCIrF2BHwAHJl6Z",
+      "vehicleType": "van",
+      "company": "Toyota Hias",
+      "capacity": 8,
+      "basePrice": 400,
+      "route": "Mekke Bölgesi → Mekke Bölgesi",
+      "durationMinutes": 60,
+      "images": [
+        "https://firebasestorage.googleapis.com/v0/b/sefernur-app.firebasestorage.app/o/transfers%2Fuploads%2F1771057275401_scaled_indir.jpg?alt=media&token=f07cd1e6-668e-4a10-8d65-0646c8060255"
+      ]
+    },
+    {
+      "id": "XjBAk1iHXDHHteWCoR3Q",
+      "vehicleType": "sedan",
+      "company": "CAMRY",
+      "capacity": 3,
+      "basePrice": 250,
+      "route": "Cidde → Mekke Bölgesi",
+      "durationMinutes": 60,
+      "images": [
+        "https://firebasestorage.googleapis.com/v0/b/sefernur-app.firebasestorage.app/o/transfers%2Fuploads%2F1771058999012_scaled_indir%20(2).jpg?alt=media&token=fbcf3cf5-4478-4102-aefe-796e05d41026"
+      ]
+    },
+    {
+      "id": "eEXAS8KnK63Tj7jHkcLX",
+      "vehicleType": "bus",
+      "company": "SAPTCO Otobüs",
+      "capacity": 49,
+      "basePrice": 1500,
+      "route": "Mekke Bölgesi → Medine Bölgesi",
+      "durationMinutes": 240,
+      "images": [
+        "https://firebasestorage.googleapis.com/v0/b/sefernur-app.firebasestorage.app/o/transfers%2Fuploads%2F1771057353870_scaled_indir%20(1).jpg?alt=media&token=0c9912cd-f735-48a3-be3f-71bd6f486e03"
+      ]
+    }
+  ]
+}

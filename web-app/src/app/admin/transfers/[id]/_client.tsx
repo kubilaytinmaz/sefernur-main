@@ -15,8 +15,9 @@ import { PricingTab } from "./tabs/PricingTab";
 import { ReservationsTab } from "./tabs/ReservationsTab";
 import { ReviewsTab } from "./tabs/ReviewsTab";
 import { RouteTab } from "./tabs/RouteTab";
+import { ToursPricingTab } from "./tabs/ToursPricingTab";
 
-type TabId = "basic" | "route" | "pricing" | "availability" | "images" | "reviews" | "reservations" | "analytics";
+type TabId = "basic" | "route" | "pricing" | "tours-pricing" | "availability" | "images" | "reviews" | "reservations" | "analytics";
 
 interface Tab {
   id: TabId;
@@ -28,6 +29,7 @@ const tabs: Tab[] = [
   { id: "basic", label: "Temel Bilgiler", icon: "📋" },
   { id: "route", label: "Güzergah", icon: "🗺️" },
   { id: "pricing", label: "Fiyatlandırma", icon: "💰" },
+  { id: "tours-pricing", label: "Tur Fiyatlandırması", icon: "🎫" },
   { id: "availability", label: "Müsaitlik", icon: "📅" },
   { id: "images", label: "Görseller", icon: "🖼️" },
   { id: "reviews", label: "Değerlendirmeler", icon: "⭐" },
@@ -36,7 +38,7 @@ const tabs: Tab[] = [
 ];
 
 export default function TransferDetailPage() {
-  const id = useRouteId();
+  const id = useRouteId(2); // /admin/transfers/[id] → index 2
   const router = useRouter();
   const isNew = id === "new";
 
@@ -77,6 +79,8 @@ export default function TransferDetailPage() {
           return;
         }
         setTransfer(t);
+      } catch (error) {
+        console.error("Error fetching transfer:", error);
       } finally {
         setLoading(false);
       }
@@ -216,6 +220,9 @@ export default function TransferDetailPage() {
         )}
         {activeTab === "pricing" && (
           <PricingTab transfer={transfer} onUpdate={updateTransferData} />
+        )}
+        {activeTab === "tours-pricing" && (
+          <ToursPricingTab transferId={id} />
         )}
         {activeTab === "availability" && (
           <AvailabilityTab transfer={transfer} onUpdate={updateTransferData} />

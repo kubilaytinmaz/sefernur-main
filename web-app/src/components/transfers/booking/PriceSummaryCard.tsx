@@ -43,19 +43,6 @@ export function PriceSummaryCard({ price, passengerCount, tourName, tourCount }:
 
         {/* Price Items */}
         <div className="space-y-3 mb-4">
-          {/* Transfer Price */}
-          <div className="flex items-center justify-between py-2 border-b border-emerald-100">
-            <div>
-              <p className="text-sm font-medium text-slate-800">Transfer Ücreti</p>
-              <p className="text-xs text-slate-500">
-                {passengerCount} yolcu • Araç kapasitesi
-              </p>
-            </div>
-            <p className="text-sm font-semibold text-slate-900">
-              {formatTlUsdPairFromTl(price.transferTotal)}
-            </p>
-          </div>
-
           {/* Tour Price */}
           {price.tourPrice > 0 && (
             <div className="flex items-center justify-between py-2 border-b border-emerald-100">

@@ -13,6 +13,7 @@ export interface VehiclePricingModel {
   nightSurcharge: number;
   waitingFeePerHour: number;
   luggageFee: number;
+  tourPrices?: Record<string, number>; // tourId -> price mapping
   updatedAt: Date;
   updatedBy: string;
 }

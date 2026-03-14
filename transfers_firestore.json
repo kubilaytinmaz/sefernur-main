@@ -1,0 +1,1763 @@
+{
+  "documents": [
+    {
+      "name": "projects/sefernur-app/databases/(default)/documents/transfers/4hyqrBjFAmIiaqYdt6cA",
+      "fields": {
+        "images": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "https://firebasestorage.googleapis.com/v0/b/sefernur-app.firebasestorage.app/o/transfers%2Fuploads%2F1771059212069_scaled_indir%20(4).jpg?alt=media&token=d776dd21-d887-45b2-9a43-06b54e4a9f48"
+              }
+            ]
+          }
+        },
+        "basePrice": {
+          "doubleValue": 300
+        },
+        "id": {
+          "nullValue": null
+        },
+        "toName": {
+          "stringValue": "الساحات الشرقية للمسجد الحرام, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+        },
+        "email": {
+          "nullValue": null
+        },
+        "fromLocation": {
+          "mapValue": {
+            "fields": {
+              "lat": {
+                "doubleValue": 25.1354363
+              },
+              "lng": {
+                "doubleValue": 39.162594
+              }
+            }
+          }
+        },
+        "createdAt": {
+          "stringValue": "2026-02-14T11:53:43.527997"
+        },
+        "vehicleType": {
+          "stringValue": "sedan"
+        },
+        "capacity": {
+          "integerValue": "6"
+        },
+        "rating": {
+          "doubleValue": 0
+        },
+        "favoriteUserIds": {
+          "arrayValue": {}
+        },
+        "isPopular": {
+          "booleanValue": false
+        },
+        "phone": {
+          "nullValue": null
+        },
+        "fromAddress": {
+          "mapValue": {
+            "fields": {
+              "country": {
+                "stringValue": "Suudi Arabistan"
+              },
+              "state": {
+                "stringValue": ""
+              },
+              "location": {
+                "mapValue": {
+                  "fields": {
+                    "latitude": {
+                      "doubleValue": 25.1354363
+                    },
+                    "longitude": {
+                      "doubleValue": 39.162594
+                    }
+                  }
+                }
+              },
+              "countryCode": {
+                "stringValue": "SA"
+              },
+              "city": {
+                "stringValue": "Medine Bölgesi"
+              },
+              "address": {
+                "stringValue": "محافظة المدينة المنورة, Medine Bölgesi, Suudi Arabistan"
+              }
+            }
+          }
+        },
+        "isActive": {
+          "booleanValue": true
+        },
+        "toAddress": {
+          "mapValue": {
+            "fields": {
+              "state": {
+                "stringValue": ""
+              },
+              "country": {
+                "stringValue": "Suudi Arabistan"
+              },
+              "location": {
+                "mapValue": {
+                  "fields": {
+                    "latitude": {
+                      "doubleValue": 21.420847
+                    },
+                    "longitude": {
+                      "doubleValue": 39.826869
+                    }
+                  }
+                }
+              },
+              "city": {
+                "stringValue": "Mekke Bölgesi"
+              },
+              "countryCode": {
+                "stringValue": "SA"
+              },
+              "address": {
+                "stringValue": "الساحات الشرقية للمسجد الحرام, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+              }
+            }
+          }
+        },
+        "durationMinutes": {
+          "integerValue": "120"
+        },
+        "whatsapp": {
+          "nullValue": null
+        },
+        "reviewCount": {
+          "integerValue": "0"
+        },
+        "fromName": {
+          "stringValue": "محافظة المدينة المنورة, Medine Bölgesi, Suudi Arabistan"
+        },
+        "company": {
+          "stringValue": "CARNİVAL"
+        },
+        "availability": {
+          "mapValue": {}
+        },
+        "toLocation": {
+          "mapValue": {
+            "fields": {
+              "lng": {
+                "doubleValue": 39.826869
+              },
+              "lat": {
+                "doubleValue": 21.420847
+              }
+            }
+          }
+        },
+        "updatedAt": {
+          "stringValue": "2026-02-14T11:53:43.527995"
+        }
+      },
+      "createTime": "2026-02-14T08:53:43.825839Z",
+      "updateTime": "2026-02-14T08:53:43.825839Z"
+    },
+    {
+      "name": "projects/sefernur-app/databases/(default)/documents/transfers/G9QqxFOramgNrCPJA9Js",
+      "fields": {
+        "whatsapp": {
+          "nullValue": null
+        },
+        "company": {
+          "stringValue": "Binek"
+        },
+        "fromName": {
+          "stringValue": "الساحات الشرقية للمسجد الحرام, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+        },
+        "reviewCount": {
+          "integerValue": "0"
+        },
+        "availability": {
+          "mapValue": {}
+        },
+        "toLocation": {
+          "mapValue": {
+            "fields": {
+              "lat": {
+                "doubleValue": 21.4245589
+              },
+              "lng": {
+                "doubleValue": 39.8248709
+              }
+            }
+          }
+        },
+        "updatedAt": {
+          "stringValue": "2026-02-14T11:19:42.487695"
+        },
+        "isActive": {
+          "booleanValue": true
+        },
+        "toAddress": {
+          "mapValue": {
+            "fields": {
+              "country": {
+                "stringValue": "Suudi Arabistan"
+              },
+              "state": {
+                "stringValue": ""
+              },
+              "location": {
+                "mapValue": {
+                  "fields": {
+                    "latitude": {
+                      "doubleValue": 21.4245589
+                    },
+                    "longitude": {
+                      "doubleValue": 39.8248709
+                    }
+                  }
+                }
+              },
+              "city": {
+                "stringValue": "Mekke Bölgesi"
+              },
+              "countryCode": {
+                "stringValue": "SA"
+              },
+              "address": {
+                "stringValue": "باب القدس 35, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+              }
+            }
+          }
+        },
+        "durationMinutes": {
+          "integerValue": "60"
+        },
+        "createdAt": {
+          "stringValue": "2026-02-14T11:08:05.988145"
+        },
+        "vehicleType": {
+          "stringValue": "sedan"
+        },
+        "favoriteUserIds": {
+          "arrayValue": {}
+        },
+        "isPopular": {
+          "booleanValue": false
+        },
+        "rating": {
+          "doubleValue": 0
+        },
+        "capacity": {
+          "integerValue": "4"
+        },
+        "fromAddress": {
+          "mapValue": {
+            "fields": {
+              "address": {
+                "stringValue": "الساحات الشرقية للمسجد الحرام, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+              },
+              "city": {
+                "stringValue": "Mekke Bölgesi"
+              },
+              "countryCode": {
+                "stringValue": "SA"
+              },
+              "location": {
+                "mapValue": {
+                  "fields": {
+                    "latitude": {
+                      "doubleValue": 21.420847
+                    },
+                    "longitude": {
+                      "doubleValue": 39.826869
+                    }
+                  }
+                }
+              },
+              "country": {
+                "stringValue": "Suudi Arabistan"
+              },
+              "state": {
+                "stringValue": ""
+              }
+            }
+          }
+        },
+        "phone": {
+          "nullValue": null
+        },
+        "basePrice": {
+          "doubleValue": 100
+        },
+        "images": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "https://firebasestorage.googleapis.com/v0/b/sefernur-app.firebasestorage.app/o/transfers%2Fuploads%2F1771057180252_scaled_72726567-6f2b-4ebd-bdea-122d88266d85_600x340.jpg?alt=media&token=9af10ede-46f8-4c1b-8b14-809897c1ec04"
+              }
+            ]
+          }
+        },
+        "fromLocation": {
+          "mapValue": {
+            "fields": {
+              "lng": {
+                "doubleValue": 39.826869
+              },
+              "lat": {
+                "doubleValue": 21.420847
+              }
+            }
+          }
+        },
+        "email": {
+          "nullValue": null
+        },
+        "toName": {
+          "stringValue": "باب القدس 35, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+        },
+        "id": {
+          "stringValue": "G9QqxFOramgNrCPJA9Js"
+        }
+      },
+      "createTime": "2026-02-14T08:08:06.421935Z",
+      "updateTime": "2026-02-14T08:19:42.945375Z"
+    },
+    {
+      "name": "projects/sefernur-app/databases/(default)/documents/transfers/Ii7HEEUBKfZdBL7eapuH",
+      "fields": {
+        "luggageCapacity": {
+          "integerValue": "0"
+        },
+        "toAddress": {
+          "mapValue": {
+            "fields": {
+              "city": {
+                "stringValue": "Medine Bölgesi"
+              },
+              "countryCode": {
+                "stringValue": "SA"
+              },
+              "location": {
+                "mapValue": {
+                  "fields": {
+                    "latitude": {
+                      "doubleValue": 25.1354363
+                    },
+                    "longitude": {
+                      "doubleValue": 39.162594
+                    }
+                  }
+                }
+              },
+              "state": {
+                "stringValue": ""
+              },
+              "country": {
+                "stringValue": "Suudi Arabistan"
+              },
+              "address": {
+                "stringValue": "محافظة المدينة المنورة, Medine Bölgesi, Suudi Arabistan"
+              }
+            }
+          }
+        },
+        "availability": {
+          "mapValue": {
+            "fields": {
+              "2025-08-12": {
+                "mapValue": {
+                  "fields": {
+                    "isAvailable": {
+                      "booleanValue": true
+                    },
+                    "availableSeats": {
+                      "integerValue": "10"
+                    },
+                    "date": {
+                      "stringValue": "2025-08-12"
+                    },
+                    "specialPrice": {
+                      "doubleValue": 500
+                    }
+                  }
+                }
+              },
+              "2025-08-14": {
+                "mapValue": {
+                  "fields": {
+                    "date": {
+                      "stringValue": "2025-08-14"
+                    },
+                    "specialPrice": {
+                      "doubleValue": 500
+                    },
+                    "availableSeats": {
+                      "integerValue": "10"
+                    },
+                    "isAvailable": {
+                      "booleanValue": true
+                    }
+                  }
+                }
+              },
+              "2025-08-11": {
+                "mapValue": {
+                  "fields": {
+                    "availableSeats": {
+                      "integerValue": "10"
+                    },
+                    "isAvailable": {
+                      "booleanValue": true
+                    },
+                    "specialPrice": {
+                      "doubleValue": 500
+                    },
+                    "date": {
+                      "stringValue": "2025-08-11"
+                    }
+                  }
+                }
+              },
+              "2025-08-15": {
+                "mapValue": {
+                  "fields": {
+                    "specialPrice": {
+                      "doubleValue": 500
+                    },
+                    "date": {
+                      "stringValue": "2025-08-15"
+                    },
+                    "availableSeats": {
+                      "integerValue": "10"
+                    },
+                    "isAvailable": {
+                      "booleanValue": true
+                    }
+                  }
+                }
+              },
+              "2025-08-10": {
+                "mapValue": {
+                  "fields": {
+                    "date": {
+                      "stringValue": "2025-08-10"
+                    },
+                    "specialPrice": {
+                      "doubleValue": 500
+                    },
+                    "isAvailable": {
+                      "booleanValue": true
+                    },
+                    "availableSeats": {
+                      "integerValue": "10"
+                    }
+                  }
+                }
+              },
+              "2025-08-13": {
+                "mapValue": {
+                  "fields": {
+                    "date": {
+                      "stringValue": "2025-08-13"
+                    },
+                    "specialPrice": {
+                      "doubleValue": 500
+                    },
+                    "isAvailable": {
+                      "booleanValue": true
+                    },
+                    "availableSeats": {
+                      "integerValue": "10"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "whatsapp": {
+          "stringValue": "+905427689921"
+        },
+        "amenities": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "wifi"
+              }
+            ]
+          }
+        },
+        "updatedAt": {
+          "stringValue": "2026-01-10T18:50:33.624232"
+        },
+        "basePrice": {
+          "doubleValue": 1000
+        },
+        "images": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "https://firebasestorage.googleapis.com/v0/b/sefernur-app.firebasestorage.app/o/transfers%2Fuploads%2F1755013670738_scaled_1000102337.jpg?alt=media&token=5e0f2d3e-869a-4747-a2ab-9ff68a8aea12"
+              }
+            ]
+          }
+        },
+        "toName": {
+          "stringValue": "محافظة المدينة المنورة, Medine Bölgesi, Suudi Arabistan"
+        },
+        "fromLocation": {
+          "mapValue": {
+            "fields": {
+              "lat": {
+                "doubleValue": 21.420847
+              },
+              "lng": {
+                "doubleValue": 39.826869
+              }
+            }
+          }
+        },
+        "phone": {
+          "stringValue": "+905427689921"
+        },
+        "capacity": {
+          "integerValue": "7"
+        },
+        "favoriteUserIds": {
+          "arrayValue": {}
+        },
+        "isActive": {
+          "booleanValue": true
+        },
+        "durationMinutes": {
+          "integerValue": "120"
+        },
+        "fromName": {
+          "stringValue": "الساحات الشرقية للمسجد الحرام, الحرم, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+        },
+        "reviewCount": {
+          "integerValue": "0"
+        },
+        "company": {
+          "stringValue": "Sefernur"
+        },
+        "vehicleName": {
+          "stringValue": ""
+        },
+        "toLocation": {
+          "mapValue": {
+            "fields": {
+              "lng": {
+                "doubleValue": 39.162594
+              },
+              "lat": {
+                "doubleValue": 25.1354363
+              }
+            }
+          }
+        },
+        "id": {
+          "stringValue": "Ii7HEEUBKfZdBL7eapuH"
+        },
+        "email": {
+          "stringValue": "firma@mail.com"
+        },
+        "vehicleType": {
+          "stringValue": "bus"
+        },
+        "childSeatCount": {
+          "integerValue": "0"
+        },
+        "createdAt": {
+          "stringValue": "2025-08-10T11:53:24.774962"
+        },
+        "fromAddress": {
+          "mapValue": {
+            "fields": {
+              "address": {
+                "stringValue": "الساحات الشرقية للمسجد الحرام, الحرم, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+              },
+              "location": {
+                "mapValue": {
+                  "fields": {
+                    "latitude": {
+                      "doubleValue": 21.420847
+                    },
+                    "longitude": {
+                      "doubleValue": 39.826869
+                    }
+                  }
+                }
+              },
+              "state": {
+                "stringValue": ""
+              },
+              "country": {
+                "stringValue": "Suudi Arabistan"
+              },
+              "city": {
+                "stringValue": "Mekke Bölgesi"
+              },
+              "countryCode": {
+                "stringValue": "SA"
+              }
+            }
+          }
+        },
+        "rating": {
+          "doubleValue": 0
+        },
+        "isPopular": {
+          "booleanValue": false
+        }
+      },
+      "createTime": "2025-08-10T11:53:26.859912Z",
+      "updateTime": "2026-01-10T15:50:34.414543Z"
+    },
+    {
+      "name": "projects/sefernur-app/databases/(default)/documents/transfers/KKfPFSj9Sa5v35uh80cR",
+      "fields": {
+        "updatedAt": {
+          "stringValue": "2026-02-14T11:22:01.425890"
+        },
+        "toLocation": {
+          "mapValue": {
+            "fields": {
+              "lng": {
+                "doubleValue": 39.611162
+              },
+              "lat": {
+                "doubleValue": 24.4686804
+              }
+            }
+          }
+        },
+        "availability": {
+          "mapValue": {}
+        },
+        "fromName": {
+          "stringValue": "باب القدس 35, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+        },
+        "company": {
+          "stringValue": "GMC YUKON"
+        },
+        "reviewCount": {
+          "integerValue": "0"
+        },
+        "whatsapp": {
+          "nullValue": null
+        },
+        "durationMinutes": {
+          "integerValue": "120"
+        },
+        "toAddress": {
+          "mapValue": {
+            "fields": {
+              "location": {
+                "mapValue": {
+                  "fields": {
+                    "latitude": {
+                      "doubleValue": 24.4686804
+                    },
+                    "longitude": {
+                      "doubleValue": 39.611162
+                    }
+                  }
+                }
+              },
+              "country": {
+                "stringValue": "Suudi Arabistan"
+              },
+              "state": {
+                "stringValue": ""
+              },
+              "countryCode": {
+                "stringValue": "SA"
+              },
+              "city": {
+                "stringValue": "Medine Bölgesi"
+              },
+              "address": {
+                "stringValue": "الدروس العلمية, Kind Fahd Road, بضاعة, Medine, محافظة المدينة المنورة, Medine Bölgesi, 41419, Suudi Arabistan"
+              }
+            }
+          }
+        },
+        "isActive": {
+          "booleanValue": true
+        },
+        "fromAddress": {
+          "mapValue": {
+            "fields": {
+              "city": {
+                "stringValue": "Mekke Bölgesi"
+              },
+              "countryCode": {
+                "stringValue": "SA"
+              },
+              "country": {
+                "stringValue": "Suudi Arabistan"
+              },
+              "state": {
+                "stringValue": ""
+              },
+              "location": {
+                "mapValue": {
+                  "fields": {
+                    "latitude": {
+                      "doubleValue": 21.4245589
+                    },
+                    "longitude": {
+                      "doubleValue": 39.8248709
+                    }
+                  }
+                }
+              },
+              "address": {
+                "stringValue": "باب القدس 35, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+              }
+            }
+          }
+        },
+        "phone": {
+          "nullValue": null
+        },
+        "favoriteUserIds": {
+          "arrayValue": {}
+        },
+        "isPopular": {
+          "booleanValue": false
+        },
+        "rating": {
+          "doubleValue": 0
+        },
+        "capacity": {
+          "integerValue": "5"
+        },
+        "vehicleType": {
+          "stringValue": "vip"
+        },
+        "createdAt": {
+          "stringValue": "2026-02-14T11:12:10.238181"
+        },
+        "fromLocation": {
+          "mapValue": {
+            "fields": {
+              "lng": {
+                "doubleValue": 39.8248709
+              },
+              "lat": {
+                "doubleValue": 21.4245589
+              }
+            }
+          }
+        },
+        "email": {
+          "nullValue": null
+        },
+        "toName": {
+          "stringValue": "الدروس العلمية, Kind Fahd Road, بضاعة, Medine, محافظة المدينة المنورة, Medine Bölgesi, 41419, Suudi Arabistan"
+        },
+        "id": {
+          "stringValue": "KKfPFSj9Sa5v35uh80cR"
+        },
+        "basePrice": {
+          "doubleValue": 600
+        },
+        "images": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "https://firebasestorage.googleapis.com/v0/b/sefernur-app.firebasestorage.app/o/transfers%2Fuploads%2F1771057320319_scaled_images%20(1).jpg?alt=media&token=f66c574a-75e4-4a68-b107-d1bf0095c2b3"
+              }
+            ]
+          }
+        }
+      },
+      "createTime": "2026-02-14T08:12:10.672063Z",
+      "updateTime": "2026-02-14T08:22:01.680127Z"
+    },
+    {
+      "name": "projects/sefernur-app/databases/(default)/documents/transfers/LYzf1gcar8CW3H1ARt0u",
+      "fields": {
+        "fromLocation": {
+          "mapValue": {
+            "fields": {
+              "lat": {
+                "doubleValue": 21.420847
+              },
+              "lng": {
+                "doubleValue": 39.826869
+              }
+            }
+          }
+        },
+        "email": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "LYzf1gcar8CW3H1ARt0u"
+        },
+        "toName": {
+          "stringValue": "باب القدس 35, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+        },
+        "images": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "https://firebasestorage.googleapis.com/v0/b/sefernur-app.firebasestorage.app/o/transfers%2Fuploads%2F1771057221050_scaled_images.jpg?alt=media&token=bb93dc29-c30f-4168-9378-43b59899a78f"
+              }
+            ]
+          }
+        },
+        "basePrice": {
+          "doubleValue": 400
+        },
+        "fromAddress": {
+          "mapValue": {
+            "fields": {
+              "address": {
+                "stringValue": "الساحات الشرقية للمسجد الحرام, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+              },
+              "country": {
+                "stringValue": "Suudi Arabistan"
+              },
+              "state": {
+                "stringValue": ""
+              },
+              "location": {
+                "mapValue": {
+                  "fields": {
+                    "latitude": {
+                      "doubleValue": 21.420847
+                    },
+                    "longitude": {
+                      "doubleValue": 39.826869
+                    }
+                  }
+                }
+              },
+              "city": {
+                "stringValue": "Mekke Bölgesi"
+              },
+              "countryCode": {
+                "stringValue": "SA"
+              }
+            }
+          }
+        },
+        "phone": {
+          "nullValue": null
+        },
+        "favoriteUserIds": {
+          "arrayValue": {}
+        },
+        "isPopular": {
+          "booleanValue": false
+        },
+        "capacity": {
+          "integerValue": "16"
+        },
+        "rating": {
+          "doubleValue": 0
+        },
+        "vehicleType": {
+          "stringValue": "bus"
+        },
+        "createdAt": {
+          "stringValue": "2026-02-14T11:09:25.942175"
+        },
+        "durationMinutes": {
+          "integerValue": "120"
+        },
+        "toAddress": {
+          "mapValue": {
+            "fields": {
+              "address": {
+                "stringValue": "باب القدس 35, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+              },
+              "country": {
+                "stringValue": "Suudi Arabistan"
+              },
+              "state": {
+                "stringValue": ""
+              },
+              "location": {
+                "mapValue": {
+                  "fields": {
+                    "latitude": {
+                      "doubleValue": 21.4245589
+                    },
+                    "longitude": {
+                      "doubleValue": 39.8248709
+                    }
+                  }
+                }
+              },
+              "city": {
+                "stringValue": "Mekke Bölgesi"
+              },
+              "countryCode": {
+                "stringValue": "SA"
+              }
+            }
+          }
+        },
+        "isActive": {
+          "booleanValue": true
+        },
+        "updatedAt": {
+          "stringValue": "2026-02-14T11:20:22.206677"
+        },
+        "toLocation": {
+          "mapValue": {
+            "fields": {
+              "lng": {
+                "doubleValue": 39.8248709
+              },
+              "lat": {
+                "doubleValue": 21.4245589
+              }
+            }
+          }
+        },
+        "availability": {
+          "mapValue": {}
+        },
+        "whatsapp": {
+          "nullValue": null
+        },
+        "reviewCount": {
+          "integerValue": "0"
+        },
+        "fromName": {
+          "stringValue": "الساحات الشرقية للمسجد الحرام, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+        },
+        "company": {
+          "stringValue": "COSTER"
+        }
+      },
+      "createTime": "2026-02-14T08:09:27.189839Z",
+      "updateTime": "2026-02-14T08:20:22.455471Z"
+    },
+    {
+      "name": "projects/sefernur-app/databases/(default)/documents/transfers/Qu8Kh0tRrpQT8Av5EN1W",
+      "fields": {
+        "durationMinutes": {
+          "integerValue": "60"
+        },
+        "toAddress": {
+          "mapValue": {
+            "fields": {
+              "address": {
+                "stringValue": "الساحات الشرقية للمسجد الحرام, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+              },
+              "location": {
+                "mapValue": {
+                  "fields": {
+                    "latitude": {
+                      "doubleValue": 21.420847
+                    },
+                    "longitude": {
+                      "doubleValue": 39.826869
+                    }
+                  }
+                }
+              },
+              "country": {
+                "stringValue": "Suudi Arabistan"
+              },
+              "state": {
+                "stringValue": ""
+              },
+              "city": {
+                "stringValue": "Mekke Bölgesi"
+              },
+              "countryCode": {
+                "stringValue": "SA"
+              }
+            }
+          }
+        },
+        "isActive": {
+          "booleanValue": true
+        },
+        "updatedAt": {
+          "stringValue": "2026-02-14T11:51:48.027542"
+        },
+        "toLocation": {
+          "mapValue": {
+            "fields": {
+              "lat": {
+                "doubleValue": 21.420847
+              },
+              "lng": {
+                "doubleValue": 39.826869
+              }
+            }
+          }
+        },
+        "availability": {
+          "mapValue": {}
+        },
+        "fromName": {
+          "stringValue": "طريق المدينة, الأندلس, Cidde, محافظة جدة, Mekke Bölgesi, 23124, Suudi Arabistan"
+        },
+        "company": {
+          "stringValue": "STARİA"
+        },
+        "reviewCount": {
+          "integerValue": "0"
+        },
+        "whatsapp": {
+          "nullValue": null
+        },
+        "toName": {
+          "stringValue": "الساحات الشرقية للمسجد الحرام, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+        },
+        "id": {
+          "nullValue": null
+        },
+        "fromLocation": {
+          "mapValue": {
+            "fields": {
+              "lat": {
+                "doubleValue": 21.5504432
+              },
+              "lng": {
+                "doubleValue": 39.1742363
+              }
+            }
+          }
+        },
+        "email": {
+          "nullValue": null
+        },
+        "images": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "https://firebasestorage.googleapis.com/v0/b/sefernur-app.firebasestorage.app/o/transfers%2Fuploads%2F1771059105856_scaled_indir%20(3).jpg?alt=media&token=2b1ddea1-cdc8-447f-894e-d55cec8d6e9d"
+              }
+            ]
+          }
+        },
+        "basePrice": {
+          "doubleValue": 350
+        },
+        "phone": {
+          "nullValue": null
+        },
+        "fromAddress": {
+          "mapValue": {
+            "fields": {
+              "address": {
+                "stringValue": "طريق المدينة, الأندلس, Cidde, محافظة جدة, Mekke Bölgesi, 23124, Suudi Arabistan"
+              },
+              "countryCode": {
+                "stringValue": "SA"
+              },
+              "city": {
+                "stringValue": "Mekke Bölgesi"
+              },
+              "location": {
+                "mapValue": {
+                  "fields": {
+                    "latitude": {
+                      "doubleValue": 21.5504432
+                    },
+                    "longitude": {
+                      "doubleValue": 39.1742363
+                    }
+                  }
+                }
+              },
+              "country": {
+                "stringValue": "Suudi Arabistan"
+              },
+              "state": {
+                "stringValue": ""
+              }
+            }
+          }
+        },
+        "rating": {
+          "doubleValue": 0
+        },
+        "capacity": {
+          "integerValue": "8"
+        },
+        "favoriteUserIds": {
+          "arrayValue": {}
+        },
+        "isPopular": {
+          "booleanValue": false
+        },
+        "vehicleType": {
+          "stringValue": "van"
+        },
+        "createdAt": {
+          "stringValue": "2026-02-14T11:51:48.027544"
+        }
+      },
+      "createTime": "2026-02-14T08:51:48.339903Z",
+      "updateTime": "2026-02-14T08:51:48.339903Z"
+    },
+    {
+      "name": "projects/sefernur-app/databases/(default)/documents/transfers/UFkzE5w4uiYlxKxqTvMP",
+      "fields": {
+        "toAddress": {
+          "mapValue": {
+            "fields": {
+              "address": {
+                "stringValue": "فندق دار التقوى, 2981, Kind Fahd Road, بضاعة, Medine, محافظة المدينة المنورة, Medine Bölgesi, 42311, Suudi Arabistan"
+              },
+              "city": {
+                "stringValue": "Medine Bölgesi"
+              },
+              "countryCode": {
+                "stringValue": "SA"
+              },
+              "location": {
+                "mapValue": {
+                  "fields": {
+                    "latitude": {
+                      "doubleValue": 24.471153
+                    },
+                    "longitude": {
+                      "doubleValue": 39.6111216
+                    }
+                  }
+                }
+              },
+              "country": {
+                "stringValue": "Suudi Arabistan"
+              },
+              "state": {
+                "stringValue": ""
+              }
+            }
+          }
+        },
+        "isActive": {
+          "booleanValue": true
+        },
+        "durationMinutes": {
+          "integerValue": "200"
+        },
+        "availability": {
+          "mapValue": {}
+        },
+        "whatsapp": {
+          "nullValue": null
+        },
+        "reviewCount": {
+          "integerValue": "0"
+        },
+        "fromName": {
+          "stringValue": "الساحات الشرقية للمسجد الحرام, الحرم, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+        },
+        "company": {
+          "stringValue": "Makkah Buss"
+        },
+        "updatedAt": {
+          "stringValue": "2025-09-30T07:57:16.457907"
+        },
+        "toLocation": {
+          "mapValue": {
+            "fields": {
+              "lat": {
+                "doubleValue": 24.471153
+              },
+              "lng": {
+                "doubleValue": 39.6111216
+              }
+            }
+          }
+        },
+        "basePrice": {
+          "doubleValue": 10000
+        },
+        "images": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "https://firebasestorage.googleapis.com/v0/b/sefernur-app.firebasestorage.app/o/transfers%2Fuploads%2F1756720060494_scaled_292200304_2282886971860507_7623158704882886803_n.jpg?alt=media&token=60b5e23f-aab3-441d-9162-d5650c0b191a"
+              }
+            ]
+          }
+        },
+        "toName": {
+          "stringValue": "فندق دار التقوى, 2981, Kind Fahd Road, بضاعة, Medine, محافظة المدينة المنورة, Medine Bölgesi, 42311, Suudi Arabistan"
+        },
+        "id": {
+          "stringValue": "UFkzE5w4uiYlxKxqTvMP"
+        },
+        "fromLocation": {
+          "mapValue": {
+            "fields": {
+              "lng": {
+                "doubleValue": 39.826869
+              },
+              "lat": {
+                "doubleValue": 21.420847
+              }
+            }
+          }
+        },
+        "email": {
+          "nullValue": null
+        },
+        "vehicleType": {
+          "stringValue": "bus"
+        },
+        "createdAt": {
+          "stringValue": "2025-09-01T12:47:42.464181"
+        },
+        "phone": {
+          "stringValue": "05319122171"
+        },
+        "fromAddress": {
+          "mapValue": {
+            "fields": {
+              "address": {
+                "stringValue": "الساحات الشرقية للمسجد الحرام, الحرم, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+              },
+              "city": {
+                "stringValue": "Mekke Bölgesi"
+              },
+              "countryCode": {
+                "stringValue": "SA"
+              },
+              "location": {
+                "mapValue": {
+                  "fields": {
+                    "latitude": {
+                      "doubleValue": 21.420847
+                    },
+                    "longitude": {
+                      "doubleValue": 39.826869
+                    }
+                  }
+                }
+              },
+              "country": {
+                "stringValue": "Suudi Arabistan"
+              },
+              "state": {
+                "stringValue": ""
+              }
+            }
+          }
+        },
+        "rating": {
+          "doubleValue": 0
+        },
+        "capacity": {
+          "integerValue": "55"
+        },
+        "favoriteUserIds": {
+          "arrayValue": {}
+        },
+        "isPopular": {
+          "booleanValue": true
+        }
+      },
+      "createTime": "2025-09-01T09:47:42.692303Z",
+      "updateTime": "2025-09-30T04:57:17.386911Z"
+    },
+    {
+      "name": "projects/sefernur-app/databases/(default)/documents/transfers/VXiU3BCIrF2BHwAHJl6Z",
+      "fields": {
+        "durationMinutes": {
+          "integerValue": "60"
+        },
+        "isActive": {
+          "booleanValue": true
+        },
+        "toAddress": {
+          "mapValue": {
+            "fields": {
+              "address": {
+                "stringValue": "الساحات الشرقية للمسجد الحرام, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+              },
+              "city": {
+                "stringValue": "Mekke Bölgesi"
+              },
+              "countryCode": {
+                "stringValue": "SA"
+              },
+              "state": {
+                "stringValue": ""
+              },
+              "country": {
+                "stringValue": "Suudi Arabistan"
+              },
+              "location": {
+                "mapValue": {
+                  "fields": {
+                    "latitude": {
+                      "doubleValue": 21.420847
+                    },
+                    "longitude": {
+                      "doubleValue": 39.826869
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "toLocation": {
+          "mapValue": {
+            "fields": {
+              "lng": {
+                "doubleValue": 39.826869
+              },
+              "lat": {
+                "doubleValue": 21.420847
+              }
+            }
+          }
+        },
+        "updatedAt": {
+          "stringValue": "2026-02-14T11:21:16.461461"
+        },
+        "whatsapp": {
+          "nullValue": null
+        },
+        "reviewCount": {
+          "integerValue": "0"
+        },
+        "fromName": {
+          "stringValue": "الساحات الشرقية للمسجد الحرام, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+        },
+        "company": {
+          "stringValue": "Toyota Hias"
+        },
+        "availability": {
+          "mapValue": {}
+        },
+        "fromLocation": {
+          "mapValue": {
+            "fields": {
+              "lat": {
+                "doubleValue": 21.420847
+              },
+              "lng": {
+                "doubleValue": 39.826869
+              }
+            }
+          }
+        },
+        "email": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "VXiU3BCIrF2BHwAHJl6Z"
+        },
+        "toName": {
+          "stringValue": "الساحات الشرقية للمسجد الحرام, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+        },
+        "images": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "https://firebasestorage.googleapis.com/v0/b/sefernur-app.firebasestorage.app/o/transfers%2Fuploads%2F1771057275401_scaled_indir.jpg?alt=media&token=f07cd1e6-668e-4a10-8d65-0646c8060255"
+              }
+            ]
+          }
+        },
+        "basePrice": {
+          "doubleValue": 400
+        },
+        "favoriteUserIds": {
+          "arrayValue": {}
+        },
+        "isPopular": {
+          "booleanValue": false
+        },
+        "capacity": {
+          "integerValue": "8"
+        },
+        "rating": {
+          "doubleValue": 0
+        },
+        "fromAddress": {
+          "mapValue": {
+            "fields": {
+              "address": {
+                "stringValue": "الساحات الشرقية للمسجد الحرام, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+              },
+              "city": {
+                "stringValue": "Mekke Bölgesi"
+              },
+              "countryCode": {
+                "stringValue": "SA"
+              },
+              "location": {
+                "mapValue": {
+                  "fields": {
+                    "latitude": {
+                      "doubleValue": 21.420847
+                    },
+                    "longitude": {
+                      "doubleValue": 39.826869
+                    }
+                  }
+                }
+              },
+              "state": {
+                "stringValue": ""
+              },
+              "country": {
+                "stringValue": "Suudi Arabistan"
+              }
+            }
+          }
+        },
+        "phone": {
+          "nullValue": null
+        },
+        "createdAt": {
+          "stringValue": "2026-02-14T11:15:21.057478"
+        },
+        "vehicleType": {
+          "stringValue": "van"
+        }
+      },
+      "createTime": "2026-02-14T08:15:21.408415Z",
+      "updateTime": "2026-02-14T08:21:16.717839Z"
+    },
+    {
+      "name": "projects/sefernur-app/databases/(default)/documents/transfers/XjBAk1iHXDHHteWCoR3Q",
+      "fields": {
+        "isPopular": {
+          "booleanValue": false
+        },
+        "favoriteUserIds": {
+          "arrayValue": {}
+        },
+        "capacity": {
+          "integerValue": "3"
+        },
+        "rating": {
+          "doubleValue": 0
+        },
+        "fromAddress": {
+          "mapValue": {
+            "fields": {
+              "address": {
+                "stringValue": "طريق المدينة, الأندلس, Cidde, محافظة جدة, Mekke Bölgesi, 23124, Suudi Arabistan"
+              },
+              "country": {
+                "stringValue": "Suudi Arabistan"
+              },
+              "state": {
+                "stringValue": ""
+              },
+              "location": {
+                "mapValue": {
+                  "fields": {
+                    "latitude": {
+                      "doubleValue": 21.5504432
+                    },
+                    "longitude": {
+                      "doubleValue": 39.1742363
+                    }
+                  }
+                }
+              },
+              "countryCode": {
+                "stringValue": "SA"
+              },
+              "city": {
+                "stringValue": "Mekke Bölgesi"
+              }
+            }
+          }
+        },
+        "phone": {
+          "nullValue": null
+        },
+        "createdAt": {
+          "stringValue": "2026-02-14T11:50:01.678202"
+        },
+        "vehicleType": {
+          "stringValue": "sedan"
+        },
+        "email": {
+          "nullValue": null
+        },
+        "fromLocation": {
+          "mapValue": {
+            "fields": {
+              "lng": {
+                "doubleValue": 39.1742363
+              },
+              "lat": {
+                "doubleValue": 21.5504432
+              }
+            }
+          }
+        },
+        "toName": {
+          "stringValue": "الساحات الشرقية للمسجد الحرام, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+        },
+        "id": {
+          "nullValue": null
+        },
+        "images": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "https://firebasestorage.googleapis.com/v0/b/sefernur-app.firebasestorage.app/o/transfers%2Fuploads%2F1771058999012_scaled_indir%20(2).jpg?alt=media&token=fbcf3cf5-4478-4102-aefe-796e05d41026"
+              }
+            ]
+          }
+        },
+        "basePrice": {
+          "doubleValue": 250
+        },
+        "toLocation": {
+          "mapValue": {
+            "fields": {
+              "lng": {
+                "doubleValue": 39.826869
+              },
+              "lat": {
+                "doubleValue": 21.420847
+              }
+            }
+          }
+        },
+        "updatedAt": {
+          "stringValue": "2026-02-14T11:50:01.678200"
+        },
+        "whatsapp": {
+          "nullValue": null
+        },
+        "reviewCount": {
+          "integerValue": "0"
+        },
+        "fromName": {
+          "stringValue": "طريق المدينة, الأندلس, Cidde, محافظة جدة, Mekke Bölgesi, 23124, Suudi Arabistan"
+        },
+        "company": {
+          "stringValue": "CAMRY"
+        },
+        "availability": {
+          "mapValue": {}
+        },
+        "durationMinutes": {
+          "integerValue": "60"
+        },
+        "isActive": {
+          "booleanValue": true
+        },
+        "toAddress": {
+          "mapValue": {
+            "fields": {
+              "address": {
+                "stringValue": "الساحات الشرقية للمسجد الحرام, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+              },
+              "location": {
+                "mapValue": {
+                  "fields": {
+                    "latitude": {
+                      "doubleValue": 21.420847
+                    },
+                    "longitude": {
+                      "doubleValue": 39.826869
+                    }
+                  }
+                }
+              },
+              "country": {
+                "stringValue": "Suudi Arabistan"
+              },
+              "state": {
+                "stringValue": ""
+              },
+              "city": {
+                "stringValue": "Mekke Bölgesi"
+              },
+              "countryCode": {
+                "stringValue": "SA"
+              }
+            }
+          }
+        }
+      },
+      "createTime": "2026-02-14T08:50:02.090335Z",
+      "updateTime": "2026-02-14T08:50:02.090335Z"
+    },
+    {
+      "name": "projects/sefernur-app/databases/(default)/documents/transfers/eEXAS8KnK63Tj7jHkcLX",
+      "fields": {
+        "whatsapp": {
+          "nullValue": null
+        },
+        "reviewCount": {
+          "integerValue": "0"
+        },
+        "company": {
+          "stringValue": "SAPTCO Otobüs"
+        },
+        "fromName": {
+          "stringValue": "الساحات الشرقية للمسجد الحرام, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+        },
+        "availability": {
+          "mapValue": {}
+        },
+        "toLocation": {
+          "mapValue": {
+            "fields": {
+              "lng": {
+                "doubleValue": 39.162594
+              },
+              "lat": {
+                "doubleValue": 25.1354363
+              }
+            }
+          }
+        },
+        "updatedAt": {
+          "stringValue": "2026-02-14T11:22:47.195038"
+        },
+        "isActive": {
+          "booleanValue": true
+        },
+        "toAddress": {
+          "mapValue": {
+            "fields": {
+              "location": {
+                "mapValue": {
+                  "fields": {
+                    "latitude": {
+                      "doubleValue": 25.1354363
+                    },
+                    "longitude": {
+                      "doubleValue": 39.162594
+                    }
+                  }
+                }
+              },
+              "state": {
+                "stringValue": ""
+              },
+              "country": {
+                "stringValue": "Suudi Arabistan"
+              },
+              "city": {
+                "stringValue": "Medine Bölgesi"
+              },
+              "countryCode": {
+                "stringValue": "SA"
+              },
+              "address": {
+                "stringValue": "محافظة المدينة المنورة, Medine Bölgesi, Suudi Arabistan"
+              }
+            }
+          }
+        },
+        "durationMinutes": {
+          "integerValue": "240"
+        },
+        "createdAt": {
+          "stringValue": "2026-02-14T11:16:37.671663"
+        },
+        "vehicleType": {
+          "stringValue": "bus"
+        },
+        "rating": {
+          "doubleValue": 0
+        },
+        "capacity": {
+          "integerValue": "49"
+        },
+        "isPopular": {
+          "booleanValue": false
+        },
+        "favoriteUserIds": {
+          "arrayValue": {}
+        },
+        "phone": {
+          "nullValue": null
+        },
+        "fromAddress": {
+          "mapValue": {
+            "fields": {
+              "address": {
+                "stringValue": "الساحات الشرقية للمسجد الحرام, حدود الحرم المكي, Mekke, Mekke Bölgesi, 24231, Suudi Arabistan"
+              },
+              "location": {
+                "mapValue": {
+                  "fields": {
+                    "latitude": {
+                      "doubleValue": 21.420847
+                    },
+                    "longitude": {
+                      "doubleValue": 39.826869
+                    }
+                  }
+                }
+              },
+              "country": {
+                "stringValue": "Suudi Arabistan"
+              },
+              "state": {
+                "stringValue": ""
+              },
+              "countryCode": {
+                "stringValue": "SA"
+              },
+              "city": {
+                "stringValue": "Mekke Bölgesi"
+              }
+            }
+          }
+        },
+        "basePrice": {
+          "doubleValue": 1500
+        },
+        "images": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "https://firebasestorage.googleapis.com/v0/b/sefernur-app.firebasestorage.app/o/transfers%2Fuploads%2F1771057353870_scaled_indir%20(1).jpg?alt=media&token=0c9912cd-f735-48a3-be3f-71bd6f486e03"
+              }
+            ]
+          }
+        },
+        "toName": {
+          "stringValue": "محافظة المدينة المنورة, Medine Bölgesi, Suudi Arabistan"
+        },
+        "id": {
+          "stringValue": "eEXAS8KnK63Tj7jHkcLX"
+        },
+        "fromLocation": {
+          "mapValue": {
+            "fields": {
+              "lat": {
+                "doubleValue": 21.420847
+              },
+              "lng": {
+                "doubleValue": 39.826869
+              }
+            }
+          }
+        },
+        "email": {
+          "nullValue": null
+        }
+      },
+      "createTime": "2026-02-14T08:16:38.007583Z",
+      "updateTime": "2026-02-14T08:22:47.459263Z"
+    }
+  ]
+}

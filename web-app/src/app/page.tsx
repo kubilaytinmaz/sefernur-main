@@ -86,8 +86,9 @@ export default function HomePage() {
     queryFn: () => getTopReviews(6),
   });
 
+  // Tüm aktif transferleri göster - yatay kaydırmalı
   const topTransfers = useMemo(
-    () => (transfersQuery.data ?? []).slice(0, 3),
+    () => transfersQuery.data ?? [],
     [transfersQuery.data]
   );
   const topGuides = useMemo(
@@ -136,9 +137,9 @@ export default function HomePage() {
 
         {/* Loading State */}
         {transfersQuery.isLoading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
             {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="h-[300px] rounded-2xl bg-slate-200 animate-pulse" />
+              <div key={i} className="w-56 md:w-64 flex-shrink-0 h-[280px] rounded-2xl bg-slate-200 animate-pulse" />
             ))}
           </div>
         ) : null}
@@ -152,12 +153,59 @@ export default function HomePage() {
           </Card>
         ) : null}
 
-        {/* Transfers Grid - 5 Card Horizontal Grid */}
+        {/* Transfers Horizontal Scroll - Tüm Araçlar */}
         {!transfersQuery.isLoading && !transfersQuery.isError && topTransfers.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {topTransfers.slice(0, 5).map((transfer, index) => (
-              <CompactTransferCard key={transfer.id} transfer={transfer} index={index} />
-            ))}
+          <div className="relative group/scroll -mx-8 px-8">
+            {/* Sol Ok - Kartın solunda */}
+            <button
+              type="button"
+              onClick={() => {
+                const container = document.getElementById('transfers-scroll-container');
+                if (container) {
+                  container.scrollBy({ left: -300, behavior: 'smooth' });
+                }
+              }}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -ml-2 w-12 h-12 rounded-full bg-white shadow-xl shadow-slate-300/50 border-2 border-slate-200 flex items-center justify-center text-slate-700 hover:bg-gradient-to-r hover:from-cyan-500 hover:to-sky-500 hover:text-white hover:border-cyan-500 hover:shadow-cyan-500/30 transition-all duration-300 z-20 hover:scale-110 active:scale-95"
+              aria-label="Sola kaydır"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            {/* Yatay kaydırmalı kart container */}
+            <div
+              id="transfers-scroll-container"
+              className="flex gap-4 overflow-x-auto pb-4 scroll-smooth snap-x snap-mandatory"
+              style={{
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+                WebkitOverflowScrolling: 'touch'
+              }}
+            >
+              {topTransfers.map((transfer, index) => (
+                <div key={transfer.id} className="w-56 md:w-64 flex-shrink-0 snap-start">
+                  <CompactTransferCard transfer={transfer} index={index} />
+                </div>
+              ))}
+            </div>
+
+            {/* Sağ Ok - Kartın sağıında */}
+            <button
+              type="button"
+              onClick={() => {
+                const container = document.getElementById('transfers-scroll-container');
+                if (container) {
+                  container.scrollBy({ left: 300, behavior: 'smooth' });
+                }
+              }}
+              className="absolute right-0 top-1/2 -translate-y-1/2 -mr-2 w-12 h-12 rounded-full bg-white shadow-xl shadow-slate-300/50 border-2 border-slate-200 flex items-center justify-center text-slate-700 hover:bg-gradient-to-r hover:from-cyan-500 hover:to-sky-500 hover:text-white hover:border-cyan-500 hover:shadow-cyan-500/30 transition-all duration-300 z-20 hover:scale-110 active:scale-95"
+              aria-label="Sağa kaydır"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
           </div>
         ) : null}
       </section>
@@ -583,22 +631,27 @@ function PlaceCityRow({ cityLabel, places }: { cityLabel: string; places: PlaceM
       </div>
       
       {/* Cards with navigation */}
-      <div className="relative group/nav">
+      <div className="relative group/nav -mx-8 px-8">
         {/* Left arrow */}
         <button
           onClick={() => scroll("left")}
-          className={`absolute -left-2 top-1/2 -translate-y-1/2 z-10 p-2.5 md:p-3 rounded-2xl bg-white/95 backdrop-blur-md border shadow-xl hover:shadow-2xl transition-all opacity-100 md:opacity-0 md:group-hover/nav:opacity-100 cursor-pointer hover:scale-110 ${
-            isMekke ? 'border-amber-200/50 hover:border-amber-300' : 'border-emerald-200/50 hover:border-emerald-300'
+          className={`absolute left-0 top-1/2 -translate-y-1/2 -ml-2 w-12 h-12 rounded-full bg-white shadow-xl shadow-slate-300/50 border-2 border-slate-200 flex items-center justify-center text-slate-700 hover:bg-gradient-to-r hover:from-cyan-500 hover:to-sky-500 hover:text-white hover:border-cyan-500 hover:shadow-cyan-500/30 transition-all duration-300 z-20 hover:scale-110 active:scale-95 ${
+            isMekke ? 'hover:from-amber-500 hover:to-orange-500 hover:border-amber-500 hover:shadow-amber-500/30' : 'hover:from-emerald-500 hover:to-teal-500 hover:border-emerald-500 hover:shadow-emerald-500/30'
           }`}
           aria-label="Önceki"
         >
-          <ChevronLeft className={`w-5 h-5 ${isMekke ? 'text-amber-700' : 'text-emerald-700'}`} />
+          <ChevronLeft className="w-6 h-6" />
         </button>
 
         {/* Cards */}
         <div
           ref={scrollRef}
-          className="flex gap-4 md:gap-5 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide px-1"
+          className="flex gap-4 md:gap-5 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide scroll-smooth"
+          style={{
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+            WebkitOverflowScrolling: 'touch'
+          }}
         >
           {places.map((place, index) => {
             const img = place.images?.[0];
@@ -694,12 +747,12 @@ function PlaceCityRow({ cityLabel, places }: { cityLabel: string; places: PlaceM
         {/* Right arrow */}
         <button
           onClick={() => scroll("right")}
-          className={`absolute -right-2 top-1/2 -translate-y-1/2 z-10 p-2.5 md:p-3 rounded-2xl bg-white/95 backdrop-blur-md border shadow-xl hover:shadow-2xl transition-all opacity-100 md:opacity-0 md:group-hover/nav:opacity-100 cursor-pointer hover:scale-110 ${
-            isMekke ? 'border-amber-200/50 hover:border-amber-300' : 'border-emerald-200/50 hover:border-emerald-300'
+          className={`absolute right-0 top-1/2 -translate-y-1/2 -mr-2 w-12 h-12 rounded-full bg-white shadow-xl shadow-slate-300/50 border-2 border-slate-200 flex items-center justify-center text-slate-700 hover:bg-gradient-to-r hover:from-cyan-500 hover:to-sky-500 hover:text-white hover:border-cyan-500 hover:shadow-cyan-500/30 transition-all duration-300 z-20 hover:scale-110 active:scale-95 ${
+            isMekke ? 'hover:from-amber-500 hover:to-orange-500 hover:border-amber-500 hover:shadow-amber-500/30' : 'hover:from-emerald-500 hover:to-teal-500 hover:border-emerald-500 hover:shadow-emerald-500/30'
           }`}
           aria-label="Sonraki"
         >
-          <ChevronRight className={`w-5 h-5 ${isMekke ? 'text-amber-700' : 'text-emerald-700'}`} />
+          <ChevronRight className="w-6 h-6" />
         </button>
       </div>
     </div>

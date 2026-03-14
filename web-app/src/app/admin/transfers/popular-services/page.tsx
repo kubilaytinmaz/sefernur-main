@@ -6,35 +6,35 @@ import { Pagination } from "@/components/admin/Pagination";
 import { SearchInput } from "@/components/admin/SearchInput";
 import { StatCard } from "@/components/admin/StatCard";
 import {
-    createPopularService,
-    deletePopularService,
-    getAllPopularServices,
-    getPopularServiceStats,
-    updatePopularService
-} from "@/lib/firebase/admin-domain";
+  createPopularService,
+  deletePopularService,
+  getAllPopularServices,
+  getPopularServiceStats,
+  updatePopularService
+} from "@/lib/data/popular-services";
 import {
-    emojiCategories,
-    PopularServiceModel,
-    serviceTypeColors,
-    serviceTypeLabels
+  emojiCategories,
+  PopularServiceModel,
+  serviceTypeColors,
+  serviceTypeLabels
 } from "@/types/popular-service";
 import {
-    Activity,
-    Clock,
-    DollarSign,
-    Download,
-    Edit3,
-    Filter,
-    GripVertical,
-    Loader2,
-    MapPin,
-    Plus,
-    Popcorn,
-    Save,
-    Star,
-    Trash2,
-    Users,
-    X
+  Activity,
+  Clock,
+  DollarSign,
+  Download,
+  Edit3,
+  Filter,
+  GripVertical,
+  Loader2,
+  MapPin,
+  Plus,
+  Popcorn,
+  Save,
+  Star,
+  Trash2,
+  Users,
+  X
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -100,7 +100,7 @@ function exportToCSV(services: PopularServiceModel[]) {
     s.duration.text,
     s.price.display,
     s.isPopular ? "Evet" : "Hayır",
-    s.order.toString(),
+    (s.order ?? 0).toString(),
   ]);
 
   const csvContent = [
@@ -182,6 +182,13 @@ function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
     routeStops: service?.route?.stops?.join(", ") || "",
     isPopular: service?.isPopular ?? true,
     order: service?.order || 0,
+    // Vehicle prices
+    sedanPrice: service?.vehiclePrices?.sedan || 0,
+    vanPrice: service?.vehiclePrices?.van || 0,
+    busPrice: service?.vehiclePrices?.bus || 0,
+    vipPrice: service?.vehiclePrices?.vip || 0,
+    jeepPrice: service?.vehiclePrices?.jeep || 0,
+    costerPrice: service?.vehiclePrices?.coster || 0,
   });
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -218,6 +225,15 @@ function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
       } : undefined,
       isPopular: formData.isPopular,
       order: formData.order,
+      // Vehicle prices
+      vehiclePrices: {
+        sedan: formData.sedanPrice || undefined,
+        van: formData.vanPrice || undefined,
+        bus: formData.busPrice || undefined,
+        vip: formData.vipPrice || undefined,
+        jeep: formData.jeepPrice || undefined,
+        coster: formData.costerPrice || undefined,
+      },
     };
 
     onSave(data);
@@ -457,6 +473,84 @@ function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
         </div>
       </div>
 
+      {/* Vehicle Prices */}
+      <div>
+        <h3 className="mb-3 text-sm font-semibold text-gray-900">Araç Bazlı Fiyatlar</h3>
+        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+          <p className="mb-3 text-xs text-gray-600">
+            Her araç tipi için bu turun fiyatını belirleyin. Boş bırakılan alanlar varsayılan fiyatı kullanır.
+          </p>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
+            <div>
+              <label className="mb-1 block text-xs font-medium text-gray-700">Sedan</label>
+              <input
+                type="number"
+                value={formData.sedanPrice}
+                onChange={(e) => setFormData({ ...formData, sedanPrice: Number(e.target.value) })}
+                className="w-full rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                placeholder="600"
+                min="0"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium text-gray-700">Van</label>
+              <input
+                type="number"
+                value={formData.vanPrice}
+                onChange={(e) => setFormData({ ...formData, vanPrice: Number(e.target.value) })}
+                className="w-full rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                placeholder="800"
+                min="0"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium text-gray-700">Bus</label>
+              <input
+                type="number"
+                value={formData.busPrice}
+                onChange={(e) => setFormData({ ...formData, busPrice: Number(e.target.value) })}
+                className="w-full rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                placeholder="1200"
+                min="0"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium text-gray-700">VIP</label>
+              <input
+                type="number"
+                value={formData.vipPrice}
+                onChange={(e) => setFormData({ ...formData, vipPrice: Number(e.target.value) })}
+                className="w-full rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                placeholder="1500"
+                min="0"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium text-gray-700">Jeep</label>
+              <input
+                type="number"
+                value={formData.jeepPrice}
+                onChange={(e) => setFormData({ ...formData, jeepPrice: Number(e.target.value) })}
+                className="w-full rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                placeholder="1000"
+                min="0"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium text-gray-700">Coster</label>
+              <input
+                type="number"
+                value={formData.costerPrice}
+                onChange={(e) => setFormData({ ...formData, costerPrice: Number(e.target.value) })}
+                className="w-full rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                placeholder="1000"
+                min="0"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Route */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
@@ -651,7 +745,7 @@ export default function PopularServicesPage() {
           comparison = a.duration.hours - b.duration.hours;
           break;
         case "order":
-          comparison = a.order - b.order;
+          comparison = (a.order ?? 0) - (b.order ?? 0);
           break;
       }
       return sort.direction === "asc" ? comparison : -comparison;
@@ -813,13 +907,62 @@ export default function PopularServicesPage() {
     },
     {
       key: "price",
-      header: "Fiyat",
-      render: (s) => (
-        <div className="flex items-center gap-1">
-          <DollarSign className="h-3.5 w-3.5 text-gray-400" />
-          <span className="font-medium text-gray-900">{s.price.display}</span>
-        </div>
-      ),
+      header: "Araç Fiyatları",
+      render: (s) => {
+        const vp = s.vehiclePrices;
+        if (!vp) {
+          return (
+            <div className="flex items-center gap-1">
+              <DollarSign className="h-3.5 w-3.5 text-gray-400" />
+              <span className="font-medium text-gray-900">{s.price.display}</span>
+              <span className="text-xs text-gray-400">(tek fiyat)</span>
+            </div>
+          );
+        }
+        const prices = Object.values(vp).filter((p): p is number => p != null && p > 0);
+        const minPrice = prices.length > 0 ? Math.min(...prices) : s.price.baseAmount;
+        return (
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-1.5">
+              <DollarSign className="h-3.5 w-3.5 text-emerald-500" />
+              <span className="font-bold text-emerald-700">{minPrice} SAR</span>
+              <span className="text-xs text-gray-400">'den başlayan</span>
+            </div>
+            <div className="grid grid-cols-3 gap-1 text-[10px]">
+              {vp.sedan != null && vp.sedan > 0 && (
+                <span className="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded text-center font-medium">
+                  Sedan {vp.sedan} SAR
+                </span>
+              )}
+              {vp.van != null && vp.van > 0 && (
+                <span className="bg-purple-50 text-purple-700 px-1.5 py-0.5 rounded text-center font-medium">
+                  Van {vp.van} SAR
+                </span>
+              )}
+              {vp.bus != null && vp.bus > 0 && (
+                <span className="bg-orange-50 text-orange-700 px-1.5 py-0.5 rounded text-center font-medium">
+                  Bus {vp.bus} SAR
+                </span>
+              )}
+              {vp.vip != null && vp.vip > 0 && (
+                <span className="bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded text-center font-medium">
+                  VIP {vp.vip} SAR
+                </span>
+              )}
+              {vp.jeep != null && vp.jeep > 0 && (
+                <span className="bg-green-50 text-green-700 px-1.5 py-0.5 rounded text-center font-medium">
+                  Jeep {vp.jeep} SAR
+                </span>
+              )}
+              {vp.coster != null && vp.coster > 0 && (
+                <span className="bg-cyan-50 text-cyan-700 px-1.5 py-0.5 rounded text-center font-medium">
+                  Coster {vp.coster} SAR
+                </span>
+              )}
+            </div>
+          </div>
+        );
+      },
     },
     {
       key: "badges",

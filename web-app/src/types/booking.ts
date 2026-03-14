@@ -3,7 +3,7 @@
  * Booking formu ve fiyat hesaplama için kullanılan tipler
  */
 
-import type { PopularService } from "@/lib/transfers/popular-services-simple";
+import type { PopularServiceModel } from "./popular-service";
 import type { TransferModel } from "./transfer";
 
 /**
@@ -98,7 +98,7 @@ export interface BookingFormData {
 
   // Tur bilgileri (opsiyonel)
   tourId?: string;
-  tour?: PopularService;
+  tour?: PopularServiceModel;
 
   // Tarih ve saat
   dateTime: DateTimeInfo;
@@ -192,7 +192,7 @@ export interface CouponCode {
  */
 export interface CalculatePriceInput {
   transfer: TransferModel;
-  tour?: PopularService;
+  tour?: PopularServiceModel;
   dateTime: DateTimeInfo;
   passengers: PassengerInfo;
   luggageCount: number;

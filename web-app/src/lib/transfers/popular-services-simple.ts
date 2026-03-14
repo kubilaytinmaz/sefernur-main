@@ -10,6 +10,7 @@ export interface PopularService {
   name: string;
   description: string;
   icon: string;
+  order?: number;
   
   // Transfer için mesafe bilgisi
   distance?: {

@@ -8,19 +8,19 @@
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
-import type { PopularService } from "@/lib/transfers/popular-services-simple";
+import type { PopularServiceModel } from "@/types/popular-service";
 import {
-    Calendar,
-    CheckCircle2,
-    Clock,
-    Info,
-    MapPin,
-    Route,
-    Users,
+  Calendar,
+  CheckCircle2,
+  Clock,
+  Info,
+  MapPin,
+  Route,
+  Users,
 } from "lucide-react";
 
 interface TourInfoCardProps {
-  tour: PopularService;
+  tour: PopularServiceModel;
   onShowDetail: () => void;
 }
 

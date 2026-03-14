@@ -2,12 +2,13 @@
 
 // Popüler Transfer Rotaları Bölümü - Basitleştirilmiş
 // Sadece transfer rotaları gösterir, fiyat gösterilmez
+// Firebase'den dinamik veri çeker
 
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardContent } from "@/components/ui/Card";
-import { POPULAR_ROUTES } from "@/lib/transfers/popular-routes";
+import { usePopularRoutes } from "@/hooks/usePopularRoutes";
 import { cn } from "@/lib/utils";
-import { Clock3, MapPin, Star } from "lucide-react";
+import { AlertTriangle, Clock3, MapPin, Star } from "lucide-react";
 
 export interface PopularRoutesSectionProps {
   onRouteSelect?: (routeId: string) => void;
@@ -20,6 +21,61 @@ export function PopularRoutesSection({
   selectedRouteId,
   className,
 }: PopularRoutesSectionProps) {
+  // Firebase'den popüler rotaları çek
+  const { data: routes = [], isLoading, error } = usePopularRoutes();
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <section className={cn("max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6", className)}>
+        <div className="flex items-center justify-center py-12">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-12 h-12 border-4 border-cyan-200 border-t-cyan-600 rounded-full animate-spin"></div>
+            <p className="text-sm text-slate-600">Popüler rotalar yükleniyor...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <section className={cn("max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6", className)}>
+        <div className="flex items-center justify-center py-12">
+          <div className="flex flex-col items-center gap-4 text-center max-w-md">
+            <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+              <AlertTriangle className="w-8 h-8 text-red-600" />
+            </div>
+            <h3 className="text-lg font-semibold text-slate-900">Rotalar yüklenemedi</h3>
+            <p className="text-sm text-slate-600">
+              Popüler rotaları yüklerken bir hata oluştu. Lütfen sayfayı yenileyin veya daha sonra tekrar deneyin.
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Empty state
+  if (routes.length === 0) {
+    return (
+      <section className={cn("max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6", className)}>
+        <div className="flex items-center justify-center py-12">
+          <div className="flex flex-col items-center gap-4 text-center max-w-md">
+            <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center">
+              <MapPin className="w-8 h-8 text-slate-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-slate-900">Henüz popüler rota yok</h3>
+            <p className="text-sm text-slate-600">
+              Yakında burada popüler transfer rotalarını görebileceksiniz.
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className={cn("max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6", className)}>
       {/* Başlık */}
@@ -30,7 +86,7 @@ export function PopularRoutesSection({
 
       {/* Rota Kartları Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
-        {POPULAR_ROUTES.map((route) => {
+        {routes.map((route) => {
           const isSelected = selectedRouteId === route.id;
 
           return (

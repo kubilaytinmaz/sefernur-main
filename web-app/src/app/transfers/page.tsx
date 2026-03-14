@@ -6,16 +6,16 @@ import { PopularServicesSection } from "@/components/transfers";
 import { TransferSearchForm } from "@/components/transfers/TransferSearchForm";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardContent } from "@/components/ui/Card";
-import { formatTlUsdPairFromTl } from "@/lib/currency";
+import { formatSarAsTry, formatTlSarPair, sarToTry } from "@/lib/currency";
+import { getPopularServices } from "@/lib/data/popular-services";
 import { getActiveTransfers } from "@/lib/firebase/domain";
-import { POPULAR_SERVICES, type PopularService } from "@/lib/transfers/popular-services-simple";
-import { calculateTransferPrice } from "@/lib/transfers/pricing";
+import { calculateAllHourlyRates, calculateTransferPrice } from "@/lib/transfers/pricing";
 import { createSlug } from "@/lib/transfers/seo-slugs";
 import { displayAddress } from "@/types/address";
+import type { PopularServiceModel } from "@/types/popular-service";
 import { TransferModel, VehicleType, vehicleTypeLabels } from "@/types/transfer";
 import { useQuery } from "@tanstack/react-query";
 import {
-  ArrowRight,
   Briefcase,
   Car,
   Clock3,
@@ -54,13 +54,21 @@ const capacityOptions = [
 export default function TransfersPage() {
   // Seçili popüler hizmetler - çoklu seçim destekli
   const [selectedServiceIds, setSelectedServiceIds] = useState<string[]>([]);
+  const [selectedServices, setSelectedServices] = useState<PopularServiceModel[]>([]);
 
   const transfersQuery = useQuery({
     queryKey: ["transfers", "active"],
     queryFn: () => getActiveTransfers(),
   });
 
+  // Tüm popüler turları saatlik fiyat hesaplaması için çek
+  const popularToursQuery = useQuery({
+    queryKey: ["popularServices", "all"],
+    queryFn: () => getPopularServices({ type: "tour" }),
+  });
+
   const transfers = transfersQuery.data ?? [];
+  const allTours = popularToursQuery.data ?? [];
 
   // Arama formu gönderildiğinde (şimdilik sadece log)
   const handleSearch = (params: {
@@ -76,18 +84,17 @@ export default function TransfersPage() {
     console.log("Arama:", params);
   };
 
-  // Popüler hizmet seçimi (çoklu seçim toggle)
-  const handleServiceSelect = (serviceIds: string[]) => {
+  // Popüler hizmet seçimi (çoklu seçim toggle) - PopularServicesSection'dan gelen servisleri kullan
+  const handleServiceSelect = (serviceIds: string[], services: PopularServiceModel[]) => {
     setSelectedServiceIds(serviceIds);
+    setSelectedServices(services);
   };
 
-  // Seçili hizmetleri al
-  const selectedServices: PopularService[] = useMemo(
-    () => selectedServiceIds
-      .map(id => POPULAR_SERVICES.find(s => s.id === id))
-      .filter(Boolean) as PopularService[],
-    [selectedServiceIds]
-  );
+  // Tüm araç tipleri için saatlik fiyatları hesapla (SAR cinsinden)
+  // TÜM turları kullanarak hesapla, sadece seçili olanları değil
+  const hourlyRates = useMemo(() => {
+    return calculateAllHourlyRates(allTours);
+  }, [allTours]);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -160,11 +167,12 @@ export default function TransfersPage() {
 
         {!transfersQuery.isLoading && !transfersQuery.isError && transfers.length > 0 ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {transfers.map((transfer) => (
+            {[...transfers].sort((a, b) => a.basePrice - b.basePrice).map((transfer) => (
               <TransferCard
                 key={transfer.id}
                 transfer={transfer}
                 selectedServices={selectedServices}
+                hourlyRates={hourlyRates}
               />
             ))}
           </div>
@@ -176,26 +184,35 @@ export default function TransfersPage() {
 
 /* ────────── Transfer Card ────────── */
 
+interface TransferCardProps {
+  transfer: TransferModel;
+  selectedServices: PopularServiceModel[];
+  hourlyRates: Record<VehicleType, number | null>;
+}
+
 function TransferCard({
   transfer,
-  selectedServices
-}: {
-  transfer: TransferModel;
-  selectedServices: PopularService[];
-}) {
+  selectedServices,
+  hourlyRates,
+}: TransferCardProps) {
   const firstImage = transfer.images?.[0];
   const vehicleLabel = vehicleTypeLabels[transfer.vehicleType] || transfer.vehicleType;
-  
+
   // Seçili hizmetlere göre toplam fiyat hesaplama (çoklu seçim destekli)
   const displayPrice = useMemo(() => {
     if (selectedServices.length === 0) {
+      // Seçili tur yoksa, saatlik fiyatı göster (TL cinsinden)
+      const hourlyRateSar = hourlyRates[transfer.vehicleType];
+      if (hourlyRateSar) {
+        return sarToTry(hourlyRateSar);
+      }
       return transfer.basePrice;
     }
 
-    // Baz transfer fiyatı her zaman dahil
-    let totalPrice = transfer.basePrice;
+    // Sadece seçili turların toplam fiyatını göster
+    let totalPriceTl = 0;
 
-    // Her seçili hizmetin fiyatını ekle
+    // Her seçili hizmetin fiyatını ekle (SAR → TL çevir)
     for (const service of selectedServices) {
       if (service.type === 'transfer') {
         // Transfer hizmeti: Mesafe bazlı fiyat hesaplama
@@ -209,23 +226,25 @@ function TransferCard({
             extraLuggage: 0,
             passengerCount: 1,
           });
-          // Transfer seçildiğinde, baz fiyatı çıkarıp mesafe bazlı fiyat koy
-          totalPrice = totalPrice - transfer.basePrice + priceCalc.total;
+          totalPriceTl += priceCalc.total;
         } else {
-          totalPrice = totalPrice - transfer.basePrice + service.price.baseAmount;
+          // vehiclePrices kullan, yoksa baseAmount
+          const servicePriceSar = service.vehiclePrices?.[transfer.vehicleType] ?? service.price.baseAmount;
+          totalPriceTl += sarToTry(servicePriceSar);
         }
       } else {
-        // Tur/Rehber: Hizmet ücretini ekle
-        totalPrice += service.price.baseAmount;
+        // Tur/Rehber: vehiclePrices varsa onu kullan, yoksa baseAmount
+        const servicePriceSar = service.vehiclePrices?.[transfer.vehicleType] ?? service.price.baseAmount;
+        totalPriceTl += sarToTry(servicePriceSar);
       }
     }
 
-    return totalPrice;
-  }, [selectedServices, transfer]);
+    return totalPriceTl;
+  }, [selectedServices, transfer, hourlyRates]);
 
   // Fiyat değişim göstergesi - çoklu seçim destekli
   const priceLabel = useMemo(() => {
-    if (selectedServices.length === 0) return 'Başlangıç';
+    if (selectedServices.length === 0) return 'Saatlik';
     if (selectedServices.length === 1) {
       const svc = selectedServices[0];
       if (svc.type === 'transfer') return 'Seçili Rota';
@@ -235,17 +254,62 @@ function TransferCard({
     return `Transfer + ${selectedServices.length} Hizmet`;
   }, [selectedServices]);
 
-  // Seçili hizmet isimleri özeti
-  const servicesSummary = useMemo(() => {
-    if (selectedServices.length === 0) return null;
+  // Fiyat alt açıklaması (SAR/saat veya tur özeti)
+  const priceSubtext = useMemo(() => {
+    if (selectedServices.length === 0) {
+      const hourlyRateSar = hourlyRates[transfer.vehicleType];
+      if (hourlyRateSar) {
+        return `${hourlyRateSar} SAR/saat`;
+      }
+      return null;
+    }
     if (selectedServices.length === 1) return selectedServices[0].name;
     return selectedServices.map(s => s.name).join(' + ');
+  }, [selectedServices, transfer, hourlyRates]);
+
+  // TL/SAR formatında fiyat gösterimi
+  const formattedPrice = useMemo(() => {
+    if (selectedServices.length === 0) {
+      const hourlyRateSar = hourlyRates[transfer.vehicleType];
+      if (hourlyRateSar) {
+        return formatTlSarPair(displayPrice, hourlyRateSar);
+      }
+      return formatSarAsTry(displayPrice);
+    }
+    // Seçili tur varsa, tur fiyatını TL/SAR formatında göster
+    // vehiclePrices kullanarak SAR değerini hesapla
+    const totalSar = selectedServices.reduce((sum, service) => {
+      if (service.type === 'transfer') {
+        const distanceKm = service.distance?.km || 0;
+        if (distanceKm > 0) {
+          // Mesafe bazlı fiyatlamada transfer.basePrice SAR cinsinden
+          return sum + transfer.basePrice;
+        }
+        return sum + (service.vehiclePrices?.[transfer.vehicleType] ?? service.price.baseAmount);
+      }
+      // Tur için vehiclePrices kullan
+      return sum + (service.vehiclePrices?.[transfer.vehicleType] ?? service.price.baseAmount);
+    }, 0);
+    return formatTlSarPair(displayPrice, totalSar);
+  }, [selectedServices, transfer, hourlyRates, displayPrice]);
+
+  // Rota gösterimi - seçili tur yoksa "1 Saatlik Kiralama", varsa tur rotası
+  const routeDisplay = useMemo(() => {
+    if (selectedServices.length === 0) {
+      return "1 Saatlik Kiralama";
+    }
+    // İlk seçili turun rotasını göster
+    const firstService = selectedServices[0];
+    if (firstService.route) {
+      return `${displayAddress(firstService.route.from)} → ${displayAddress(firstService.route.to)}`;
+    }
+    return firstService.name;
   }, [selectedServices]);
 
   // SEO uyumlu Türkçe URL oluştur
   const vehicleName = transfer.vehicleName || vehicleLabel;
   const vehicleSlug = `${createSlug(vehicleName)}-${transfer.id}`;
-  
+
   // Booking URL: İlk seçili tur veya tursuz
   // Çoklu tur seçiminde tüm turları query param olarak gönder
   const bookingUrl = useMemo(() => {
@@ -256,7 +320,7 @@ function TransferCard({
     const firstService = selectedServices[0];
     const tourSlug = `${createSlug(firstService.name)}-${firstService.id}`;
     const baseUrl = `/transfer-rezervasyon/${vehicleSlug}/${tourSlug}`;
-    
+
     // Birden fazla tur seçilmişse, ek turları query param olarak ekle
     if (selectedServices.length > 1) {
       const extraTourIds = selectedServices.slice(1).map(s => s.id).join(',');
@@ -269,21 +333,21 @@ function TransferCard({
     <Link href={bookingUrl}>
       <Card className="group overflow-hidden border-slate-200 bg-white hover:border-cyan-300 transition-colors duration-200 cursor-pointer h-full">
         {/* Image Section */}
-        <div className="relative h-48 overflow-hidden bg-slate-100">
+        <div className="relative h-48 overflow-hidden bg-gradient-to-br from-slate-50 to-slate-200">
           {firstImage ? (
             <img
               src={firstImage}
               alt={transfer.vehicleName || vehicleLabel}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-cyan-50 to-sky-50">
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-cyan-50 to-sky-50">
               <VehicleIcon type={transfer.vehicleType} className="w-12 h-12 text-cyan-300" />
             </div>
           )}
 
           {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
           {/* Top badges */}
           <div className="absolute top-3 left-3 right-3 flex justify-between items-start">
@@ -298,7 +362,7 @@ function TransferCard({
                 {vehicleLabel}
               </Badge>
             </div>
-            
+
             {/* Favorite Button */}
             <div onClick={(e) => e.stopPropagation()}>
               <FavoriteButton
@@ -334,9 +398,7 @@ function TransferCard({
           {/* Route */}
           <div className="mt-1.5 flex items-center gap-1.5 text-xs text-slate-500">
             <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
-            <span className="truncate">{displayAddress(transfer.fromAddress)}</span>
-            <ArrowRight className="w-3 h-3 text-slate-400 shrink-0" />
-            <span className="truncate">{displayAddress(transfer.toAddress)}</span>
+            <span className="truncate">{routeDisplay}</span>
           </div>
 
           {/* Info Row */}
@@ -377,11 +439,11 @@ function TransferCard({
                 {priceLabel}
               </p>
               <p className="text-base font-bold text-cyan-700 leading-tight">
-                {formatTlUsdPairFromTl(displayPrice)}
+                {formattedPrice}
               </p>
-              {servicesSummary && (
+              {priceSubtext && (
                 <p className="text-[9px] text-slate-400 mt-0.5 max-w-[140px] line-clamp-2 text-right">
-                  {servicesSummary}
+                  {priceSubtext}
                 </p>
               )}
             </div>

@@ -2,42 +2,44 @@
 
 import { StatCard } from "@/components/admin/StatCard";
 import {
-    getAllRoutePricing,
-    getAllVehiclePricing,
-    getTransferPricingStats,
-    updateRoutePricing,
-    updateVehiclePricing,
+  getAllRoutePricing,
+  getAllVehiclePricing,
+  getTransferPricingStats,
+  updateRoutePricing,
+  updateVehiclePricing,
 } from "@/lib/firebase/admin-domain";
 import {
-    calculateTransferPrice,
-    isNightTime,
-    ROUTE_FIXED_PRICES,
-    VEHICLE_PRICING,
+  calculateTransferPrice,
+  isNightTime,
+  ROUTE_FIXED_PRICES,
+  VEHICLE_PRICING,
 } from "@/lib/transfers/pricing";
 import { VehicleType, vehicleTypeLabels } from "@/types/transfer";
 import {
-    RoutePricingModel,
-    VehiclePricingModel,
-    vehiclePricingOrder
+  RoutePricingModel,
+  VehiclePricingModel,
+  vehiclePricingOrder
 } from "@/types/transfer-pricing";
 import {
-    Calculator,
-    Car,
-    Check,
-    Edit3,
-    Loader2,
-    MapPin,
-    Plus,
-    RefreshCw,
-    Route,
-    Save,
-    Trash2,
-    Users
+  Calculator,
+  Car,
+  Check,
+  Edit3,
+  Loader2,
+  MapPin,
+  Plus,
+  RefreshCw,
+  Route,
+  Save,
+  Trash2,
+  Users
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { PopularToursPricingTab } from "./tabs/PopularToursPricingTab";
+import { VehicleTourMatrixTab } from "./tabs/VehicleTourMatrixTab";
 
 // ─── Tab Types ─────────────────────────────────────────────────────────────
-type TabType = "vehicle" | "route" | "simulator";
+type TabType = "vehicle" | "route" | "simulator" | "popular-tours" | "vehicle-tour-matrix";
 
 // ─── Vehicle Pricing Form Component ────────────────────────────────────────
 interface VehiclePricingFormProps {
@@ -609,6 +611,8 @@ export default function TransferPricingPage() {
   const tabs = [
     { id: "vehicle" as TabType, label: "Araç Tipi Fiyatlandırma", icon: Car },
     { id: "route" as TabType, label: "Rota Bazlı Fiyatlandırma", icon: Route },
+    { id: "popular-tours" as TabType, label: "Popüler Turlar", icon: Users },
+    { id: "vehicle-tour-matrix" as TabType, label: "Araç-Tur Matrisi", icon: Calculator },
     { id: "simulator" as TabType, label: "Fiyat Simülatörü", icon: Calculator },
   ];
 
@@ -902,6 +906,16 @@ export default function TransferPricingPage() {
                 </>
               )}
             </div>
+          )}
+
+          {/* Popular Tours Pricing Tab */}
+          {activeTab === "popular-tours" && (
+            <PopularToursPricingTab onRefresh={load} />
+          )}
+
+          {/* Vehicle-Tour Matrix Tab */}
+          {activeTab === "vehicle-tour-matrix" && (
+            <VehicleTourMatrixTab onRefresh={load} />
           )}
 
           {/* Simulator Tab */}

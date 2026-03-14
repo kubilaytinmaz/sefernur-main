@@ -4,86 +4,107 @@
 
 Ana sayfadaki "Öne Çıkan Transferler" bölümünde tüm araçların "Sedan" olarak görünmesi sorunu tespit edildi.
 
-### Tespit Edilen Sorunlar
+### Kök Neden
 
-1. **Veri Sorunu (Kök Neden)**: [`mapTransferDoc`](web-app/src/lib/firebase/domain.ts:100-154) fonksiyonunda, geçersiz `vehicleType` değerleri için varsayılan olarak "sedan" atanıyor:
-   ```typescript
-   const vehicleType: VehicleType = validVehicleTypes.includes(rawVehicle as VehicleType)
-     ? (rawVehicle as VehicleType)
-     : "sedan";  // ← Varsayılan değer
-   ```
+[`mapTransferDoc`](web-app/src/lib/firebase/domain.ts:124-128) fonksiyonunda geçersiz `vehicleType` değerleri için varsayılan olarak "sedan" atanıyor:
 
-2. **Görsel Sorunlar**:
-   - Kartlarda araç tipi badge'i tekrarlı görünüyor
-   - Araç ismi (`vehicleName`) yerine sadece tip gösteriliyor
-   - Görsel hiyerarşi yetersiz
+```typescript
+const vehicleType: VehicleType = validVehicleTypes.includes(rawVehicle as VehicleType)
+  ? (rawVehicle as VehicleType)
+  : "sedan";  // ← Hep sedan'a düşüyor
+```
 
-3. **Veri Doğrulama Eksikliği**:
-   - Firebase'de gelen verilerin `vehicleType` alanı boş veya geçersiz olabilir
-   - Uygun fallback mekanizması yok
+Firebase'de `vehicleType` alanı boş veya tanımsız olunca tüm araçlar "Sedan" olarak gösteriliyor.
+
+---
+
+## Mevcut Araç Fiyat Yapısı
+
+[`VEHICLE_PRICING`](web-app/src/lib/transfers/pricing.ts:14-57) ve [`ROUTE_FIXED_PRICES`](web-app/src/lib/transfers/pricing.ts:67-95) verilerine göre en ucuz fiyatlar:
+
+| Araç Tipi | Kapasite | Baz Fiyat | JED-Mekke | JED-Medine | Mekke-Medine |
+|-----------|----------|-----------|-----------|-----------|--------------|
+| Sedan     | 4 kişi   | 1.425 TL  | 1.425 TL  | 3.325 TL  | 2.375 TL     |
+| Van       | 7 kişi   | 1.900 TL  | 1.900 TL  | 3.800 TL  | 2.850 TL     |
+| Coster    | 12 kişi  | 2.375 TL  | 2.375 TL  | 4.275 TL  | 3.325 TL     |
+| Jeep      | 5 kişi   | 2.000 TL  | ~1.853 TL | ~4.323 TL | ~3.088 TL    |
+| VIP       | 4 kişi   | 3.000 TL  | 2.850 TL  | 6.650 TL  | 4.750 TL     |
+| Bus       | 50 kişi  | 5.000 TL  | ~3.563 TL | ~6.413 TL | ~4.988 TL    |
+
+---
 
 ## Çözüm Planı
 
-### Adım 1: Veri Doğrulama ve Fallback Mekanizması
+### Adım 1: mapTransferDoc Akıllı Araç Tipi Tespiti
 
 **Dosya**: [`web-app/src/lib/firebase/domain.ts`](web-app/src/lib/firebase/domain.ts:100-154)
 
-`mapTransferDoc` fonksiyonunu geliştir:
+Kapasiteye ve araç ismine göre akıllı `vehicleType` tahminleme ekle:
 
-1. **Araç tipini kapasiteden türet** (eğer `vehicleType` boşsa):
-   - 1-4 kişi → "sedan"
-   - 5-8 kişi → "van"
-   - 9-15 kişi → "coster"
-   - 16+ kişi → "bus"
+```typescript
+function inferVehicleType(capacity: number, vehicleName: string): VehicleType {
+  const nameLower = vehicleName.toLowerCase();
+  
+  // İsimden tespit
+  if (nameLower.includes('vip') || nameLower.includes('luxury')) return 'vip';
+  if (nameLower.includes('jeep') || nameLower.includes('suv')) return 'jeep';
+  if (nameLower.includes('bus') || nameLower.includes('otobus')) return 'bus';
+  if (nameLower.includes('coster') || nameLower.includes('hiace') || nameLower.includes('coaster')) return 'coster';
+  if (nameLower.includes('van') || nameLower.includes('minibus')) return 'van';
+  if (nameLower.includes('sedan') || nameLower.includes('camry')) return 'sedan';
+  
+  // Kapasiteden tespit
+  if (capacity <= 4) return 'sedan';
+  if (capacity <= 7) return 'van';
+  if (capacity <= 15) return 'coster';
+  return 'bus';
+}
+```
 
-2. **Araç isminden türet** (eğer varsa):
-   - `vehicleName` içinde "vip", "luxury" varsa → "vip"
-   - "jeep", "suv" varsa → "jeep"
-
-3. **Loglama**: Geçersiz vehicleType değerlerini console'a yaz
-
-### Adım 2: CompactTransferCard Bileşenini İyileştir
+### Adım 2: CompactTransferCard İyileştirmesi
 
 **Dosya**: [`web-app/src/components/transfers/CompactTransferCard.tsx`](web-app/src/components/transfers/CompactTransferCard.tsx:47-175)
 
-Görsel iyileştirmeler:
+Yapılacak iyileştirmeler:
 
-1. **Araç İsmi Öncelikli**: `vehicleName` varsa onu göster, yoksa tipi göster
-2. **Badge Hiyerarşisi**:
-   - Birincil: Araç ismi (varsa)
-   - İkincil: Araç tipi badge'i
-3. **Görsel Ayrım**: Farklı araç tipleri için farklı renkler/ikonlar
+1. Araç ismi varsa badge'de onu göster, yoksa tipi göster
+2. Kapasite badge'ini daha belirgin yap
+3. "Sedan" tekrarını kaldır - tek bir yerde göster
+4. "Fiyat" bölümünde en ucuz başlayan fiyatı göster
 
-### Adım 3: Ana Sayfa Grid Düzeni
+### Adım 3: Ana Sayfa Transfer Section İyileştirmesi
 
-**Dosya**: [`web-app/src/app/page.tsx`](web-app/src/app/page.tsx:156-162)
+**Dosya**: [`web-app/src/app/page.tsx`](web-app/src/app/page.tsx:89-162)
 
-Grid düzenini optimize et:
-- Mobil: 2 sütun (mevcut)
-- Tablet: 3 sütun (mevcut)
-- Desktop: 4 sütun (5 yerine)
-- Büyük ekran: 5 sütun
+1. `topTransfers` hesaplamasını 3'ten 5'e çıkar (grid 5'li)
+2. Her araç tipinden birer tane göster (çeşitlilik)
+3. En ucuz fiyatlı araçları öne çıkar
 
-### Adım 4: Firebase Veri Temizleme Scripti
+### Adım 4: Fiyat Gösterimini İyileştir
 
-Admin panel için veri temizleme fonksiyonu ekle:
-- Boş veya geçersiz `vehicleType` alanlarını tespit et
-- Kapasiteye göre otomatik düzelt
-- Toplu güncelleme imkanı
+**Dosya**: [`web-app/src/components/transfers/CompactTransferCard.tsx`](web-app/src/components/transfers/CompactTransferCard.tsx:150-158)
+
+Her araç kartında en ucuz rotanın fiyatını göster:
+
+```
+"1.425 TL'den başlayan fiyatlarla" (sedan için)
+"1.900 TL'den başlayan fiyatlarla" (van için)
+```
+
+---
 
 ## Uygulama Sırası
 
 ```mermaid
 graph TD
-    A[Adım 1: mapTransferDoc Geliştir] --> B[Adım 2: CompactTransferCard İyileştir]
-    B --> C[Adım 3: Ana Sayfa Grid Düzeni]
-    C --> D[Adım 4: Firebase Veri Temizleme]
-    D --> E[Test ve Doğrulama]
+    A[Adim 1: mapTransferDoc - Akilli Arac Tipi Tespiti] --> B[Adim 2: CompactTransferCard Iyilestirmesi]
+    B --> C[Adim 3: Ana Sayfa Section Iyilestirmesi]
+    C --> D[Adim 4: Fiyat Gosterimini Iyilestir]
+    D --> E[Test ve Dogrulama]
 ```
 
-## Beklenen Sonuç
+## Değiştirilecek Dosyalar
 
-1. Her araç kartında doğru araç tipi görünecek
-2. Araç ismi varsa öncelikli gösterilecek
-3. Görsel hiyerarşi net olacak
-4. Geçersiz veriler için akıllı fallback çalışacak
+1. [`web-app/src/lib/firebase/domain.ts`](web-app/src/lib/firebase/domain.ts) - mapTransferDoc güncelle
+2. [`web-app/src/components/transfers/CompactTransferCard.tsx`](web-app/src/components/transfers/CompactTransferCard.tsx) - Kart tasarımı iyileştir
+3. [`web-app/src/app/page.tsx`](web-app/src/app/page.tsx) - Ana sayfa grid düzeni
