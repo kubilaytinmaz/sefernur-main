@@ -11,7 +11,6 @@ import { ContactMessageModel, ContactSubject } from "@/types/contact";
 import { GuideModel } from "@/types/guide";
 import { HotelCategory, HotelModel, RoomType } from "@/types/hotel";
 import { PlaceCity, PlaceModel } from "@/types/place";
-import { PopularRouteModel } from "@/types/popular-route";
 import { PopularServiceModel } from "@/types/popular-service";
 import { PromotionModel, PromotionTargetType } from "@/types/promotion";
 import { ReservationModel, ReservationStatus, ReservationType } from "@/types/reservation";
@@ -27,9 +26,7 @@ import {
   TransferRouteModel,
 } from "@/types/transfer-location";
 import {
-  RoutePricingModel,
-  TransferPricingDocument,
-  VehiclePricingModel,
+  RoutePricingModel
 } from "@/types/transfer-pricing";
 import { rolesFromFirestore, rolesToFirestore, RoleType, UserModel } from "@/types/user";
 import { VisaApplicationModel, VisaStatus } from "@/types/visa";
@@ -47,8 +44,7 @@ import {
   setDoc,
   Timestamp,
   updateDoc,
-  where,
-  writeBatch
+  where
 } from "firebase/firestore";
 import { db, storage } from "./config";
 import { COLLECTIONS } from "./firestore";
@@ -1420,158 +1416,8 @@ export async function getPopularServiceStats(): Promise<{
 }
 
 // ═══════════════════════════════════════════════════════════════════════
-// ─── POPULAR ROUTES MANAGEMENT ───────────────────────────────────────────
-// ═══════════════════════════════════════════════════════════════════════
-
-function mapPopularRoute(id: string, d: Record<string, unknown>): PopularRouteModel {
-  const distanceObj = d.distance as Record<string, unknown> | undefined;
-  const durationObj = d.duration as Record<string, unknown> | undefined;
-  const fromObj = d.from as Record<string, unknown> | undefined;
-  const toObj = d.to as Record<string, unknown> | undefined;
-  const pricesObj = d.prices as Record<string, unknown> | undefined;
-
-  return {
-    id,
-    name: readString(d.name),
-    icon: readString(d.icon) || "🚗",
-    from: {
-      locationId: readString(fromObj?.locationId),
-      city: readString(fromObj?.city),
-      name: readString(fromObj?.name),
-    },
-    to: {
-      locationId: readString(toObj?.locationId),
-      city: readString(toObj?.city),
-      name: readString(toObj?.name),
-    },
-    distance: {
-      km: readNumber(distanceObj?.km),
-      text: readString(distanceObj?.text),
-    },
-    duration: {
-      minutes: readNumber(durationObj?.minutes),
-      text: readString(durationObj?.text),
-    },
-    basePrice: readNumber(d.basePrice),
-    prices: pricesObj ? {
-      sedan: readNumber(pricesObj.sedan),
-      van: readNumber(pricesObj.van),
-      coster: readNumber(pricesObj.coster),
-      bus: readNumber(pricesObj.bus),
-      vip: readNumber(pricesObj.vip),
-      jeep: readNumber(pricesObj.jeep),
-    } : undefined,
-    category: (readString(d.category) || "local") as PopularRouteModel["category"],
-    isPopular: d.isPopular === true,
-    order: readNumber(d.order),
-    createdAt: asDate(d.createdAt) ?? new Date(),
-    updatedAt: asDate(d.updatedAt) ?? new Date(),
-  };
-}
-
-export interface PopularRouteFilters {
-  category?: PopularRouteModel["category"];
-  isPopular?: boolean;
-}
-
-export async function getAllPopularRoutes(
-  filters?: PopularRouteFilters,
-): Promise<PopularRouteModel[]> {
-  const constraints: QueryConstraint[] = [];
-  const items = await fetchAll(COLLECTIONS.POPULAR_ROUTES, constraints, mapPopularRoute);
-
-  let result = items;
-  if (filters?.category) {
-    result = result.filter((r) => r.category === filters.category);
-  }
-  if (filters?.isPopular !== undefined) {
-    result = result.filter((r) => r.isPopular === filters.isPopular);
-  }
-
-  return result.sort((a, b) => a.order - b.order);
-}
-
-export async function getPopularRouteByIdAdmin(id: string): Promise<PopularRouteModel | null> {
-  const snap = await getDoc(doc(db, COLLECTIONS.POPULAR_ROUTES, id));
-  if (!snap.exists()) return null;
-  return mapPopularRoute(snap.id, snap.data() as Record<string, unknown>);
-}
-
-export async function createPopularRoute(
-  data: Omit<PopularRouteModel, "id" | "createdAt" | "updatedAt">,
-): Promise<string> {
-  const ref = await addDoc(collection(db, COLLECTIONS.POPULAR_ROUTES), {
-    ...data,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  });
-  return ref.id;
-}
-
-export async function updatePopularRoute(
-  id: string,
-  data: Partial<PopularRouteModel>,
-): Promise<void> {
-  const { id: _id, createdAt: _ca, ...rest } = data as PopularRouteModel;
-  await updateDoc(doc(db, COLLECTIONS.POPULAR_ROUTES, id), {
-    ...rest,
-    updatedAt: serverTimestamp(),
-  });
-}
-
-export async function deletePopularRoute(id: string): Promise<void> {
-  await deleteDoc(doc(db, COLLECTIONS.POPULAR_ROUTES, id));
-}
-
-export async function reorderPopularRoutes(
-  order: { id: string; order: number }[],
-): Promise<void> {
-  const batch = writeBatch(db);
-  for (const item of order) {
-    batch.update(doc(db, COLLECTIONS.POPULAR_ROUTES, item.id), {
-      order: item.order,
-      updatedAt: serverTimestamp(),
-    });
-  }
-  await batch.commit();
-}
-
-export async function getPopularRouteStats(): Promise<{
-  total: number;
-  popular: number;
-  byCategory: Record<string, number>;
-}> {
-  const all = await getAllPopularRoutes();
-
-  return {
-    total: all.length,
-    popular: all.filter((r) => r.isPopular).length,
-    byCategory: {
-      airport: all.filter((r) => r.category === "airport").length,
-      intercity: all.filter((r) => r.category === "intercity").length,
-      local: all.filter((r) => r.category === "local").length,
-    },
-  };
-}
-
-// ═══════════════════════════════════════════════════════════════════════
 // ─── TRANSFER PRICING MANAGEMENT ─────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════
-
-function mapVehiclePricing(id: string, d: Record<string, unknown>): VehiclePricingModel {
-  return {
-    id,
-    type: "vehicle_type" as const,
-    vehicleType: (readString(d.vehicleType) || "sedan") as VehicleType,
-    basePrice: readNumber(d.basePrice),
-    pricePerKm: readNumber(d.pricePerKm),
-    nightSurcharge: readNumber(d.nightSurcharge),
-    waitingFeePerHour: readNumber(d.waitingFeePerHour),
-    luggageFee: readNumber(d.luggageFee),
-    updatedAt: asDate(d.updatedAt) ?? new Date(),
-    updatedBy: readString(d.updatedBy),
-  };
-}
 
 function mapRoutePricing(id: string, d: Record<string, unknown>): RoutePricingModel {
   const pricesObj = d.prices as Record<string, unknown> | undefined;
@@ -1582,7 +1428,10 @@ function mapRoutePricing(id: string, d: Record<string, unknown>): RoutePricingMo
     routeName: readString(d.routeName),
     fromCity: readString(d.fromCity),
     toCity: readString(d.toCity),
+    fromLocationId: readString(d.fromLocationId) || undefined,
+    toLocationId: readString(d.toLocationId) || undefined,
     distanceKm: readNumber(d.distanceKm),
+    durationMinutes: readNumber(d.durationMinutes) || undefined,
     prices: {
       sedan: readNumber(pricesObj?.sedan),
       van: readNumber(pricesObj?.van),
@@ -1591,51 +1440,12 @@ function mapRoutePricing(id: string, d: Record<string, unknown>): RoutePricingMo
       vip: pricesObj?.vip ? readNumber(pricesObj.vip) : undefined,
       jeep: pricesObj?.jeep ? readNumber(pricesObj.jeep) : undefined,
     },
+    isActive: d.isActive === true,
+    order: readNumber(d.order) || 0,
+    createdAt: asDate(d.createdAt),
     updatedAt: asDate(d.updatedAt) ?? new Date(),
     updatedBy: readString(d.updatedBy),
   };
-}
-
-// ─── Vehicle Pricing Functions ────────────────────────────────────────────
-
-export async function getAllVehiclePricing(): Promise<VehiclePricingModel[]> {
-  const constraints: QueryConstraint[] = [where("type", "==", "vehicle_type")];
-  const items = await fetchAll(COLLECTIONS.TRANSFER_PRICING, constraints, mapVehiclePricing);
-  return sortByUpdatedAtDesc(items);
-}
-
-export async function getVehiclePricingByType(
-  vehicleType: VehicleType,
-): Promise<VehiclePricingModel | null> {
-  const constraints: QueryConstraint[] = [
-    where("type", "==", "vehicle_type"),
-    where("vehicleType", "==", vehicleType),
-  ];
-  const items = await fetchAll(COLLECTIONS.TRANSFER_PRICING, constraints, mapVehiclePricing);
-  return items.length > 0 ? items[0] : null;
-}
-
-export async function updateVehiclePricing(
-  vehicleType: VehicleType,
-  data: Partial<Omit<VehiclePricingModel, "id" | "type" | "vehicleType">>,
-  updatedBy: string,
-): Promise<void> {
-  const existing = await getVehiclePricingByType(vehicleType);
-  const docId = existing?.id || vehicleType;
-  
-  const docData = {
-    type: "vehicle_type",
-    vehicleType,
-    ...data,
-    updatedAt: serverTimestamp(),
-    updatedBy,
-  };
-
-  if (existing) {
-    await updateDoc(doc(db, COLLECTIONS.TRANSFER_PRICING, docId), docData);
-  } else {
-    await setDoc(doc(db, COLLECTIONS.TRANSFER_PRICING, docId), docData);
-  }
 }
 
 // ─── Route Pricing Functions ──────────────────────────────────────────────
@@ -1698,31 +1508,38 @@ export async function deleteRoutePricing(routeId: string): Promise<void> {
 
 // ─── All Transfer Pricing Functions ───────────────────────────────────────
 
-export async function getAllTransferPricing(): Promise<TransferPricingDocument[]> {
-  const items = await fetchAll(
-    COLLECTIONS.TRANSFER_PRICING,
-    [],
-    (id, d) => {
-      const type = readString(d.type);
-      if (type === "vehicle_type") {
-        return mapVehiclePricing(id, d);
-      } else if (type === "route") {
-        return mapRoutePricing(id, d);
-      }
-      throw new Error(`Unknown pricing type: ${type}`);
-    },
-  );
+export async function getAllTransferPricing(): Promise<RoutePricingModel[]> {
+  const constraints: QueryConstraint[] = [where("type", "==", "route")];
+  const items = await fetchAll(COLLECTIONS.TRANSFER_PRICING, constraints, mapRoutePricing);
   return sortByUpdatedAtDesc(items);
 }
 
+export async function getRoutePricingByRouteId(routeId: string): Promise<RoutePricingModel | null> {
+  const constraints: QueryConstraint[] = [
+    where("type", "==", "route"),
+    where("routeId", "==", routeId),
+  ];
+  const items = await fetchAll(COLLECTIONS.TRANSFER_PRICING, constraints, mapRoutePricing);
+  return items.length > 0 ? items[0] : null;
+}
+
+export async function getActiveRoutePricing(): Promise<RoutePricingModel[]> {
+  const constraints: QueryConstraint[] = [
+    where("type", "==", "route"),
+    where("isActive", "==", true),
+  ];
+  const items = await fetchAll(COLLECTIONS.TRANSFER_PRICING, constraints, mapRoutePricing);
+  return items.sort((a, b) => a.order - b.order);
+}
+
 export async function getTransferPricingStats(): Promise<{
-  vehicleTypes: number;
   routes: number;
+  activeRoutes: number;
 }> {
   const all = await getAllTransferPricing();
   return {
-    vehicleTypes: all.filter((p) => p.type === "vehicle_type").length,
-    routes: all.filter((p) => p.type === "route").length,
+    routes: all.length,
+    activeRoutes: all.filter((p) => p.isActive).length,
   };
 }
 
