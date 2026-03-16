@@ -29,14 +29,22 @@ export function useRouteId(segmentIndex = -1): string {
     return decodeURIComponent(value);
   };
 
-  const [id, setId] = useState(getIdFromPathname);
+  const [id, setId] = useState(() => {
+    // Initial value - may be empty on first render
+    return getIdFromPathname();
+  });
 
   useEffect(() => {
     // Update when component mounts or when URL changes
-    const newId = getIdFromPathname();
-    if (newId !== id) {
-      setId(newId);
-    }
+    // Use setTimeout to ensure window.location is fully ready
+    const timer = setTimeout(() => {
+      const newId = getIdFromPathname();
+      if (newId !== id) {
+        setId(newId);
+      }
+    }, 0);
+    
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Empty array - only run once on mount
 

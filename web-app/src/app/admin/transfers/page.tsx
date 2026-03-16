@@ -5,17 +5,15 @@ import { Pagination } from "@/components/admin/Pagination";
 import { SearchInput } from "@/components/admin/SearchInput";
 import { StatCard } from "@/components/admin/StatCard";
 import { formatTlSarPair, sarToTry } from "@/lib/currency";
-import { deleteTransfer, getAllTransfers, updateTransfer } from "@/lib/firebase/admin-domain";
+import { deleteTransfer, getAllTransfers, updateTransfer } from "@/lib/data/transfers-data";
 import { displayAddress } from "@/types/address";
 import { TransferModel, amenityLabels, vehicleTypeLabels } from "@/types/transfer";
 import {
   Activity,
   CheckCircle2,
   Download,
-  FileSpreadsheet,
   Filter,
   Loader2,
-  MapPin,
   Plane,
   Plus,
   Popcorn,
@@ -426,7 +424,7 @@ export default function AdminTransfersPage() {
       key: "price",
       header: "Fiyat",
       render: (t) => {
-        // TL'ye çevir ve SAR ile birlikte göster
+        // TL'ye çevir ve USD ile birlikte göster
         const priceTl = sarToTry(t.basePrice);
         return <span className="font-medium">{formatTlSarPair(priceTl, t.basePrice)}</span>;
       },
@@ -580,37 +578,6 @@ export default function AdminTransfersPage() {
         />
       </div>
 
-      {/* Quick Navigation */}
-      <div className="flex flex-wrap gap-2 rounded-xl border border-gray-200 bg-white p-4">
-        <Link
-          href="/admin/transfers/popular-services"
-          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
-        >
-          <Popcorn className="h-4 w-4 text-amber-500" />
-          Popüler Hizmetler
-        </Link>
-        <Link
-          href="/admin/transfers/pricing"
-          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
-        >
-          <TrendingUp className="h-4 w-4 text-purple-500" />
-          Fiyatlandırma
-        </Link>
-        <Link
-          href="/admin/transfers/locations"
-          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
-        >
-          <MapPin className="h-4 w-4 text-red-500" />
-          Lokasyonlar
-        </Link>
-        <Link
-          href="/admin/transfers/reports"
-          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
-        >
-          <FileSpreadsheet className="h-4 w-4 text-blue-500" />
-          Raporlar
-        </Link>
-      </div>
 
       {/* Search and Filter Bar */}
       <div className="flex flex-wrap items-center gap-3">

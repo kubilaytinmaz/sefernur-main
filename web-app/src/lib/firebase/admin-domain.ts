@@ -18,12 +18,7 @@ import { DEFAULT_SITE_SETTINGS, SiteSettings } from "@/types/site-settings";
 import { TourCategory, TourModel } from "@/types/tour";
 import { TransferModel, VehicleAmenity, VehicleType } from "@/types/transfer";
 import {
-  LocationFilters,
-  RouteFilters,
-  TransferLocationModel,
-  TransferLocationType,
-  TransferRouteCategory,
-  TransferRouteModel,
+  TransferLocationModel
 } from "@/types/transfer-location";
 import {
   RoutePricingModel

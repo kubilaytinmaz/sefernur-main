@@ -3,7 +3,9 @@
  * Fiyat hesaplama, validasyon ve veri işleme
  */
 
-import { sarToTry } from "@/lib/currency";
+import { usdToTry } from "@/lib/currency";
+import { HOURLY_RATES } from "@/lib/transfers/pricing";
+import { calculateTourPriceTry } from "@/lib/transfers/tour-pricing";
 import type {
   CalculatePriceInput,
   CalculatePriceResult,
@@ -46,14 +48,36 @@ export function calculateBookingPrice(input: CalculatePriceInput): CalculatePric
   const isNight = isNightTime(dateTime.pickupTime);
 
   // Transfer fiyatı hesapla
-  const transferPriceResult = calculateTransferPrice({
+  let transferPriceResult = calculateTransferPrice({
     vehicleType: transfer.vehicleType,
     distanceKm,
     isNightTime: isNight,
-    waitingHours: 0, // İlerilik eklenebilir
+    waitingHours: 0,
     extraLuggage: Math.max(0, luggageCount - transfer.luggageCapacity),
     passengerCount: getTotalPassengers(passengers),
   });
+
+  // ────────── Saatlik Kiralama Fiyatı ──────────
+  
+  // Eğer tur yoksa ve kiralama süresi belirtilmişse, saatlik ücreti kullan
+  if (!tour && dateTime.rentalHours) {
+    const hourlyRateUsd = HOURLY_RATES[transfer.vehicleType] ?? 67; // Fallback $67
+    const hourlyPriceUsd = hourlyRateUsd * dateTime.rentalHours;
+    const hourlyPriceTl = usdToTry(hourlyPriceUsd);
+    
+    // Transfer fiyatını saatlik fiyat ile değiştir
+    transferPriceResult = {
+      basePrice: hourlyPriceTl,
+      distancePrice: 0,
+      nightSurcharge: 0,
+      waitingFee: 0,
+      luggageFee: 0,
+      total: hourlyPriceTl,
+      breakdown: [
+        `Saatlik kiralama (${dateTime.rentalHours} saat): $${hourlyPriceUsd} (${hourlyPriceTl.toFixed(0)}₺)`
+      ],
+    };
+  }
 
   // ────────── Tur Fiyatı ──────────
 
@@ -61,28 +85,15 @@ export function calculateBookingPrice(input: CalculatePriceInput): CalculatePric
   let tourPricePerPerson = 0;
 
   if (tour) {
-    // Önce araç bazlı fiyatı kontrol et (SAR cinsinden)
-    const vehicleType = transfer.vehicleType;
-    let baseTourPriceSar = tour.price.baseAmount;
-
-    // Eğer tur için bu araç tipine özel fiyat varsa kullan
-    if (tour.vehiclePrices && vehicleType in tour.vehiclePrices) {
-      const vehiclePrice = tour.vehiclePrices[vehicleType as keyof typeof tour.vehiclePrices];
-      if (vehiclePrice && vehiclePrice > 0) {
-        baseTourPriceSar = vehiclePrice;
-      }
-    }
-
-    // SAR'ı TL'ye çevir
-    const baseTourPriceTry = sarToTry(baseTourPriceSar);
-
-    // Fiyat tipine göre hesapla
+    // Merkezi fonksiyonla tur fiyatını hesapla (SAR → TL otomatik)
+    const totalPassengers = getTotalPassengers(passengers);
+    tourPrice = calculateTourPriceTry(tour, transfer.vehicleType, totalPassengers);
+    
+    // Kişi başı fiyat hesapla
     if (tour.price.type === "per_person") {
-      tourPricePerPerson = baseTourPriceTry;
-      tourPrice = tourPricePerPerson * getTotalPassengers(passengers);
+      tourPricePerPerson = tourPrice / totalPassengers;
     } else {
-      tourPrice = baseTourPriceTry;
-      tourPricePerPerson = baseTourPriceTry / getTotalPassengers(passengers);
+      tourPricePerPerson = totalPassengers > 0 ? tourPrice / totalPassengers : tourPrice;
     }
   }
 
@@ -279,6 +290,7 @@ export function getDefaultDateTime(): DateTimeInfo {
   return {
     pickupDate: tomorrow,
     pickupTime: "09:00",
+    rentalHours: 1, // Varsayılan 1 saat kiralama
   };
 }
 
@@ -336,11 +348,12 @@ export function createReservationSubtitle(
  * Tire içeren ID'leri (tour-*, guide-*, transfer-*) doğru parse eder
  */
 export function parseSlugWithId(slug: string): { slug: string; id: string } {
-  // Tur ID formatları: tour-*, guide-*, transfer-*
+  // Tur ID formatları: tour-*, guide-*, transfer-*, service-* (legacy)
   // Bu formatlara göre ID'yi bul
 
   // Önce bilinen prefix'leri kontrol et
-  const knownPrefixes = ['tour-', 'guide-', 'transfer-'];
+  // service- prefix'i legacy destek için eklendi
+  const knownPrefixes = ['service-', 'tour-', 'guide-', 'transfer-'];
 
   for (const prefix of knownPrefixes) {
     const prefixIndex = slug.lastIndexOf(prefix);

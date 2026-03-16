@@ -1,5 +1,5 @@
 /**
- * Popüler Hizmetler Type Definitions
+ * Popüler Turlar Type Definitions
  * Transfer, Tur ve Rehber hizmetleri için ortak veri yapısı
  */
 
@@ -37,7 +37,8 @@ export interface PopularServiceModel {
     type: PriceType;
   };
 
-  // Araç bazlı fiyatlar (her araç tipi için farklı fiyat)
+  // Araç bazlı fiyatlar (her araç tipi için farklı fiyat - USD)
+  // Bu alanlar rota fiyatlarını override eder
   vehiclePrices?: {
     sedan?: number;
     van?: number;
@@ -46,6 +47,9 @@ export interface PopularServiceModel {
     jeep?: number;
     coster?: number;
   };
+
+  // Rota fiyatı referansı (otomatik fiyat çekme için)
+  routePricingId?: string;  // transfer_pricing.routeId referansı
 
   // Güzergah bilgisi (araç kartlarında gösterilecek)
   route?: {

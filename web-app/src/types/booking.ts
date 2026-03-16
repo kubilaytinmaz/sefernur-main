@@ -57,6 +57,7 @@ export interface DateTimeInfo {
   pickupTime: string;
   returnDate?: Date;
   returnTime?: string;
+  rentalHours?: number; // Kiralama süresi (saat) - sadece tursuz transferler için
 }
 
 /**

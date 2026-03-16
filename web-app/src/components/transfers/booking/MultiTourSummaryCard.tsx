@@ -9,8 +9,10 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { formatTlUsdPairFromTl } from "@/lib/currency";
+import { calculateTourPriceTry } from "@/lib/transfers/tour-pricing";
 import { cn } from "@/lib/utils";
 import type { PopularServiceModel } from "@/types/popular-service";
+import type { VehicleType } from "@/types/transfer";
 import {
   ChevronDown,
   ChevronUp,
@@ -24,6 +26,7 @@ import { useMemo, useState } from "react";
 
 interface MultiTourSummaryCardProps {
   tours: PopularServiceModel[];
+  vehicleType?: VehicleType;
   onRemoveTour?: (tourId: string) => void;
   onAddTour?: () => void;
   onShowTourDetail?: (tour: PopularServiceModel) => void;
@@ -32,6 +35,7 @@ interface MultiTourSummaryCardProps {
 
 export function MultiTourSummaryCard({
   tours,
+  vehicleType,
   onRemoveTour,
   onAddTour,
   onShowTourDetail,
@@ -39,15 +43,13 @@ export function MultiTourSummaryCard({
 }: MultiTourSummaryCardProps) {
   const [isExpanded, setIsExpanded] = useState(true);
 
-  // Toplam tur fiyatını hesapla
+  // Toplam tur fiyatını hesapla (TL cinsinden, SAR'dan otomatik çevrilir)
   const totalTourPrice = useMemo(() => {
     return tours.reduce((sum, tour) => {
-      if (tour.price.type === "per_person") {
-        return sum + tour.price.baseAmount * passengerCount;
-      }
-      return sum + tour.price.baseAmount;
+      const tourPriceTry = calculateTourPriceTry(tour, vehicleType, passengerCount);
+      return sum + tourPriceTry;
     }, 0);
-  }, [tours, passengerCount]);
+  }, [tours, vehicleType, passengerCount]);
 
   // Toplam süre
   const totalHours = useMemo(() => {
@@ -100,6 +102,7 @@ export function MultiTourSummaryCard({
                 key={tour.id}
                 tour={tour}
                 index={index}
+                vehicleType={vehicleType}
                 passengerCount={passengerCount}
                 onRemove={onRemoveTour}
                 onShowDetail={onShowTourDetail}
@@ -152,6 +155,7 @@ export function MultiTourSummaryCard({
 interface TourItemProps {
   tour: PopularServiceModel;
   index: number;
+  vehicleType?: VehicleType;
   passengerCount: number;
   onRemove?: (tourId: string) => void;
   onShowDetail?: (tour: PopularServiceModel) => void;
@@ -160,16 +164,15 @@ interface TourItemProps {
 function TourItem({
   tour,
   index,
+  vehicleType,
   passengerCount,
   onRemove,
   onShowDetail,
 }: TourItemProps) {
+  // Merkezi fonksiyonla fiyat hesapla (SAR → TL otomatik)
   const tourPrice = useMemo(() => {
-    if (tour.price.type === "per_person") {
-      return tour.price.baseAmount * passengerCount;
-    }
-    return tour.price.baseAmount;
-  }, [tour, passengerCount]);
+    return calculateTourPriceTry(tour, vehicleType, passengerCount);
+  }, [tour, vehicleType, passengerCount]);
 
   return (
     <div
@@ -235,9 +238,6 @@ function TourItem({
               <p className="text-xs text-slate-500">Tur Fiyatı</p>
               <p className="text-sm font-bold text-orange-700">
                 {formatTlUsdPairFromTl(tourPrice)}
-                {tour.price.type === "per_person" && (
-                  <span className="text-xs font-normal text-slate-500"> / kişi</span>
-                )}
               </p>
             </div>
             {onShowDetail && (

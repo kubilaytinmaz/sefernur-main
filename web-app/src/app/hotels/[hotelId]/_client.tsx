@@ -934,7 +934,7 @@ export default function HotelDetailPage() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-10">
           <Link
-            href="/hotels"
+            href="/oteller"
             className="inline-flex items-center gap-1.5 text-sm text-white/80 hover:text-white transition-colors mb-6"
           >
             <ArrowLeft className="w-4 h-4" /> Otel listesine dön

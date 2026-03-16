@@ -1,28 +1,33 @@
 // Transfer Arama Formu - Sabit (her zaman açık) LocationSelector entegrasyonu
+// Arama yapıldığında transfer-sonuçlar sayfasına yönlendirir
 
 "use client";
 
 import { DatePicker } from "@/components/transfers/DatePicker";
 import { LocationSelector } from "@/components/transfers/LocationSelector";
 import { Button } from "@/components/ui/Button";
-import { usePopularRoutes } from "@/hooks/usePopularRoutes";
-import { estimateRoutePrice, isNightTime } from "@/lib/transfers/pricing";
+import { useActivePopularTransferRoutes } from "@/hooks/usePopularTransferRoutes";
+import { usdToTry } from "@/lib/currency";
+import { getRoutePricesByLocations } from "@/lib/data/popular-transfer-routes-data";
+import { estimateRoutePrice, isNightTime } from "@/lib/transfers/pricing-v2";
 import {
   getDestinationsByFromLocation,
   getRoutesByLocations,
   LOCATIONS,
   TransferLocation
 } from "@/lib/transfers/transfer-locations";
-import type { PopularRouteModel } from "@/types/popular-route";
 import type { VehicleType } from "@/types/transfer";
 import { vehicleTypeLabels } from "@/types/transfer";
+import { formatTL, formatUSD } from "@/types/transfer-pricing";
 import { Car, ChevronDown, Clock, Info, MapPin, Minus, Plus, Users } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export interface TransferSearchParams {
   routeId?: string;
   fromCity: string;
   toCity: string;
+  fromLocationId?: string;
+  toLocationId?: string;
   pickupDate: Date;
   pickupTime: string;
   passengerCount: number;
@@ -32,17 +37,14 @@ export interface TransferSearchParams {
 }
 
 interface TransferSearchFormProps {
-  onSearch: (params: TransferSearchParams) => void;
+  onSearch?: (params: TransferSearchParams) => void;
   loading?: boolean;
 }
 
-export function TransferSearchForm({ 
-  onSearch, 
+export function TransferSearchForm({
+  onSearch,
   loading = false
 }: TransferSearchFormProps) {
-  // Firebase'den popüler rotaları çek
-  const { data: popularRoutes = [] } = usePopularRoutes();
-  
   const [fromLocation, setFromLocation] = useState<TransferLocation | null>(null);
   const [toLocation, setToLocation] = useState<TransferLocation | null>(null);
   const [pickupDate, setPickupDate] = useState<Date>(new Date());
@@ -50,8 +52,11 @@ export function TransferSearchForm({
   const [passengerCount, setPassengerCount] = useState<number>(1);
   const [vehicleType, setVehicleType] = useState<VehicleType | undefined>(undefined);
 
+  // Dinamik popüler rotalar
+  const { data: popularRoutes = [], isLoading: routesLoading } = useActivePopularTransferRoutes();
+
   // Popüler rota seçimi
-  const [selectedPopularRoute, setSelectedPopularRoute] = useState<PopularRouteModel | null>(null);
+  const [selectedPopularRoute, setSelectedPopularRoute] = useState<string | null>(null);
 
   // Dropdown state'leri
   const [timeDropdownOpen, setTimeDropdownOpen] = useState(false);
@@ -77,14 +82,13 @@ export function TransferSearchForm({
   };
 
   // Popüler rota seçimi
-  const handlePopularRouteSelect = (route: PopularRouteModel) => {
-    setSelectedPopularRoute(route);
-    const from = Object.values(LOCATIONS).find(
-      loc => loc.city === route.from.city || loc.name.includes(route.from.city)
-    );
-    const to = Object.values(LOCATIONS).find(
-      loc => loc.city === route.to.city || loc.name.includes(route.to.city)
-    );
+  const handlePopularRouteSelect = (routeId: string) => {
+    setSelectedPopularRoute(routeId);
+    const route = popularRoutes.find(r => r.id === routeId);
+    if (!route) return;
+
+    const from = LOCATIONS[route.fromLocationId];
+    const to = LOCATIONS[route.toLocationId];
     
     if (from) setFromLocation(from);
     if (to) setToLocation(to);
@@ -100,22 +104,55 @@ export function TransferSearchForm({
     const routes = getRoutesByLocations(fromLocation.id, toLocation.id);
     const routeId = routes[0]?.id;
 
-    onSearch({
+    const params: TransferSearchParams = {
       routeId,
       fromCity: fromLocation.city,
       toCity: toLocation.city,
+      fromLocationId: fromLocation.id,
+      toLocationId: toLocation.id,
       pickupDate,
       pickupTime,
       passengerCount,
       luggageCount: 1,
       vehicleType,
-    });
+    };
+
+    // Callback'i çağır
+    onSearch?.(params);
   };
 
-  // Tahmini fiyat hesapla
+  // Rota bazlı fiyatları çek
+  const [routePrices, setRoutePrices] = useState<import("@/types/popular-transfer-route").RouteVehiclePrices | null>(null);
+  
+  // fromLocation veya toLocation değiştiğinde rota fiyatlarını getir
+  useEffect(() => {
+    if (!fromLocation || !toLocation) {
+      setRoutePrices(null);
+      return;
+    }
+    getRoutePricesByLocations(fromLocation.id, toLocation.id).then(setRoutePrices);
+  }, [fromLocation, toLocation]);
+
+  // Tahmini fiyat hesapla - önce rota fiyatlarını kullan, yoksa eski sisteme düş
   const priceEstimate = useMemo(() => {
     if (!fromLocation || !toLocation) return null;
+
+    // Rota fiyatları varsa onları kullan
+    if (routePrices) {
+      const vt = vehicleType || 'sedan';
+      const price = routePrices[vt as keyof typeof routePrices];
+      if (price && price > 0) {
+        const tlPrice = usdToTry(price);
+        return {
+          minUSD: price,
+          maxUSD: price,
+          minTL: tlPrice,
+          maxTL: tlPrice,
+        };
+      }
+    }
     
+    // Fallback: eski fiyat tahmin sistemi
     const routes = getRoutesByLocations(fromLocation.id, toLocation.id);
     if (routes.length === 0) return null;
 
@@ -124,7 +161,7 @@ export function TransferSearchForm({
       vehicleType || 'sedan',
       pickupTime
     );
-  }, [fromLocation, toLocation, vehicleType, pickupTime]);
+  }, [fromLocation, toLocation, vehicleType, pickupTime, routePrices]);
 
 
   // Saat seçenekleri
@@ -137,18 +174,21 @@ export function TransferSearchForm({
   return (
     <>
       {/* Popüler Rotalar - Kompakt */}
-        <div className="mb-6">
-          <h4 className="text-xs font-semibold text-slate-600 mb-2 flex items-center gap-2 uppercase tracking-wider">
-            <MapPin className="w-3.5 h-3.5 text-cyan-600" />
-            Popüler Rotalar
-          </h4>
+      <div className="mb-6">
+        <h4 className="text-xs font-semibold text-slate-600 mb-2 flex items-center gap-2 uppercase tracking-wider">
+          <MapPin className="w-3.5 h-3.5 text-cyan-600" />
+          En Çok Kullanılan Transferler
+        </h4>
+        {routesLoading ? (
+          <div className="text-xs text-slate-500">Popüler rotalar yükleniyor...</div>
+        ) : (
           <div className="flex flex-wrap gap-1.5">
-            {popularRoutes.filter(r => r.isPopular).map((route) => (
+            {popularRoutes.map((route) => (
               <button
                 key={route.id}
-                onClick={() => handlePopularRouteSelect(route)}
+                onClick={() => handlePopularRouteSelect(route.id)}
                 className={`px-2.5 py-1.5 rounded-lg border transition-all flex items-center gap-1.5 whitespace-nowrap ${
-                  selectedPopularRoute?.id === route.id
+                  selectedPopularRoute === route.id
                     ? 'border-cyan-500 bg-cyan-50 ring-1 ring-cyan-200'
                     : 'border-slate-200 hover:border-cyan-300 hover:bg-slate-50'
                 }`}
@@ -160,7 +200,8 @@ export function TransferSearchForm({
               </button>
             ))}
           </div>
-        </div>
+        )}
+      </div>
 
         {/* Detaylı Arama */}
         <div className="space-y-4">
@@ -451,9 +492,12 @@ export function TransferSearchForm({
                 <Info className="w-4 h-4 text-cyan-600 mt-0.5 shrink-0" />
                 <div className="flex-1">
                   <p className="text-sm font-medium text-cyan-900">
-                    Tahmini Fiyat: {priceEstimate.min.toLocaleString('tr-TR')} TL - {priceEstimate.max.toLocaleString('tr-TR')} TL
+                    Tahmini Fiyat: {formatUSD(priceEstimate.minUSD)} - {formatUSD(priceEstimate.maxUSD)}
                   </p>
                   <p className="text-xs text-cyan-700 mt-0.5">
+                    ≈ {formatTL(priceEstimate.minTL)} - {formatTL(priceEstimate.maxTL)}
+                  </p>
+                  <p className="text-xs text-cyan-600 mt-1">
                     Araç tipine, yolcu sayısına ve saate göre fiyat değişebilir.
                   </p>
                 </div>

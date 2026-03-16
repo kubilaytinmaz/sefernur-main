@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouteId } from "@/hooks/useRouteId";
-import { createTransfer, getTransferById, updateTransfer } from "@/lib/firebase/admin-domain";
+import { createTransfer, getTransferById, updateTransfer } from "@/lib/data/transfers-data";
 import { TransferModel } from "@/types/transfer";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
 import Link from "next/link";
@@ -11,13 +11,9 @@ import { AnalyticsTab } from "./tabs/AnalyticsTab";
 import { AvailabilityTab } from "./tabs/AvailabilityTab";
 import { BasicInfoTab } from "./tabs/BasicInfoTab";
 import { ImagesTab } from "./tabs/ImagesTab";
-import { PricingTab } from "./tabs/PricingTab";
 import { ReservationsTab } from "./tabs/ReservationsTab";
 import { ReviewsTab } from "./tabs/ReviewsTab";
-import { RouteTab } from "./tabs/RouteTab";
-import { ToursPricingTab } from "./tabs/ToursPricingTab";
-
-type TabId = "basic" | "route" | "pricing" | "tours-pricing" | "availability" | "images" | "reviews" | "reservations" | "analytics";
+type TabId = "basic" | "availability" | "images" | "reviews" | "reservations" | "analytics";
 
 interface Tab {
   id: TabId;
@@ -27,9 +23,6 @@ interface Tab {
 
 const tabs: Tab[] = [
   { id: "basic", label: "Temel Bilgiler", icon: "📋" },
-  { id: "route", label: "Güzergah", icon: "🗺️" },
-  { id: "pricing", label: "Fiyatlandırma", icon: "💰" },
-  { id: "tours-pricing", label: "Tur Fiyatlandırması", icon: "🎫" },
   { id: "availability", label: "Müsaitlik", icon: "📅" },
   { id: "images", label: "Görseller", icon: "🖼️" },
   { id: "reviews", label: "Değerlendirmeler", icon: "⭐" },
@@ -73,8 +66,18 @@ export default function TransferDetailPage() {
 
     (async () => {
       try {
+        console.log("🔍 Looking for transfer with ID:", id);
+        
+        // ID boşsa bekle, bir sonraki render'da dolacak
+        if (!id || id === "") {
+          console.log("⏳ ID is empty, waiting...");
+          return;
+        }
+        
         const t = await getTransferById(id);
+        console.log("📦 Found transfer:", t);
         if (!t) {
+          console.error("❌ Transfer not found for ID:", id);
           router.replace("/admin/transfers");
           return;
         }
@@ -214,15 +217,6 @@ export default function TransferDetailPage() {
       <div className="rounded-b-xl border border-t-0 border-gray-200 bg-white p-6">
         {activeTab === "basic" && (
           <BasicInfoTab transfer={transfer} onUpdate={updateTransferData} />
-        )}
-        {activeTab === "route" && (
-          <RouteTab transfer={transfer} onUpdate={updateTransferData} />
-        )}
-        {activeTab === "pricing" && (
-          <PricingTab transfer={transfer} onUpdate={updateTransferData} />
-        )}
-        {activeTab === "tours-pricing" && (
-          <ToursPricingTab transferId={id} />
         )}
         {activeTab === "availability" && (
           <AvailabilityTab transfer={transfer} onUpdate={updateTransferData} />

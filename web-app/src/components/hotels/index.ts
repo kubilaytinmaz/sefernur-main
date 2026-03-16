@@ -19,3 +19,6 @@ export { GuestPresetButtons } from "./GuestPresetButtons";
 export { GuestSummaryBar } from "./GuestSummaryBar";
 export { PricePerPerson } from "./PricePerPerson";
 
+// SEO Quick Links
+export { HotelQuickLinksSection, HotelQuickLinksSkeleton } from "./HotelQuickLinksSection";
+

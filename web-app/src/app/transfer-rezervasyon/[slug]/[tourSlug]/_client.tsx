@@ -10,7 +10,7 @@ import { EmptyState, ErrorState, LoadingState } from "@/components/states/AsyncS
 import { TourDetailModal } from "@/components/transfers/TourDetailModal";
 import { BookingFormCard, MultiTourSummaryCard, PriceSummaryCard, VehicleInfoCard } from "@/components/transfers/booking";
 import { usePopularServiceById, usePopularTours } from "@/hooks/usePopularServices";
-import { getTransferById } from "@/lib/firebase/domain";
+import { getTransferById } from "@/lib/data/transfers-data";
 import { parseSlugWithId } from "@/lib/transfers/booking";
 import type { PriceBreakdown } from "@/types/booking";
 import type { PopularServiceModel } from "@/types/popular-service";
@@ -155,6 +155,7 @@ export default function BookingPageClient() {
             {allTours.length > 0 && (
               <MultiTourSummaryCard
                 tours={allTours}
+                vehicleType={transfer.vehicleType}
                 onShowTourDetail={(tour) => {
                   const index = allTours.findIndex(t => t.id === tour.id);
                   setSelectedTourIndex(index);

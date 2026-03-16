@@ -3,11 +3,11 @@
 "use client";
 
 import {
-    LOCATIONS,
-    LocationType,
-    TransferLocation,
-    getLocationIcon,
-    getLocationTypeLabel
+  LOCATIONS,
+  LocationType,
+  TransferLocation,
+  getLocationIcon,
+  getLocationTypeLabel
 } from "@/lib/transfers/transfer-locations";
 import { Check, ChevronDown, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -190,7 +190,7 @@ export function LocationSelector({
                   {/* Lokasyonlar */}
                   {locationsByType[type].map((location) => {
                     const isSelected = value?.id === location.id;
-                    
+                     
                     return (
                       <button
                         key={location.id}

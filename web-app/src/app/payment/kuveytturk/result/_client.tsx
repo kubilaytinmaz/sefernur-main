@@ -104,7 +104,7 @@ function KuveytTurkPaymentResultContent() {
 
             <div className="pt-2 flex flex-wrap gap-3">
               <Button onClick={() => window.location.assign("/reservations")}>Rezervasyonlarım</Button>
-              <Button variant="outline" onClick={() => window.location.assign("/hotels")}>Otele Dön</Button>
+              <Button variant="outline" onClick={() => window.location.assign("/oteller")}>Otele Dön</Button>
               <Button variant="ghost" onClick={() => window.location.assign("/")}>Ana Sayfa</Button>
             </div>
 

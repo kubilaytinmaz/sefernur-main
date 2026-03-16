@@ -5,12 +5,12 @@
 
 import { SCHEMA_BASE_URL, SCHEMA_LOGO_URL, SCHEMA_ORG_DESCRIPTION, SCHEMA_ORG_NAME } from './constants';
 import type {
-    SchemaArticle,
-    SchemaGuide,
-    SchemaHotel,
-    SchemaOrganization,
-    SchemaPlace,
-    SchemaTour,
+  SchemaArticle,
+  SchemaGuide,
+  SchemaHotel,
+  SchemaOrganization,
+  SchemaPlace,
+  SchemaTour,
 } from './types';
 
 // ═══════════════════════════════════════════════════════
@@ -527,5 +527,35 @@ export function getEventSchema(params: {
         availability: params.offers.availability,
       },
     }),
+  };
+}
+
+/**
+ * Otel hızlı arama bağlantıları için Schema.org JSON-LD oluşturur
+ * SEO uyumlu kategori listesi schema'sı
+ */
+export function createHotelQuickLinksSchema(categories: Array<{
+  id: string;
+  title: string;
+  description: string;
+  seoKeywords: string[];
+  priority: number;
+}>) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Umre Otel Kategorileri',
+    description: 'Mekke ve Medine otel arama kategorileri - Harem yakın, ekonomik, lüks, aile odaları ve daha fazlası',
+    itemListElement: categories.map((cat, index) => ({
+      '@type': 'ListItem',
+      position: cat.priority,
+      item: {
+        '@type': 'Thing',
+        name: cat.title,
+        description: cat.description,
+        keywords: cat.seoKeywords.join(', '),
+        url: `${SCHEMA_BASE_URL}/oteller?category=${cat.id}`,
+      },
+    })),
   };
 }

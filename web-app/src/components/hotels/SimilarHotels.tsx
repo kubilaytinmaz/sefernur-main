@@ -155,7 +155,7 @@ export function SimilarHotels({
         {/* View All Link */}
         <div className="mt-4 pt-4 border-t border-slate-100 text-center">
           <Link
-            href={`/hotels?cityCode=${cityCode}&checkIn=${encodeURIComponent(checkIn)}&checkOut=${encodeURIComponent(checkOut)}&adults=${adults}`}
+            href={`/otel-sonuclar?cityCode=${cityCode}&checkIn=${encodeURIComponent(checkIn)}&checkOut=${encodeURIComponent(checkOut)}&adults=${adults}`}
             className="inline-flex items-center gap-2 text-sm font-medium text-emerald-700 hover:text-emerald-800"
           >
             Tüm otelleri gör

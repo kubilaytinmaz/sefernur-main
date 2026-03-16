@@ -235,9 +235,9 @@ function HeroSection() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.location.href = `/hotels?search=${encodeURIComponent(searchQuery)}`;
+      window.location.href = `/oteller?search=${encodeURIComponent(searchQuery)}`;
     } else {
-      window.location.href = "/hotels";
+      window.location.href = "/oteller";
     }
   };
 
@@ -304,7 +304,7 @@ function HeroSection() {
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
-            href="/hotels"
+            href="/oteller"
             className="group relative inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold hover:from-emerald-500 hover:to-teal-500 transition-all duration-300 shadow-xl shadow-emerald-900/30 hover:shadow-emerald-900/50 hover:-translate-y-1"
           >
             <Hotel className="w-4 h-4 relative z-10" />
@@ -365,7 +365,7 @@ const CATEGORIES = [
   {
     title: "Oteller",
     description: "Mekke & Medine konaklaması",
-    href: "/hotels",
+    href: "/oteller",
     icon: Hotel,
     gradient: "from-blue-500 via-indigo-500 to-violet-500",
     bgGradient: "from-blue-500/10 to-indigo-500/10",

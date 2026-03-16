@@ -6,9 +6,9 @@ import { PopularServicesSection } from "@/components/transfers";
 import { TransferSearchForm } from "@/components/transfers/TransferSearchForm";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardContent } from "@/components/ui/Card";
-import { formatSarAsTry, formatTlSarPair, sarToTry } from "@/lib/currency";
-import { getPopularServices } from "@/lib/data/popular-services";
-import { getActiveTransfers } from "@/lib/firebase/domain";
+import { formatTlUsdPairFromUsd, usdToTry } from "@/lib/currency";
+import { getPopularServices } from "@/lib/data/popular-services-data";
+import { getActiveTransfers } from "@/lib/data/transfers-data";
 import { calculateAllHourlyRates, calculateTransferPrice } from "@/lib/transfers/pricing";
 import { createSlug } from "@/lib/transfers/seo-slugs";
 import { displayAddress } from "@/types/address";
@@ -25,6 +25,7 @@ import {
   Users
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
 /* ────────── Vehicle Icon ────────── */
@@ -55,6 +56,9 @@ export default function TransfersPage() {
   // Seçili popüler hizmetler - çoklu seçim destekli
   const [selectedServiceIds, setSelectedServiceIds] = useState<string[]>([]);
   const [selectedServices, setSelectedServices] = useState<PopularServiceModel[]>([]);
+  
+  // Saatlik kiralama süresi seçimi
+  const [selectedHours, setSelectedHours] = useState<number>(1);
 
   const transfersQuery = useQuery({
     queryKey: ["transfers", "active"],
@@ -70,18 +74,32 @@ export default function TransfersPage() {
   const transfers = transfersQuery.data ?? [];
   const allTours = popularToursQuery.data ?? [];
 
-  // Arama formu gönderildiğinde (şimdilik sadece log)
+  const router = useRouter();
+  
+  // Arama formu gönderildiğinde sonuçlar sayfasına yönlendir
   const handleSearch = (params: {
     routeId?: string;
     fromCity: string;
     toCity: string;
+    fromLocationId?: string;
+    toLocationId?: string;
     pickupDate: Date;
     pickupTime: string;
     passengerCount: number;
     luggageCount: number;
     vehicleType?: VehicleType;
   }) => {
-    console.log("Arama:", params);
+    // URL parametreleri oluştur
+    const searchParams = new URLSearchParams();
+    if (params.fromLocationId) searchParams.set('from', params.fromLocationId);
+    if (params.toLocationId) searchParams.set('to', params.toLocationId);
+    searchParams.set('date', params.pickupDate.toISOString().split('T')[0]);
+    searchParams.set('time', params.pickupTime);
+    searchParams.set('passengers', params.passengerCount.toString());
+    if (params.vehicleType) searchParams.set('vehicleType', params.vehicleType);
+    if (params.routeId) searchParams.set('routeId', params.routeId);
+
+    router.push(`/transfer-sonuclar?${searchParams.toString()}`);
   };
 
   // Popüler hizmet seçimi (çoklu seçim toggle) - PopularServicesSection'dan gelen servisleri kullan
@@ -173,6 +191,7 @@ export default function TransfersPage() {
                 transfer={transfer}
                 selectedServices={selectedServices}
                 hourlyRates={hourlyRates}
+                selectedHours={selectedHours}
               />
             ))}
           </div>
@@ -188,12 +207,14 @@ interface TransferCardProps {
   transfer: TransferModel;
   selectedServices: PopularServiceModel[];
   hourlyRates: Record<VehicleType, number | null>;
+  selectedHours: number;
 }
 
 function TransferCard({
   transfer,
   selectedServices,
   hourlyRates,
+  selectedHours,
 }: TransferCardProps) {
   const firstImage = transfer.images?.[0];
   const vehicleLabel = vehicleTypeLabels[transfer.vehicleType] || transfer.vehicleType;
@@ -202,17 +223,20 @@ function TransferCard({
   const displayPrice = useMemo(() => {
     if (selectedServices.length === 0) {
       // Seçili tur yoksa, saatlik fiyatı göster (TL cinsinden)
-      const hourlyRateSar = hourlyRates[transfer.vehicleType];
-      if (hourlyRateSar) {
-        return sarToTry(hourlyRateSar);
+      // Seçili saate göre fiyat hesapla
+      const hourlyRateUsd = hourlyRates[transfer.vehicleType];
+      if (hourlyRateUsd) {
+        // Seçili saat sayısına göre fiyat hesapla
+        const totalPriceUsd = hourlyRateUsd * selectedHours;
+        return usdToTry(totalPriceUsd);
       }
-      return transfer.basePrice;
+      return transfer.basePrice * selectedHours;
     }
 
     // Sadece seçili turların toplam fiyatını göster
     let totalPriceTl = 0;
 
-    // Her seçili hizmetin fiyatını ekle (SAR → TL çevir)
+    // Her seçili hizmetin fiyatını ekle (USD → TL çevir)
     for (const service of selectedServices) {
       if (service.type === 'transfer') {
         // Transfer hizmeti: Mesafe bazlı fiyat hesaplama
@@ -226,16 +250,16 @@ function TransferCard({
             extraLuggage: 0,
             passengerCount: 1,
           });
-          totalPriceTl += priceCalc.total;
+          totalPriceTl += usdToTry(priceCalc.total);
         } else {
           // vehiclePrices kullan, yoksa baseAmount
-          const servicePriceSar = service.vehiclePrices?.[transfer.vehicleType] ?? service.price.baseAmount;
-          totalPriceTl += sarToTry(servicePriceSar);
+          const servicePriceUsd = service.vehiclePrices?.[transfer.vehicleType] ?? service.price.baseAmount;
+          totalPriceTl += usdToTry(servicePriceUsd);
         }
       } else {
-        // Tur/Rehber: vehiclePrices varsa onu kullan, yoksa baseAmount
-        const servicePriceSar = service.vehiclePrices?.[transfer.vehicleType] ?? service.price.baseAmount;
-        totalPriceTl += sarToTry(servicePriceSar);
+        // Tur/Rehber: vehiclePrices varsa onu kullan, yoksa baseAmount (USD cinsinden)
+        const servicePriceUsd = service.vehiclePrices?.[transfer.vehicleType] ?? service.price.baseAmount;
+        totalPriceTl += usdToTry(servicePriceUsd);
       }
     }
 
@@ -244,7 +268,9 @@ function TransferCard({
 
   // Fiyat değişim göstergesi - çoklu seçim destekli
   const priceLabel = useMemo(() => {
-    if (selectedServices.length === 0) return 'Saatlik';
+    if (selectedServices.length === 0) {
+      return selectedHours === 24 ? 'Günlük' : `${selectedHours} Saatlik`;
+    }
     if (selectedServices.length === 1) {
       const svc = selectedServices[0];
       if (svc.type === 'transfer') return 'Seçili Rota';
@@ -252,14 +278,14 @@ function TransferCard({
     }
     // Çoklu seçim
     return `Transfer + ${selectedServices.length} Hizmet`;
-  }, [selectedServices]);
+  }, [selectedServices, selectedHours]);
 
-  // Fiyat alt açıklaması (SAR/saat veya tur özeti)
+  // Fiyat alt açıklaması (USD/saat veya tur özeti)
   const priceSubtext = useMemo(() => {
     if (selectedServices.length === 0) {
-      const hourlyRateSar = hourlyRates[transfer.vehicleType];
-      if (hourlyRateSar) {
-        return `${hourlyRateSar} SAR/saat`;
+      const hourlyRateUsd = hourlyRates[transfer.vehicleType];
+      if (hourlyRateUsd) {
+        return `${hourlyRateUsd} USD/saat`;
       }
       return null;
     }
@@ -267,36 +293,46 @@ function TransferCard({
     return selectedServices.map(s => s.name).join(' + ');
   }, [selectedServices, transfer, hourlyRates]);
 
-  // TL/SAR formatında fiyat gösterimi
+  // TL/USD formatında fiyat gösterimi
   const formattedPrice = useMemo(() => {
     if (selectedServices.length === 0) {
-      const hourlyRateSar = hourlyRates[transfer.vehicleType];
-      if (hourlyRateSar) {
-        return formatTlSarPair(displayPrice, hourlyRateSar);
+      const hourlyRateUsd = hourlyRates[transfer.vehicleType];
+      if (hourlyRateUsd) {
+        // Seçili saat sayısına göre toplam USD fiyatı hesapla
+        const totalUsd = hourlyRateUsd * selectedHours;
+        return formatTlUsdPairFromUsd(totalUsd);
       }
-      return formatSarAsTry(displayPrice);
+      return formatTlUsdPairFromUsd(displayPrice / 38); // TL'yi USD'ye çevir (fallback)
     }
-    // Seçili tur varsa, tur fiyatını TL/SAR formatında göster
-    // vehiclePrices kullanarak SAR değerini hesapla
-    const totalSar = selectedServices.reduce((sum, service) => {
+    // Seçili tur varsa, tur fiyatını TL/USD formatında göster
+    // vehiclePrices kullanarak USD değerini hesapla
+    const totalUsd = selectedServices.reduce((sum, service) => {
       if (service.type === 'transfer') {
         const distanceKm = service.distance?.km || 0;
         if (distanceKm > 0) {
-          // Mesafe bazlı fiyatlamada transfer.basePrice SAR cinsinden
-          return sum + transfer.basePrice;
+          // Mesafe bazlı fiyatlamada calculateTransferPrice'dan USD değerini al
+          const priceCalc = calculateTransferPrice({
+            vehicleType: transfer.vehicleType,
+            distanceKm,
+            isNightTime: false,
+            waitingHours: 0,
+            extraLuggage: 0,
+            passengerCount: 1,
+          });
+          return sum + priceCalc.total;
         }
         return sum + (service.vehiclePrices?.[transfer.vehicleType] ?? service.price.baseAmount);
       }
-      // Tur için vehiclePrices kullan
+      // Tur için vehiclePrices kullan (USD cinsinden)
       return sum + (service.vehiclePrices?.[transfer.vehicleType] ?? service.price.baseAmount);
     }, 0);
-    return formatTlSarPair(displayPrice, totalSar);
+    return formatTlUsdPairFromUsd(totalUsd);
   }, [selectedServices, transfer, hourlyRates, displayPrice]);
 
-  // Rota gösterimi - seçili tur yoksa "1 Saatlik Kiralama", varsa tur rotası
+  // Rota gösterimi - seçili tur yoksa "Saatlik Kiralama", varsa tur rotası
   const routeDisplay = useMemo(() => {
     if (selectedServices.length === 0) {
-      return "1 Saatlik Kiralama";
+      return "Saatlik Kiralama";
     }
     // İlk seçili turun rotasını göster
     const firstService = selectedServices[0];

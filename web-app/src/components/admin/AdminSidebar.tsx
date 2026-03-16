@@ -3,23 +3,25 @@
 import { cn } from "@/lib/utils";
 import { useSiteSettings } from "@/providers/site-settings-provider";
 import {
-    BarChart3,
-    Building2,
-    CalendarCheck,
-    Car,
-    ChevronLeft,
-    ChevronRight,
-    Compass,
-    Globe,
-    LogOut,
-    Mail,
-    MapPin,
-    Megaphone,
-    Percent,
-    Plane,
-    Settings,
-    UserCheck,
-    Users,
+  BarChart3,
+  Building2,
+  CalendarCheck,
+  Car,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  Compass,
+  Globe,
+  LogOut,
+  Mail,
+  MapPin,
+  Megaphone,
+  Percent,
+  Plane,
+  Settings,
+  UserCheck,
+  Users
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -50,6 +52,11 @@ const NAV_ITEMS = [
     label: "Transferler",
     href: "/admin/transfers",
     icon: Plane,
+    subItems: [
+      { label: "Araçlar", href: "/admin/transfers" },
+      { label: "Rotalar ve Fiyatlar", href: "/admin/transfers/pricing" },
+      { label: "Raporlar", href: "/admin/transfers/reports" },
+    ],
   },
   {
     label: "Araçlar",
@@ -106,10 +113,23 @@ export function AdminSidebar({ onLogout }: AdminSidebarProps) {
   const pathname = usePathname();
   const settings = useSiteSettings();
   const [collapsed, setCollapsed] = useState(false);
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
   const isActive = (href: string) => {
     if (href === "/admin") return pathname === "/admin";
     return pathname.startsWith(href);
+  };
+
+  const toggleExpanded = (label: string) => {
+    setExpandedItems((prev) => {
+      const next = new Set(prev);
+      if (next.has(label)) {
+        next.delete(label);
+      } else {
+        next.add(label);
+      }
+      return next;
+    });
   };
 
   return (
@@ -157,6 +177,62 @@ export function AdminSidebar({ onLogout }: AdminSidebarProps) {
       <nav className="flex-1 space-y-1 overflow-y-auto p-3">
         {NAV_ITEMS.map((item) => {
           const active = isActive(item.href);
+          const hasSubItems = item.subItems && item.subItems.length > 0;
+          const isExpanded = expandedItems.has(item.label);
+          
+          if (hasSubItems && !collapsed) {
+            return (
+              <div key={item.href}>
+                <button
+                  onClick={() => toggleExpanded(item.label)}
+                  className={cn(
+                    "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                    active
+                      ? "bg-emerald-50 text-emerald-700"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <item.icon
+                      className={cn(
+                        "h-5 w-5 flex-shrink-0",
+                        active ? "text-emerald-600" : "text-gray-400",
+                      )}
+                    />
+                    <span>{item.label}</span>
+                  </div>
+                  {isExpanded ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
+                </button>
+                {isExpanded && (
+                  <div className="ml-6 mt-1 space-y-1">
+                    {item.subItems!.map((subItem) => {
+                      const subActive = isActive(subItem.href);
+                      return (
+                        <Link
+                          key={subItem.href}
+                          href={subItem.href}
+                          className={cn(
+                            "flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors",
+                            subActive
+                              ? "bg-emerald-50 text-emerald-700 font-medium"
+                              : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+                          )}
+                        >
+                          <div className="h-1.5 w-1.5 rounded-full bg-gray-300" />
+                          <span>{subItem.label}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          }
+          
           return (
             <Link
               key={item.href}

@@ -1,14 +1,14 @@
 "use client";
 
-// Popüler Hizmetler Bölümü - Turlar
+// Popüler Turlar Bölümü - Turlar
 // Çoklu seçim destekli, detaylı bilgi modal ile gösterimli
 // Local JSON dosyasından veri çeker
 
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardContent } from "@/components/ui/Card";
 import { usePopularTours } from "@/hooks/usePopularServices";
-import { formatSarAsTry } from "@/lib/currency";
-import { getMinPriceForService } from "@/lib/data/popular-services";
+import { formatTlUsdPairFromUsd } from "@/lib/currency";
+import { calculateTourVehiclePrice } from "@/lib/transfers/pricing-v2";
 import { cn } from "@/lib/utils";
 import type { PopularServiceModel } from "@/types/popular-service";
 import {
@@ -47,9 +47,10 @@ export function PopularServicesSection({
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<PopularServiceModel | null>(null);
 
-  // Her tur için SAR fiyatını döndür
-  const getMinSarPrice = useCallback((service: PopularServiceModel): number => {
-    return getMinPriceForService(service);
+  // Her tur için minimum USD fiyatını döndür
+  const getMinUsdPrice = useCallback((service: PopularServiceModel): number => {
+    // En ucuz araç tipi (sedan) için fiyatı hesapla
+    return calculateTourVehiclePrice(service, 'sedan');
   }, []);
 
   // Seçim toggle işlemi
@@ -245,7 +246,7 @@ export function PopularServicesSection({
                 setSelectedService(service);
                 setDetailModalOpen(true);
               }}
-              minSarPrice={getMinSarPrice(service)}
+              minUsdPrice={getMinUsdPrice(service)}
             />
           ))}
         </div>
@@ -302,7 +303,7 @@ interface ServiceCardProps {
   selectionIndex: number; // -1 ise seçili değil
   onToggle: (id: string) => void;
   onShowDetail: () => void;
-  minSarPrice: number;
+  minUsdPrice: number;
 }
 
 function ServiceCard({
@@ -311,9 +312,9 @@ function ServiceCard({
   selectionIndex,
   onToggle,
   onShowDetail,
-  minSarPrice,
+  minUsdPrice,
 }: ServiceCardProps) {
-  const priceTl = formatSarAsTry(minSarPrice);
+  const priceDisplay = formatTlUsdPairFromUsd(minUsdPrice);
 
   return (
     <div
@@ -400,8 +401,7 @@ function ServiceCard({
                 : "bg-slate-50 border-slate-200"
             )}>
               <div className="flex items-baseline gap-1">
-                <span className="text-sm font-bold text-cyan-700">{priceTl}</span>
-                <span className="text-[10px] text-slate-400">/ {minSarPrice} SAR</span>
+                <span className="text-sm font-bold text-cyan-700">{priceDisplay}</span>
               </div>
               <span className="text-[10px] text-slate-500">başlayan fiyatlarla</span>
             </div>

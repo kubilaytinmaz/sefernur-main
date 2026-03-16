@@ -1,6 +1,6 @@
 /**
- * Popüler Hizmetler için React Query Hooks
- * Local JSON dosyasından popüler turları, transferleri ve rehberleri çeker
+ * Popüler Turlar için React Query Hooks
+ * Local data'dan popüler turları, transferleri ve rehberleri çeker
  */
 
 import {
@@ -9,14 +9,14 @@ import {
   getPopularServices,
   getPopularTours,
   getPopularTransfers,
-} from "@/lib/data/popular-services";
+} from "@/lib/data/popular-services-data";
 import type { PopularServiceModel } from "@/types/popular-service";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
-// ─── Genel Popüler Hizmetler Hook ───────────────────────────────────────────────
+// ─── Genel Popüler Turlar Hook ───────────────────────────────────────────────
 
 /**
- * Tüm popüler hizmetleri getir (veya filtrelenmiş)
+ * Tüm popüler turları getir (veya filtrelenmiş)
  */
 export function usePopularServices(options?: {
   type?: "tour" | "transfer" | "guide";
@@ -26,15 +26,15 @@ export function usePopularServices(options?: {
   return useQuery({
     queryKey: ["popularServices", options],
     queryFn: () => getPopularServices(options),
-    staleTime: 5 * 60 * 1000, // 5 dakika
-    gcTime: 10 * 60 * 1000, // 10 dakika
+    staleTime: 30 * 1000, // 30 saniye (admin değişikliklerini hızlı yansıtmak için)
+    gcTime: 60 * 1000, // 1 dakika
     refetchOnWindowFocus: false,
     refetchOnMount: false,
   });
 }
 
 /**
- * ID'ye göre popüler hizmet getir
+ * ID'ye göre popüler tur getir
  */
 export function usePopularServiceById(
   id: string | null
@@ -64,8 +64,8 @@ export function usePopularTours(options?: {
   return useQuery({
     queryKey: ["popularTours", options],
     queryFn: () => getPopularTours(options),
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
+    staleTime: 30 * 1000, // 30 saniye
+    gcTime: 60 * 1000, // 1 dakika
     refetchOnWindowFocus: false,
     refetchOnMount: false,
   });
@@ -80,8 +80,8 @@ export function usePopularTransfers(options?: {
   return useQuery({
     queryKey: ["popularTransfers", options],
     queryFn: () => getPopularTransfers(options),
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
+    staleTime: 30 * 1000, // 30 saniye
+    gcTime: 60 * 1000, // 1 dakika
     refetchOnWindowFocus: false,
     refetchOnMount: false,
   });
@@ -96,8 +96,8 @@ export function usePopularGuides(options?: {
   return useQuery({
     queryKey: ["popularGuides", options],
     queryFn: () => getPopularGuides(options),
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
+    staleTime: 30 * 1000, // 30 saniye
+    gcTime: 60 * 1000, // 1 dakika
     refetchOnWindowFocus: false,
     refetchOnMount: false,
   });
@@ -106,7 +106,7 @@ export function usePopularGuides(options?: {
 // ─── Helper Hook ─────────────────────────────────────────────────────────────────────
 
 /**
- * ID'ye göre popüler hizmet getir (client-side fallback ile)
+ * ID'ye göre popüler tur getir (client-side fallback ile)
  * Firebase'den veri çekeme başarısızsa hardcoded veriyi kullanır
  */
 export function usePopularServiceByIdWithFallback(
@@ -130,8 +130,8 @@ export function usePopularServiceByIdWithFallback(
       return null;
     },
     enabled: !!id,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
+    staleTime: 30 * 1000, // 30 saniye
+    gcTime: 60 * 1000, // 1 dakika
     refetchOnWindowFocus: false,
     refetchOnMount: false,
   });

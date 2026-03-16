@@ -1,5 +1,5 @@
 // Transfer Fiyat Hesaplama Sistemi
-// Rota bazlı sabit fiyatlar (SAR'dan TL'ye çevrilmiş)
+// Rota bazlı sabit fiyatlar (USD'den TL'ye çevrilmiş)
 import type { PopularServiceModel } from "@/types/popular-service";
 import type { VehicleType } from "@/types/transfer";
 
@@ -14,50 +14,50 @@ export interface TransferPricing {
 // Araç tipine göre fiyatlandırma (varsayılan, rota bazlı override edilir)
 export const VEHICLE_PRICING: Record<VehicleType, TransferPricing> = {
   sedan: {
-    basePrice: 1425, // JED-Mekke baz fiyatı
-    pricePerKm: 2.5,
-    nightSurcharge: 200,
-    waitingFeePerHour: 100,
-    luggageFee: 50,
+    basePrice: 40, // JED-Mekke baz fiyatı (~150 SAR)
+    pricePerKm: 0.07, // ~0.25 SAR/km
+    nightSurcharge: 5, // ~20 SAR
+    waitingFeePerHour: 3, // ~10 SAR
+    luggageFee: 1, // ~4 SAR
   },
   van: {
-    basePrice: 1900, // JED-Mekke baz fiyatı
-    pricePerKm: 3.5,
-    nightSurcharge: 300,
-    waitingFeePerHour: 150,
-    luggageFee: 50,
+    basePrice: 53, // JED-Mekke baz fiyatı (~200 SAR)
+    pricePerKm: 0.10, // ~0.35 SAR/km
+    nightSurcharge: 8, // ~30 SAR
+    waitingFeePerHour: 4, // ~15 SAR
+    luggageFee: 1, // ~4 SAR
   },
   bus: {
-    basePrice: 5000, // Büyük gruplar için
-    pricePerKm: 5,
-    nightSurcharge: 500,
-    waitingFeePerHour: 200,
+    basePrice: 133, // Büyük gruplar için (~500 SAR)
+    pricePerKm: 0.13, // ~0.5 SAR/km
+    nightSurcharge: 13, // ~50 SAR
+    waitingFeePerHour: 5, // ~20 SAR
     luggageFee: 0, // Otobüste fazla bagaj ücreti yok
   },
   vip: {
-    basePrice: 3000, // VIP araçlar
-    pricePerKm: 4,
-    nightSurcharge: 400,
-    waitingFeePerHour: 200,
-    luggageFee: 100,
+    basePrice: 80, // VIP araçlar (~300 SAR)
+    pricePerKm: 0.10, // ~0.4 SAR/km
+    nightSurcharge: 11, // ~40 SAR
+    waitingFeePerHour: 5, // ~20 SAR
+    luggageFee: 3, // ~10 SAR
   },
   jeep: {
-    basePrice: 2000,
-    pricePerKm: 3,
-    nightSurcharge: 250,
-    waitingFeePerHour: 120,
-    luggageFee: 50,
+    basePrice: 53, // (~200 SAR)
+    pricePerKm: 0.08, // ~0.3 SAR/km
+    nightSurcharge: 7, // ~25 SAR
+    waitingFeePerHour: 3, // ~12 SAR
+    luggageFee: 1, // ~4 SAR
   },
   coster: {
-    basePrice: 2375, // Toyota Hiace baz fiyatı
-    pricePerKm: 4,
-    nightSurcharge: 300,
-    waitingFeePerHour: 150,
-    luggageFee: 50,
+    basePrice: 67, // Toyota Hiace baz fiyatı (~250 SAR)
+    pricePerKm: 0.10, // ~0.4 SAR/km
+    nightSurcharge: 8, // ~30 SAR
+    waitingFeePerHour: 4, // ~15 SAR
+    luggageFee: 1, // ~4 SAR
   },
 };
 
-// Rota bazlı sabit fiyatlar (SAR'dan TL'ye çevrilmiş, 1 SAR = 9.5 TL)
+// Rota bazlı sabit fiyatlar (USD'den TL'ye çevrilmiş, güncel kur kullanılır)
 export interface RouteFixedPrice {
   routeId: string;
   sedan: number;
@@ -66,33 +66,33 @@ export interface RouteFixedPrice {
 }
 
 export const ROUTE_FIXED_PRICES: RouteFixedPrice[] = [
-  // Jeddah Havalimanı (JED) ↔ Mekke
-  { routeId: 'jeddah-airport-mecca', sedan: 1425, van: 1900, coster: 2375 },
-  { routeId: 'mecca-jeddah-airport', sedan: 1425, van: 1900, coster: 2375 },
+  // Jeddah Havalimanı (JED) ↔ Mekke (~150 SAR = $40)
+  { routeId: 'jeddah-airport-mecca', sedan: 40, van: 53, coster: 67 },
+  { routeId: 'mecca-jeddah-airport', sedan: 40, van: 53, coster: 67 },
   
-  // Jeddah Havalimanı (JED) ↔ Medine
-  { routeId: 'jeddah-airport-medina', sedan: 3325, van: 3800, coster: 4275 },
-  { routeId: 'medina-jeddah-airport', sedan: 3325, van: 3800, coster: 4275 },
+  // Jeddah Havalimanı (JED) ↔ Medine (~250 SAR = $67)
+  { routeId: 'jeddah-airport-medina', sedan: 67, van: 80, coster: 93 },
+  { routeId: 'medina-jeddah-airport', sedan: 67, van: 80, coster: 93 },
   
-  // Mekke ↔ Medine
-  { routeId: 'mecca-medina', sedan: 2375, van: 2850, coster: 3325 },
-  { routeId: 'medina-mecca', sedan: 2375, van: 2850, coster: 3325 },
+  // Mekke ↔ Medine (~250 SAR = $67)
+  { routeId: 'mecca-medina', sedan: 67, van: 80, coster: 93 },
+  { routeId: 'medina-mecca', sedan: 67, van: 80, coster: 93 },
   
-  // Medine Havalimanı (MED) ↔ Mekke (tahmini)
-  { routeId: 'medina-airport-mecca', sedan: 3500, van: 4000, coster: 4500 },
-  { routeId: 'mecca-medina-airport', sedan: 3500, van: 4000, coster: 4500 },
+  // Medine Havalimanı (MED) ↔ Mekke (tahmini ~300 SAR = $80)
+  { routeId: 'medina-airport-mecca', sedan: 80, van: 93, coster: 107 },
+  { routeId: 'mecca-medina-airport', sedan: 80, van: 93, coster: 107 },
   
-  // Medine Havalimanı (MED) ↔ Medine Şehir (tahmini)
-  { routeId: 'medina-airport-medina', sedan: 300, van: 400, coster: 500 },
-  { routeId: 'medina-medina-airport', sedan: 300, van: 400, coster: 500 },
+  // Medine Havalimanı (MED) ↔ Medine Şehir (tahmini ~30 SAR = $8)
+  { routeId: 'medina-airport-medina', sedan: 8, van: 11, coster: 13 },
+  { routeId: 'medina-medina-airport', sedan: 8, van: 11, coster: 13 },
   
-  // Mekke Şehir İçi (tahmini)
-  { routeId: 'mecca-haram-to-hotel', sedan: 200, van: 300, coster: 400 },
-  { routeId: 'mecca-hotel-to-haram', sedan: 200, van: 300, coster: 400 },
+  // Mekke Şehir İçi (tahmini ~20 SAR = $5)
+  { routeId: 'mecca-haram-to-hotel', sedan: 5, van: 8, coster: 11 },
+  { routeId: 'mecca-hotel-to-haram', sedan: 5, van: 8, coster: 11 },
   
-  // Medine Şehir İçi (tahmini)
-  { routeId: 'medine-prophet-to-hotel', sedan: 200, van: 300, coster: 400 },
-  { routeId: 'medine-hotel-to-prophet', sedan: 200, van: 300, coster: 400 },
+  // Medine Şehir İçi (tahmini ~20 SAR = $5)
+  { routeId: 'medine-prophet-to-hotel', sedan: 5, van: 8, coster: 11 },
+  { routeId: 'medine-hotel-to-prophet', sedan: 5, van: 8, coster: 11 },
 ];
 
 export interface PriceCalculationInput {
@@ -178,25 +178,25 @@ export function calculateTransferPrice(input: PriceCalculationInput): PriceCalcu
   // Toplam
   const total = basePrice + distancePrice + nightSurcharge + waitingFee + luggageFee;
   
-  // Fatura detayları
+  // Fatura detayları (USD cinsinden hesaplanır, TL'ye çevrilir)
   const breakdown: string[] = [
-    `Transfer ücreti: ${basePrice} TL`,
+    `Transfer ücreti: $${basePrice.toFixed(0)}`,
   ];
   
   if (distancePrice > 0) {
-    breakdown.push(`Mesafe (${input.distanceKm} km × ${pricing.pricePerKm} TL): ${distancePrice.toFixed(0)} TL`);
+    breakdown.push(`Mesafe (${input.distanceKm} km × $${pricing.pricePerKm.toFixed(2)}): $${distancePrice.toFixed(0)}`);
   }
   
   if (nightSurcharge > 0) {
-    breakdown.push(`Gece sürşarjı (%20): ${nightSurcharge} TL`);
+    breakdown.push(`Gece sürşarjı (%20): $${nightSurcharge.toFixed(0)}`);
   }
   
   if (waitingFee > 0) {
-    breakdown.push(`Bekleme (${input.waitingHours} saat): ${waitingFee} TL`);
+    breakdown.push(`Bekleme (${input.waitingHours} saat): $${waitingFee.toFixed(0)}`);
   }
   
   if (luggageFee > 0) {
-    breakdown.push(`Fazla bagaj (${input.extraLuggage} adet): ${luggageFee} TL`);
+    breakdown.push(`Fazla bagaj (${input.extraLuggage} adet): $${luggageFee.toFixed(0)}`);
   }
   
   return {
@@ -264,12 +264,12 @@ export function estimateRoutePrice(
  */
 export function isVehicleSuitable(vehicleType: VehicleType, passengerCount: number): boolean {
   const capacities: Record<VehicleType, number> = {
-    sedan: 4,
-    van: 7,
-    bus: 50,
-    vip: 4,
+    sedan: 3,
+    van: 6,
+    bus: 45,
+    vip: 6,
     jeep: 5,
-    coster: 12,
+    coster: 8,
   };
   
   return capacities[vehicleType] >= passengerCount;
@@ -280,12 +280,12 @@ export function isVehicleSuitable(vehicleType: VehicleType, passengerCount: numb
  */
 export function getVehicleCapacity(vehicleType: VehicleType): number {
   const capacities: Record<VehicleType, number> = {
-    sedan: 4,
-    van: 7,
-    bus: 50,
-    vip: 4,
+    sedan: 3,
+    van: 6,
+    bus: 45,
+    vip: 6,
     jeep: 5,
-    coster: 12,
+    coster: 8,
   };
   
   return capacities[vehicleType];
@@ -308,59 +308,195 @@ export function getVehicleLuggageCapacity(vehicleType: VehicleType): number {
 }
 
 /**
- * Turlardan yola çıkarak araç tipi için saatlik kiralama fiyatını hesapla (SAR cinsinden)
- * Formül: Her turun (vehiclePrices[araçTipi] / duration.hours) oranını hesapla,
- * en düşük değeri döndür.
+ * Saatlik kiralama ücret aralıkları (USD cinsinden)
+ * Kullanıcı tarafından admin panelinden belirlenen ücretler
  *
- * @param tours - Popüler turlar listesi
+ * Önceki SAR fiyatları USD'ye çevrilmiştir (yaklaşık 3.75 SAR = 1 USD)
+ */
+export interface HourlyRateTier {
+  minHours: number;      // Minimum saat (örneğin: 1)
+  maxHours: number;      // Maksimum saat (örneğin: 4)
+  pricePerHour: number;  // Saatlik ücret (USD)
+}
+
+export interface VehicleHourlyPricing {
+  vehicleType: VehicleType;
+  tiers: HourlyRateTier[];
+  dailyRate?: number;     // Günlük ücret (opsiyonel, 8+ saat için)
+}
+
+/**
+ * Varsayılan saatlik ücret aralıkları
+ * Her araç tipi için farklı saat aralıkları ve fiyatlar
+ */
+export const DEFAULT_HOURLY_RATES: Record<VehicleType, VehicleHourlyPricing> = {
+  sedan: {
+    vehicleType: 'sedan',
+    tiers: [
+      { minHours: 1, maxHours: 4, pricePerHour: 67 },    // 1-4 saat: ~250 SAR/saat
+      { minHours: 4, maxHours: 8, pricePerHour: 50 },    // 4-8 saat: ~190 SAR/saat
+      { minHours: 8, maxHours: 24, pricePerHour: 40 },   // 8-24 saat: ~150 SAR/saat
+    ],
+    dailyRate: 400,  // Günlük (24+ saat): ~1500 SAR
+  },
+  van: {
+    vehicleType: 'van',
+    tiers: [
+      { minHours: 1, maxHours: 4, pricePerHour: 80 },    // 1-4 saat: ~300 SAR/saat
+      { minHours: 4, maxHours: 8, pricePerHour: 60 },    // 4-8 saat: ~225 SAR/saat
+      { minHours: 8, maxHours: 24, pricePerHour: 50 },   // 8-24 saat: ~190 SAR/saat
+    ],
+    dailyRate: 500,  // Günlük (24+ saat): ~1875 SAR
+  },
+  vip: {
+    vehicleType: 'vip',
+    tiers: [
+      { minHours: 1, maxHours: 4, pricePerHour: 133 },   // 1-4 saat: ~500 SAR/saat
+      { minHours: 4, maxHours: 8, pricePerHour: 100 },   // 4-8 saat: ~375 SAR/saat
+      { minHours: 8, maxHours: 24, pricePerHour: 80 },   // 8-24 saat: ~300 SAR/saat
+    ],
+    dailyRate: 800,  // Günlük (24+ saat): ~3000 SAR
+  },
+  coster: {
+    vehicleType: 'coster',
+    tiers: [
+      { minHours: 1, maxHours: 4, pricePerHour: 93 },    // 1-4 saat: ~350 SAR/saat
+      { minHours: 4, maxHours: 8, pricePerHour: 70 },    // 4-8 saat: ~260 SAR/saat
+      { minHours: 8, maxHours: 24, pricePerHour: 60 },   // 8-24 saat: ~225 SAR/saat
+    ],
+    dailyRate: 600,  // Günlük (24+ saat): ~2250 SAR
+  },
+  jeep: {
+    vehicleType: 'jeep',
+    tiers: [
+      { minHours: 1, maxHours: 4, pricePerHour: 67 },    // 1-4 saat: ~250 SAR/saat
+      { minHours: 4, maxHours: 8, pricePerHour: 50 },    // 4-8 saat: ~190 SAR/saat
+      { minHours: 8, maxHours: 24, pricePerHour: 40 },   // 8-24 saat: ~150 SAR/saat
+    ],
+    dailyRate: 400,  // Günlük (24+ saat): ~1500 SAR
+  },
+  bus: {
+    vehicleType: 'bus',
+    tiers: [
+      { minHours: 1, maxHours: 4, pricePerHour: 267 },   // 1-4 saat: ~1000 SAR/saat
+      { minHours: 4, maxHours: 8, pricePerHour: 200 },   // 4-8 saat: ~750 SAR/saat
+      { minHours: 8, maxHours: 24, pricePerHour: 167 },  // 8-24 saat: ~625 SAR/saat
+    ],
+    dailyRate: 1600, // Günlük (24+ saat): ~6000 SAR
+  },
+};
+
+/**
+ * Sabit saatlik kiralama ücretleri (USD cinsinden) - Geriye uyumluluk için
+ * @deprecated Bunun yerine DEFAULT_HOURLY_RATES kullanın
+ */
+export const HOURLY_RATES: Record<VehicleType, number> = {
+  sedan: 67,     // ~250 SAR (3 kişilik)
+  van: 80,       // ~300 SAR (6 kişilik)
+  vip: 133,      // ~500 SAR (6 kişi GMC)
+  coster: 93,    // ~350 SAR (8 kişilik)
+  jeep: 67,      // ~250 SAR (5 kişilik)
+  bus: 267,      // ~1000 SAR (45 kişilik)
+};
+
+/**
+ * Saatlik ücret hesapla (USD cinsinden)
  * @param vehicleType - Araç tipi
- * @returns SAR cinsinden saatlik fiyat, tur yoksa null
+ * @param hours - Kiralama süresi (saat)
+ * @returns USD cinsinden toplam fiyat
+ */
+export function calculateHourlyPrice(vehicleType: VehicleType, hours: number): number {
+  const pricing = DEFAULT_HOURLY_RATES[vehicleType];
+  if (!pricing) return 0;
+
+  // 24 saatten fazla ise günlük ücreti kullan
+  if (hours > 24 && pricing.dailyRate) {
+    const days = Math.ceil(hours / 24);
+    return pricing.dailyRate * days;
+  }
+
+  // Uygun aralığı bul
+  for (const tier of pricing.tiers) {
+    if (hours >= tier.minHours && hours <= tier.maxHours) {
+      return tier.pricePerHour * hours;
+    }
+  }
+
+  // 24 saate kadar bir aralık bulunamazsa son aralığı kullan
+  const lastTier = pricing.tiers[pricing.tiers.length - 1];
+  return lastTier.pricePerHour * hours;
+}
+
+/**
+ * Saatlik ücret bilgisi getir (USD cinsinden)
+ * @param vehicleType - Araç tipi
+ * @param hours - Kiralama süresi (saat)
+ * @returns Saatlik ücret ve toplam fiyat
+ */
+export function getHourlyRateInfo(
+  vehicleType: VehicleType,
+  hours: number
+): { hourlyRate: number; totalPrice: number; tier: HourlyRateTier } | null {
+  const pricing = DEFAULT_HOURLY_RATES[vehicleType];
+  if (!pricing) return null;
+
+  // 24 saatten fazla ise günlük ücreti kullan
+  if (hours > 24 && pricing.dailyRate) {
+    const days = Math.ceil(hours / 24);
+    return {
+      hourlyRate: pricing.dailyRate / 24,
+      totalPrice: pricing.dailyRate * days,
+      tier: {
+        minHours: 24,
+        maxHours: Infinity,
+        pricePerHour: pricing.dailyRate / 24,
+      },
+    };
+  }
+
+  // Uygun aralığı bul
+  for (const tier of pricing.tiers) {
+    if (hours >= tier.minHours && hours <= tier.maxHours) {
+      return {
+        hourlyRate: tier.pricePerHour,
+        totalPrice: tier.pricePerHour * hours,
+        tier,
+      };
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Turlardan yola çıkarak araç tipi için saatlik kiralama fiyatını hesapla (USD cinsinden)
+ * Önce sabit ücretleri döndürür, tur yoksa null
+ * @deprecated Bunun yerine calculateHourlyPrice kullanın
+ *
+ * @param tours - Popüler turlar listesi (uyumluluk için)
+ * @param vehicleType - Araç tipi
+ * @returns USD cinsinden saatlik fiyat
  */
 export function calculateHourlyRateFromTours(
   tours: PopularServiceModel[],
   vehicleType: VehicleType
 ): number | null {
-  if (!tours || tours.length === 0) return null;
-
-  let minRate = Infinity;
-
-  for (const tour of tours) {
-    const hours = tour.duration?.hours;
-    if (!hours || hours <= 0) continue;
-
-    // Araç tipine özel fiyat varsa onu kullan, yoksa baseAmount
-    let tourPrice: number | undefined;
-    if (tour.vehiclePrices) {
-      tourPrice = tour.vehiclePrices[vehicleType as keyof typeof tour.vehiclePrices] ?? undefined;
-    }
-    if (tourPrice == null || tourPrice <= 0) {
-      tourPrice = tour.price?.baseAmount;
-    }
-    if (!tourPrice || tourPrice <= 0) continue;
-
-    const rate = Math.round(tourPrice / hours);
-    if (rate < minRate) {
-      minRate = rate;
-    }
-  }
-
-  return minRate === Infinity ? null : minRate;
+  // Sabit saatlik ücretleri kullan (1 saat için)
+  return DEFAULT_HOURLY_RATES[vehicleType]?.tiers[0]?.pricePerHour ?? null;
 }
 
 /**
- * Tüm araç tipleri için saatlik fiyat haritası oluştur (SAR cinsinden)
- * @param tours - Popüler turlar listesi
- * @returns Her araç tipi için SAR cinsinden saatlik fiyat
+ * Tüm araç tipleri için saatlik fiyat haritası oluştur (USD cinsinden)
+ * @param tours - Popüler turlar listesi (uyumluluk için)
+ * @returns Her araç tipi için USD cinsinden saatlik fiyat (1 saat için)
  */
 export function calculateAllHourlyRates(
   tours: PopularServiceModel[]
 ): Record<VehicleType, number | null> {
-  const vehicleTypes: VehicleType[] = ["sedan", "van", "bus", "vip", "jeep", "coster"];
-  const rates: Record<string, number | null> = {};
-
-  for (const vt of vehicleTypes) {
-    rates[vt] = calculateHourlyRateFromTours(tours, vt);
+  // Her araç tipi için 1 saatlik ücreti döndür
+  const rates: Record<VehicleType, number | null> = {} as Record<VehicleType, number | null>;
+  for (const vehicleType of Object.keys(DEFAULT_HOURLY_RATES) as VehicleType[]) {
+    rates[vehicleType] = DEFAULT_HOURLY_RATES[vehicleType]?.tiers[0]?.pricePerHour ?? null;
   }
-
-  return rates as Record<VehicleType, number | null>;
+  return rates;
 }

@@ -1,6 +1,16 @@
+/**
+ * Para Birimi Formatlama ve Dönüşüm
+ * 
+ * Transfer ve tur fiyatları USD cinsindedir.
+ * Bu modül USD → TL dönüşümü ve formatlama sağlar.
+ * 
+ * Döviz kuru kaynakları (öncelik sırasına göre):
+ * 1. NEXT_PUBLIC_USD_TRY_RATE env variable
+ * 2. Firestore cache (exchange-rates.ts tarafından güncellenir)
+ * 3. Fallback sabit kur
+ */
+
 const fallbackUsdTryRate = 38;
-const fallbackUsdSarRate = 3.75; // 1 USD = 3.75 SAR
-const fallbackSarTryRate = 10; // 1 SAR = 10 TL
 
 function getUsdTryRate(): number {
   const parsed = Number(process.env.NEXT_PUBLIC_USD_TRY_RATE);
@@ -8,17 +18,9 @@ function getUsdTryRate(): number {
   return fallbackUsdTryRate;
 }
 
-function getUsdSarRate(): number {
-  const parsed = Number(process.env.NEXT_PUBLIC_USD_SAR_RATE);
-  if (Number.isFinite(parsed) && parsed > 0) return parsed;
-  return fallbackUsdSarRate;
-}
-
-function getSarTryRate(): number {
-  const parsed = Number(process.env.NEXT_PUBLIC_SAR_TRY_RATE);
-  if (Number.isFinite(parsed) && parsed > 0) return parsed;
-  return fallbackSarTryRate;
-}
+// ═════════════════════════════════════════════════════════════════
+// Formatters
+// ═════════════════════════════════════════════════════════════════
 
 const tlFormatter = new Intl.NumberFormat("tr-TR", {
   style: "currency",
@@ -32,12 +34,15 @@ const usdFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 0,
 });
 
-const sarFormatter = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "SAR",
-  maximumFractionDigits: 0,
-});
+// ═════════════════════════════════════════════════════════════════
+// USD Functions (Yeni)
+// ═════════════════════════════════════════════════════════════════
 
+/**
+ * TL değerini TL/USD formatında gösterir
+ * @param valueTl - TL cinsinden değer
+ * @returns "₺2.500 / $66" formatında string
+ */
 export function formatTlUsdPairFromTl(valueTl: number): string {
   if (!(valueTl > 0)) return "Teklif al";
   const rate = getUsdTryRate();
@@ -45,6 +50,11 @@ export function formatTlUsdPairFromTl(valueTl: number): string {
   return `${tlFormatter.format(valueTl)} / ${usdFormatter.format(valueUsd)}`;
 }
 
+/**
+ * USD değerini TL/USD formatında gösterir
+ * @param valueUsd - USD cinsinden değer
+ * @returns "₺2.500 / $66" formatında string
+ */
 export function formatTlUsdPairFromUsd(valueUsd: number): string {
   if (!(valueUsd > 0)) return "Teklif al";
   const rate = getUsdTryRate();
@@ -52,28 +62,68 @@ export function formatTlUsdPairFromUsd(valueUsd: number): string {
   return `${tlFormatter.format(valueTl)} / ${usdFormatter.format(valueUsd)}`;
 }
 
-export function formatSarFromUsd(valueUsd: number): string {
-  if (!(valueUsd > 0)) return "Teklif al";
-  const rate = getUsdSarRate();
-  const valueSar = valueUsd * rate;
-  return sarFormatter.format(valueSar);
+/**
+ * TL ve USD değerlerini birlikte formatlar
+ * @param valueTl - TL cinsinden değer
+ * @param valueUsd - USD cinsinden değer
+ * @returns "₺2.500 / $66" formatında string
+ */
+export function formatTlUsdPair(valueTl: number, valueUsd: number): string {
+  if (!(valueTl > 0) || !(valueUsd > 0)) return "Teklif al";
+  return `${tlFormatter.format(valueTl)} / ${usdFormatter.format(valueUsd)}`;
 }
 
 /**
- * SAR değerini TL'ye çevirir
- * @param valueSar - SAR cinsinden değer
+ * USD değerini TL'ye çevirir
+ * @param valueUsd - USD cinsinden değer
  * @returns TL cinsinden değer
+ */
+export function usdToTry(valueUsd: number): number {
+  if (!(valueUsd > 0)) return 0;
+  const rate = getUsdTryRate();
+  return valueUsd * rate;
+}
+
+/**
+ * USD değerini TL formatında gösterir
+ * @param valueUsd - USD cinsinden değer
+ * @returns "2.500₺" formatında string
+ */
+export function formatUsdAsTry(valueUsd: number): string {
+  if (!(valueUsd > 0)) return "Teklif al";
+  const valueTl = usdToTry(valueUsd);
+  return tlFormatter.format(valueTl);
+}
+
+/**
+ * USD değerini "$X'den" formatında gösterir
+ * @param valueUsd - USD cinsinden değer
+ * @returns "$66'den" formatında string
+ */
+export function formatUsdAsStartingPrice(valueUsd: number): string {
+  if (!(valueUsd > 0)) return "Teklif al";
+  return `${usdFormatter.format(valueUsd)}'den`;
+}
+
+// ═════════════════════════════════════════════════════════════════
+// SAR Functions (Deprecated - Geriye dönük uyumluluk için)
+// ═════════════════════════════════════════════════════════════════
+
+/**
+ * @deprecated USD kullanın. SAR desteği kaldırılacak.
+ * SAR değerini TL'ye çevirir
  */
 export function sarToTry(valueSar: number): number {
   if (!(valueSar > 0)) return 0;
-  const rate = getSarTryRate();
-  return valueSar * rate;
+  // 1 SAR ≈ 0.267 USD (yaklaşık 3.75 SAR = 1 USD)
+  const sarToUsdRate = 0.267;
+  const valueUsd = valueSar * sarToUsdRate;
+  return usdToTry(valueUsd);
 }
 
 /**
+ * @deprecated USD kullanın. SAR desteği kaldırılacak.
  * SAR değerini TL formatında gösterir
- * @param valueSar - SAR cinsinden değer
- * @returns "2.500₺" formatında string
  */
 export function formatSarAsTry(valueSar: number): string {
   if (!(valueSar > 0)) return "Teklif al";
@@ -82,22 +132,39 @@ export function formatSarAsTry(valueSar: number): string {
 }
 
 /**
- * TL/SAR formatında fiyat gösterir (Popüler Turlar formatı)
- * @param valueTl - TL cinsinden değer
- * @param valueSar - SAR cinsinden değer
- * @returns "₺2.500 / 250 SAR" formatında string
+ * @deprecated formatTlUsdPair kullanın. SAR desteği kaldırılacak.
+ * TL/SAR formatında fiyat gösterir
  */
 export function formatTlSarPair(valueTl: number, valueSar: number): string {
   if (!(valueTl > 0) || !(valueSar > 0)) return "Teklif al";
-  return `${tlFormatter.format(valueTl)} / ${sarFormatter.format(valueSar)}`;
+  // SAR'ı USD'ye çevirip göster
+  const valueUsd = valueSar * 0.267;
+  return `${tlFormatter.format(valueTl)} / ${usdFormatter.format(valueUsd)}`;
 }
 
 /**
+ * @deprecated formatUsdAsStartingPrice kullanın. SAR desteği kaldırılacak.
  * SAR değerini "X SAR'den" formatında gösterir
- * @param valueSar - SAR cinsinden değer
- * @returns "230 SAR'den" formatında string
  */
 export function formatSarAsStartingPrice(valueSar: number): string {
   if (!(valueSar > 0)) return "Teklif al";
-  return `${sarFormatter.format(valueSar)}'den`;
+  // SAR'ı USD'ye çevirip göster
+  const valueUsd = valueSar * 0.267;
+  return formatUsdAsStartingPrice(valueUsd);
+}
+
+/**
+ * @deprecated formatUsdAsStartingPrice kullanın. SAR desteği kaldırılacak.
+ * USD değerini SAR formatında gösterir
+ */
+export function formatSarFromUsd(valueUsd: number): string {
+  if (!(valueUsd > 0)) return "Teklif al";
+  // USD'yi SAR'a çevir (yaklaşık)
+  const valueSar = valueUsd * 3.75;
+  const sarFormatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "SAR",
+    maximumFractionDigits: 0,
+  });
+  return sarFormatter.format(valueSar);
 }

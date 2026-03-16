@@ -16,6 +16,7 @@ import {
   Menu,
   Phone,
   Plane,
+  Settings,
   Shield,
   User,
   UserCircle,
@@ -188,6 +189,16 @@ export function Header() {
                         <Heart className="w-4 h-4 mr-3" />
                         Favorilerim
                       </Link>
+                      {user.roles?.includes("admin") && (
+                        <Link
+                          href="/admin"
+                          className="flex items-center px-4 py-3 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          <Settings className="w-4 h-4 mr-3" />
+                          Admin Panel
+                        </Link>
+                      )}
                       <div className="border-t border-gray-100 mt-2 pt-2">
                         <button
                           onClick={() => {

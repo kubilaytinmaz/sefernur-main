@@ -8,7 +8,7 @@
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
-import { formatTlUsdPairFromTl } from "@/lib/currency";
+import { formatTlUsdPair, usdToTry } from "@/lib/currency";
 import { createReservation } from "@/lib/firebase/reservations";
 import {
   calculateBookingPrice,
@@ -21,6 +21,8 @@ import {
   getTotalPassengers,
   validateBookingForm,
 } from "@/lib/transfers/booking";
+import { calculateHourlyPrice } from "@/lib/transfers/pricing";
+import { calculateTourVehiclePrice } from "@/lib/transfers/pricing-v2";
 import { useAuthStore } from "@/store/auth";
 import type {
   AddressInfo,
@@ -34,6 +36,7 @@ import type {
 import type { PopularServiceModel } from "@/types/popular-service";
 import type { TransferModel } from "@/types/transfer";
 import { vehicleTypeLabels } from "@/types/transfer";
+import { formatTL, formatUSD } from "@/types/transfer-pricing";
 import { useMutation } from "@tanstack/react-query";
 import {
   Calendar,
@@ -176,15 +179,17 @@ export function BookingFormCard({ transfer, tour, extraTours = [], onPriceChange
       couponCode: couponCode.trim() || undefined,
     });
 
-    // Ek turların fiyatlarını topla
+    // Ek turların fiyatlarını merkezi fonksiyonla hesapla (USD → TL otomatik)
     if (extraTours.length > 0) {
+      const totalPassengers = getTotalPassengers(passengers);
       let extraTourTotal = 0;
+      
       for (const extraTour of extraTours) {
-        if (extraTour.price.type === "per_person") {
-          extraTourTotal += extraTour.price.baseAmount * getTotalPassengers(passengers);
-        } else {
-          extraTourTotal += extraTour.price.baseAmount;
-        }
+        const extraTourPriceUsd = calculateTourVehiclePrice(
+          extraTour,
+          transfer.vehicleType
+        );
+        extraTourTotal += usdToTry(extraTourPriceUsd);
       }
 
       // Ek tur fiyatlarını mevcut sonuca ekle
@@ -194,10 +199,14 @@ export function BookingFormCard({ transfer, tour, extraTours = [], onPriceChange
 
       // Breakdown'a ek turları ekle
       for (const extraTour of extraTours) {
-        const price = extraTour.price.type === "per_person"
-          ? extraTour.price.baseAmount * getTotalPassengers(passengers)
-          : extraTour.price.baseAmount;
-        baseResult.price.breakdown.push(`Ek tur (${extraTour.name}): ${price}₺`);
+        const priceUsd = calculateTourVehiclePrice(
+          extraTour,
+          transfer.vehicleType
+        );
+        const priceTl = usdToTry(priceUsd);
+        baseResult.price.breakdown.push(
+          `Ek tur (${extraTour.name}): ${formatUSD(priceUsd)} (${formatTL(priceTl)})`
+        );
       }
     }
 
@@ -237,7 +246,7 @@ export function BookingFormCard({ transfer, tour, extraTours = [], onPriceChange
         endDate: dateTime.returnDate || dateTime.pickupDate,
         quantity: 1,
         people: totalPassengers,
-        price: priceResult.price.total,
+        price: priceResult.price.tourPrice,
         currency: "TRY",
         status: "pending",
         userPhone: contact.phone,
@@ -335,7 +344,7 @@ export function BookingFormCard({ transfer, tour, extraTours = [], onPriceChange
             <div className="flex justify-between text-sm pt-2 border-t border-slate-100">
               <span className="text-slate-500 font-semibold">Toplam</span>
               <span className="font-bold text-cyan-700">
-                {formatTlUsdPairFromTl(priceResult.price.total)}
+                {formatTL(priceResult.price.tourPrice)}
               </span>
             </div>
           </div>
@@ -404,6 +413,35 @@ export function BookingFormCard({ transfer, tour, extraTours = [], onPriceChange
                     <FieldError errors={formErrors} field="dateTime.pickupTime" />
                   </div>
                 </div>
+
+                {/* Kiralama Süresi - Sadece tursuz rezervasyonlarda göster */}
+                {!tour && (
+                  <div>
+                    <label className="text-xs font-medium text-slate-600 mb-1.5 block">
+                      Kiralama Süresi *
+                    </label>
+                    <select
+                      value={dateTime.rentalHours || 1}
+                      onChange={(e) =>
+                        setDateTime((prev) => ({ ...prev, rentalHours: parseInt(e.target.value) }))
+                      }
+                      className="w-full h-10 px-3 rounded-lg border border-slate-200 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                      required
+                    >
+                      <option value="1">1 Saat</option>
+                      <option value="2">2 Saat</option>
+                      <option value="3">3 Saat</option>
+                      <option value="4">4 Saat</option>
+                      <option value="6">6 Saat</option>
+                      <option value="8">8 Saat</option>
+                      <option value="12">12 Saat</option>
+                      <option value="24">Günlük (24+ saat)</option>
+                    </select>
+                    <p className="text-[10px] text-slate-500 mt-1">
+                      Kaç saat kiralayacaksınız?
+                    </p>
+                  </div>
+                )}
                 {/* Night warning */}
                 {parseInt(dateTime.pickupTime.split(":")[0]) >= 22 ||
                 parseInt(dateTime.pickupTime.split(":")[0]) < 6 ? (
@@ -711,43 +749,77 @@ export function BookingFormCard({ transfer, tour, extraTours = [], onPriceChange
           {/* ═══════ Fiyat ve Gönder ═══════ */}
           <div className="pt-4 space-y-4">
             {/* Price Summary */}
-            <div className="bg-gradient-to-br from-cyan-50 to-sky-50 rounded-xl p-4 border border-cyan-200">
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">Transfer</span>
-                  <span className="font-medium text-slate-900">
-                    {formatTlUsdPairFromTl(priceResult.price.transferTotal)}
-                  </span>
-                </div>
-                {priceResult.price.tourPrice > 0 && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-600">
-                      {allTours.length > 1
-                        ? `Turlar (${allTours.length} adet)`
-                        : `Tur (${tour?.name || allTours[0]?.name})`
-                      }
-                    </span>
-                    <span className="font-medium text-slate-900">
-                      {formatTlUsdPairFromTl(priceResult.price.tourPrice)}
-                    </span>
+            {allTours.length > 0 ? (
+              // Tur seçiliyse tur fiyatını göster (TL/SAR formatında)
+              priceResult.price.tourPrice > 0 ? (
+                <div className="bg-gradient-to-br from-cyan-50 to-sky-50 rounded-xl p-4 border border-cyan-200">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-600">
+                        {allTours.length > 1
+                          ? `Turlar (${allTours.length} adet)`
+                          : `Tur (${tour?.name || allTours[0]?.name})`
+                        }
+                      </span>
+                      <span className="font-medium text-slate-900">
+                        {(() => {
+                          // Doğru USD değerini hesapla (orijinal USD fiyatlarını topla)
+                          const tourPriceUsd = allTours.reduce((sum, t) => {
+                            return sum + calculateTourVehiclePrice(t, transfer.vehicleType);
+                          }, 0);
+                          return formatTlUsdPair(priceResult.price.tourPrice, tourPriceUsd);
+                        })()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-base pt-2 border-t border-cyan-200">
+                      <span className="font-semibold text-slate-900">Toplam</span>
+                      <span className="font-bold text-cyan-700 text-lg">
+                        {(() => {
+                          // Doğru USD değerini hesapla (orijinal USD fiyatlarını topla)
+                          const tourPriceUsd = allTours.reduce((sum, t) => {
+                            return sum + calculateTourVehiclePrice(t, transfer.vehicleType);
+                          }, 0);
+                          return formatTlUsdPair(priceResult.price.tourPrice, tourPriceUsd);
+                        })()}
+                      </span>
+                    </div>
                   </div>
-                )}
-                {priceResult.price.earlyBirdDiscount > 0 && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-red-600">Erken rezervasyon indirimi</span>
-                    <span className="font-medium text-red-600">
-                      -{formatTlUsdPairFromTl(priceResult.price.earlyBirdDiscount)}
-                    </span>
-                  </div>
-                )}
-                <div className="flex justify-between text-base pt-2 border-t border-cyan-200">
-                  <span className="font-semibold text-slate-900">Toplam</span>
-                  <span className="font-bold text-cyan-700 text-lg">
-                    {formatTlUsdPairFromTl(priceResult.price.total)}
-                  </span>
                 </div>
-              </div>
-            </div>
+              ) : (
+                <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-4 border border-slate-200">
+                  <div className="flex items-center justify-center gap-2 py-2">
+                    <div className="w-4 h-4 border-2 border-cyan-600 border-t-transparent rounded-full animate-spin" />
+                    <span className="text-sm text-slate-600">Fiyat hesaplanıyor...</span>
+                  </div>
+                </div>
+              )
+            ) : (
+              // Tur seçili değilse saatlik transfer fiyatını göster (TL/USD formatında)
+              (() => {
+                // Yeni pricing sisteminden saatlik fiyatı al
+                const hourlyRateUsd = calculateHourlyPrice(transfer.vehicleType, 1);
+                const hourlyRateTl = usdToTry(hourlyRateUsd);
+                  
+                return (
+                  <div className="bg-gradient-to-br from-cyan-50 to-sky-50 rounded-xl p-4 border border-cyan-200">
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-slate-600">Saatlik Transfer</span>
+                        <span className="font-medium text-slate-900">
+                          {formatTlUsdPair(hourlyRateTl, hourlyRateUsd)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-base pt-2 border-t border-cyan-200">
+                        <span className="font-semibold text-slate-900">Toplam</span>
+                        <span className="font-bold text-cyan-700 text-lg">
+                          {formatTlUsdPair(hourlyRateTl, hourlyRateUsd)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()
+            )}
 
             {/* Warnings */}
             {priceResult.warnings.length > 0 && (
@@ -770,7 +842,11 @@ export function BookingFormCard({ transfer, tour, extraTours = [], onPriceChange
             <Button
               type="submit"
               className="w-full h-12 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl font-semibold text-base flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-cyan-600/30 hover:shadow-xl"
-              disabled={reservationMutation.isPending || !user || totalPassengers > transfer.capacity}
+              disabled={
+                reservationMutation.isPending ||
+                !user ||
+                totalPassengers > transfer.capacity
+              }
             >
               {reservationMutation.isPending ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
