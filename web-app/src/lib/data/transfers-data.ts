@@ -26,7 +26,7 @@ export const TRANSFERS: TransferModel[] = [
     luggageCapacity: 2,
     childSeatCount: 1,
     amenities: ["air_condition", "wifi", "water", "usb"],
-    basePrice: 500,
+    basePrice: 67, // 250 SAR → $67 (güncel fiyat)
     durationMinutes: 90,
     company: "Sefernur Transfer",
     phone: "+966500000001",
@@ -58,7 +58,7 @@ export const TRANSFERS: TransferModel[] = [
     luggageCapacity: 6,
     childSeatCount: 2,
     amenities: ["air_condition", "wifi", "water", "usb", "bluetooth"],
-    basePrice: 800,
+    basePrice: 80, // 300 SAR → $80 (güncel fiyat)
     durationMinutes: 90,
     company: "Sefernur Transfer",
     phone: "+966500000002",
@@ -90,7 +90,7 @@ export const TRANSFERS: TransferModel[] = [
     luggageCapacity: 50,
     childSeatCount: 0,
     amenities: ["air_condition", "wifi", "water", "tv", "usb"],
-    basePrice: 2500,
+    basePrice: 267, // 1000 SAR → $267 (güncel fiyat)
     durationMinutes: 120,
     company: "Sefernur Transfer",
     phone: "+966500000003",
@@ -122,7 +122,7 @@ export const TRANSFERS: TransferModel[] = [
     luggageCapacity: 4,
     childSeatCount: 1,
     amenities: ["air_condition", "wifi", "water", "usb", "bluetooth", "snacks", "comfort"],
-    basePrice: 1500,
+    basePrice: 133, // 500 SAR → $133 (güncel fiyat)
     durationMinutes: 90,
     company: "Sefernur VIP Transfer",
     phone: "+966500000004",
@@ -154,7 +154,7 @@ export const TRANSFERS: TransferModel[] = [
     luggageCapacity: 10,
     childSeatCount: 2,
     amenities: ["air_condition", "wifi", "water", "usb"],
-    basePrice: 1200,
+    basePrice: 120, // 450 SAR → $120 (güncel fiyat)
     durationMinutes: 180,
     company: "Sefernur Transfer",
     phone: "+966500000005",
@@ -186,7 +186,7 @@ export const TRANSFERS: TransferModel[] = [
     luggageCapacity: 8,
     childSeatCount: 2,
     amenities: ["air_condition", "wifi", "water", "usb", "bluetooth"],
-    basePrice: 900,
+    basePrice: 93, // 350 SAR → $93 (güncel fiyat - Staria)
     durationMinutes: 90,
     company: "Sefernur Transfer",
     phone: "+966500000007",

@@ -1,5 +1,6 @@
 export { HotelCard, type HotelCardData } from "./HotelCard";
 export { HotelFilters, type HotelFilters as HotelFiltersType } from "./HotelFilters";
+export { HotelSearchEditBar, type HotelSearchEditBarProps } from "./HotelSearchEditBar";
 export { HotelSearchForm, type HotelSearchFormParams, type Room } from "./HotelSearchForm";
 export { HotelSortBar, type SortDirection, type SortField, type ViewMode } from "./HotelSortBar";
 

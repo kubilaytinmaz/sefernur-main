@@ -7,7 +7,7 @@
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardContent } from "@/components/ui/Card";
 import { usePopularTours } from "@/hooks/usePopularServices";
-import { formatTlUsdPairFromUsd } from "@/lib/currency";
+import { formatTlUsdPairFromUsd, usdToTry } from "@/lib/currency";
 import { calculateTourVehiclePrice } from "@/lib/transfers/pricing-v2";
 import { cn } from "@/lib/utils";
 import type { PopularServiceModel } from "@/types/popular-service";
@@ -32,6 +32,10 @@ export interface PopularServicesSectionProps {
   selectedServiceIds?: string[];
   className?: string;
   availableVehicles?: Array<{ vehicleType: string; basePrice: number }>;
+  /** Birleşik tasarımda başlık ve seçim özeti ana sayfadan yönetilir */
+  hideHeader?: boolean;
+  /** Birleşik tasarımda seçim özeti ana sayfadan yönetilir */
+  hideSelectionSummary?: boolean;
 }
 
 export function PopularServicesSection({
@@ -39,6 +43,8 @@ export function PopularServicesSection({
   selectedServiceIds = [],
   className,
   availableVehicles = [],
+  hideHeader = false,
+  hideSelectionSummary = false,
 }: PopularServicesSectionProps) {
   // Local JSON'dan veri çek
   const { data: services = [], isLoading, error } = usePopularTours();
@@ -90,11 +96,11 @@ export function PopularServicesSection({
     }, 0);
   }, [selectedServiceIds, services]);
 
-  // Seçili hizmetlerin toplam fiyatını hesapla
+  // Seçili hizmetlerin toplam fiyatını hesapla (TL cinsinden)
   const totalPrice = useMemo(() => {
     return selectedServiceIds.reduce((sum, id) => {
       const svc = services.find((s) => s.id === id);
-      return sum + (svc?.price.baseAmount ?? 0);
+      return sum + usdToTry(svc?.price.baseAmount ?? 0);
     }, 0);
   }, [selectedServiceIds, services]);
 
@@ -162,30 +168,32 @@ export function PopularServicesSection({
 
   return (
     <section
-      className={cn("max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8", className)}
+      className={cn(hideHeader ? "" : "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8", className)}
     >
-      {/* Başlık + Seçim Sayacı */}
-      <div className="mb-5 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-        <div>
-          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-sky-500 flex items-center justify-center">
-              <Star className="w-4 h-4 text-white fill-white" />
-            </span>
-            Popüler Turlar
-          </h2>
-          <p className="mt-1.5 text-sm text-slate-600">
-            En çok tercih edilen turlar — Birden fazla seçebilirsiniz
-          </p>
-        </div>
-        {selectionCount > 0 && (
-          <div className="flex items-center gap-2 shrink-0">
-            <Badge className="bg-gradient-to-r from-cyan-500 to-sky-500 text-white border-0 text-sm px-4 py-2 gap-2 shadow-md">
-              <CheckCircle2 className="w-4 h-4" />
-              {selectionCount} seçili
-            </Badge>
+      {/* Başlık + Seçim Sayacı - hideHeader yoksa göster */}
+      {!hideHeader && (
+        <div className="mb-5 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-sky-500 flex items-center justify-center">
+                <Star className="w-4 h-4 text-white fill-white" />
+              </span>
+              Popüler Rehberli Turlar
+            </h2>
+            <p className="mt-1.5 text-sm text-slate-600">
+              En çok tercih edilen rehberli turlar — Birden fazla seçebilirsiniz
+            </p>
           </div>
-        )}
-      </div>
+          {selectionCount > 0 && (
+            <div className="flex items-center gap-2 shrink-0">
+              <Badge className="bg-gradient-to-r from-cyan-500 to-sky-500 text-white border-0 text-sm px-4 py-2 gap-2 shadow-md">
+                <CheckCircle2 className="w-4 h-4" />
+                {selectionCount} seçili
+              </Badge>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Çoklu seçim uyarısı */}
       {showWarning && (
@@ -207,8 +215,8 @@ export function PopularServicesSection({
       )}
 
       {/* Hizmet Kartları - Yatay Kaydırma */}
-      <div className="relative group -mx-8 px-8">
-        {/* Sol Ok - Kartın solunda */}
+      <div className="relative -mx-16 px-16">
+        {/* Sol Ok - Kutuların solunda, dikey ortada */}
         <button
           type="button"
           onClick={() => {
@@ -217,7 +225,7 @@ export function PopularServicesSection({
               container.scrollBy({ left: -300, behavior: 'smooth' });
             }
           }}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -ml-2 w-12 h-12 rounded-full bg-white shadow-xl shadow-slate-300/50 border-2 border-slate-200 flex items-center justify-center text-slate-700 hover:bg-gradient-to-r hover:from-cyan-500 hover:to-sky-500 hover:text-white hover:border-cyan-500 hover:shadow-cyan-500/30 transition-all duration-300 z-20 hover:scale-110 active:scale-95"
+          className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-xl border-2 border-slate-200 flex items-center justify-center text-slate-700 hover:bg-gradient-to-r hover:from-cyan-500 hover:to-sky-500 hover:text-white hover:border-cyan-500 hover:shadow-cyan-500/50 transition-all duration-200 z-30 hover:scale-110 active:scale-95"
           aria-label="Sola kaydır"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
@@ -251,7 +259,7 @@ export function PopularServicesSection({
           ))}
         </div>
 
-        {/* Sağ Ok - Kartın sağında */}
+        {/* Sağ Ok - Kutuların sağında, dikey ortada */}
         <button
           type="button"
           onClick={() => {
@@ -260,7 +268,7 @@ export function PopularServicesSection({
               container.scrollBy({ left: 300, behavior: 'smooth' });
             }
           }}
-          className="absolute right-0 top-1/2 -translate-y-1/2 -mr-2 w-12 h-12 rounded-full bg-white shadow-xl shadow-slate-300/50 border-2 border-slate-200 flex items-center justify-center text-slate-700 hover:bg-gradient-to-r hover:from-cyan-500 hover:to-sky-500 hover:text-white hover:border-cyan-500 hover:shadow-cyan-500/30 transition-all duration-300 z-20 hover:scale-110 active:scale-95"
+          className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-xl border-2 border-slate-200 flex items-center justify-center text-slate-700 hover:bg-gradient-to-r hover:from-cyan-500 hover:to-sky-500 hover:text-white hover:border-cyan-500 hover:shadow-cyan-500/50 transition-all duration-200 z-30 hover:scale-110 active:scale-95"
           aria-label="Sağa kaydır"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
@@ -279,8 +287,8 @@ export function PopularServicesSection({
         service={selectedService}
       />
 
-      {/* Seçim Özeti */}
-      {selectionCount > 0 && (
+      {/* Seçim Özeti - hideSelectionSummary yoksa göster */}
+      {!hideSelectionSummary && selectionCount > 0 && (
         <SelectionSummary
           selectedIds={selectedServiceIds}
           services={services}
@@ -515,7 +523,7 @@ function SelectionSummary({
               {totalHours} saat
             </span>
             <span className="flex items-center gap-1.5 bg-gradient-to-r from-cyan-500 to-sky-500 px-4 py-1.5 rounded-lg text-white font-bold">
-              {totalPrice}₺
+              {Math.round(totalPrice).toLocaleString('tr-TR')}₺
             </span>
           </div>
           <button
@@ -554,7 +562,9 @@ function SelectionSummary({
                   </span>
                 ) : null}
                 <span>•</span>
-                <span className="font-medium text-cyan-700">{svc.price.display}</span>
+                <span className="font-medium text-cyan-700">
+                  {formatTlUsdPairFromUsd(svc.price.baseAmount)}
+                </span>
               </span>
             </div>
             <button
@@ -581,7 +591,7 @@ function SelectionSummary({
             </p>
             <p className="text-xs text-amber-800 leading-relaxed">
               Toplam <span className="font-bold">{totalHours} saat</span> süre ve{" "}
-              <span className="font-bold">{totalPrice}₺</span> tutarında seçim yaptınız.
+              <span className="font-bold">{Math.round(totalPrice).toLocaleString('tr-TR')}₺</span> tutarında seçim yaptınız.
               Gün içinde yeterli zaman olduğundan ve programınızın uygun olduğundan emin olun.
             </p>
           </div>

@@ -337,8 +337,45 @@ export function getVehicleLuggageCapacity(vehicleType: VehicleType): number {
 
 /**
  * @deprecated Use calculateTransferPrice instead
+ *
+ * Önce admin paneldeki fiyatları dener, bulamazsa varsayılan fiyatları kullanır
  */
-export function getRouteFixedPrice(routeId: string, vehicleType: VehicleType): number | null {
+export async function getRouteFixedPrice(routeId: string, vehicleType: VehicleType): Promise<number | null> {
+  // 1. Önce admin paneldeki popüler transfer rotalarından fiyatları çek
+  try {
+    const { getAllPopularTransferRoutes } = await import("@/lib/data/popular-transfer-routes-data");
+    
+    // Tüm rotaları al ve ID'yi tam eşleşmeye bakarak kontrol et
+    const allRoutes = await getAllPopularTransferRoutes();
+    
+    // Önce routeId ile tam eşleşen bir rota ara (örn: "route-mecca-to-medina")
+    let matchingRoute = allRoutes.find(r => r.id === routeId);
+    
+    // Bulamazsa, routeId'den lokasyonları parse et ve eşleşen rota ara
+    if (!matchingRoute) {
+      // routeId'yi parse et - örnekler:
+      // "mecca-medina" → mecca, medina
+      // "jeddah-airport-mecca" → jeddah_airport, mecca (locationId formatına çevir)
+      const locationId = routeId.replace(/-/g, '_');
+      matchingRoute = allRoutes.find(r => {
+        const routeKey = `${r.fromLocationId}_${r.toLocationId}`.replace(/_/g, '-');
+        return routeKey === routeId ||
+               `${r.fromLocationId}-${r.toLocationId}` === routeId;
+      });
+    }
+    
+    // Eşleşen rota bulunduysa ve fiyatlandırma aktifse, araç fiyatını döndür
+    if (matchingRoute && matchingRoute.pricingEnabled && matchingRoute.prices) {
+      const price = matchingRoute.prices[vehicleType];
+      if (price !== undefined && price !== null) {
+        return price;
+      }
+    }
+  } catch (error) {
+    console.warn("Admin panel fiyatları alınamadı, varsayılan fiyatlar kullanılıyor:", error);
+  }
+
+  // 2. Admin panelde fiyat yoksa varsayılan fiyatları kullan
   const defaultRoute = DEFAULT_ROUTE_PRICES.find(r => r.routeId === routeId);
   if (!defaultRoute) return null;
 

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { useActivePopularTransferRoutes } from "@/hooks/usePopularTransferRoutes";
 import { usdToTry } from "@/lib/currency";
 import { getRoutePricesByLocations } from "@/lib/data/popular-transfer-routes-data";
-import { estimateRoutePrice, isNightTime } from "@/lib/transfers/pricing-v2";
+import { isNightTime } from "@/lib/transfers/pricing-v2";
 import {
   getDestinationsByFromLocation,
   getRoutesByLocations,
@@ -61,8 +61,10 @@ export function TransferSearchForm({
   // Dropdown state'leri
   const [timeDropdownOpen, setTimeDropdownOpen] = useState(false);
   const [passengerDropdownOpen, setPassengerDropdownOpen] = useState(false);
+  const [vehicleDropdownOpen, setVehicleDropdownOpen] = useState(false);
   const timeDropdownRef = useRef<HTMLDivElement>(null);
   const passengerDropdownRef = useRef<HTMLDivElement>(null);
+  const vehicleDropdownRef = useRef<HTMLDivElement>(null);
 
   // Nereden lokasyonu seçildiğinde nereye için uyumlu lokasyonları hesapla
   const availableDestinations = useMemo(() => {
@@ -133,34 +135,60 @@ export function TransferSearchForm({
     getRoutePricesByLocations(fromLocation.id, toLocation.id).then(setRoutePrices);
   }, [fromLocation, toLocation]);
 
-  // Tahmini fiyat hesapla - önce rota fiyatlarını kullan, yoksa eski sisteme düş
+  // Dışarı tıklandığında dropdown'ları kapat
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (timeDropdownRef.current && !timeDropdownRef.current.contains(event.target as Node)) {
+        setTimeDropdownOpen(false);
+      }
+      if (passengerDropdownRef.current && !passengerDropdownRef.current.contains(event.target as Node)) {
+        setPassengerDropdownOpen(false);
+      }
+      if (vehicleDropdownRef.current && !vehicleDropdownRef.current.contains(event.target as Node)) {
+        setVehicleDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Tahmini fiyat hesapla - admin paneldeki fiyatları kullan
   const priceEstimate = useMemo(() => {
     if (!fromLocation || !toLocation) return null;
 
-    // Rota fiyatları varsa onları kullan
+    // Rota fiyatları varsa onları kullan (admin panelden geliyor)
     if (routePrices) {
-      const vt = vehicleType || 'sedan';
-      const price = routePrices[vt as keyof typeof routePrices];
-      if (price && price > 0) {
-        const tlPrice = usdToTry(price);
-        return {
-          minUSD: price,
-          maxUSD: price,
-          minTL: tlPrice,
-          maxTL: tlPrice,
-        };
+      if (vehicleType) {
+        // Belirli bir araç tipi seçiliyse o aracın fiyatını göster
+        const price = routePrices[vehicleType as keyof typeof routePrices];
+        if (price && price > 0) {
+          const tlPrice = usdToTry(price);
+          return {
+            minUSD: price,
+            maxUSD: price,
+            minTL: tlPrice,
+            maxTL: tlPrice,
+          };
+        }
+      } else {
+        // "Tümü" seçiliyse tüm araç tiplerinin min-max aralığını göster
+        const allPrices = Object.values(routePrices).filter((p): p is number => typeof p === 'number' && p > 0);
+        if (allPrices.length > 0) {
+          const minPrice = Math.min(...allPrices);
+          const maxPrice = Math.max(...allPrices);
+          return {
+            minUSD: minPrice,
+            maxUSD: maxPrice,
+            minTL: usdToTry(minPrice),
+            maxTL: usdToTry(maxPrice),
+          };
+        }
       }
     }
     
-    // Fallback: eski fiyat tahmin sistemi
-    const routes = getRoutesByLocations(fromLocation.id, toLocation.id);
-    if (routes.length === 0) return null;
-
-    return estimateRoutePrice(
-      routes[0].id,
-      vehicleType || 'sedan',
-      pickupTime
-    );
+    // Rota fiyatı yoksa null döndür - fiyat gösterme
+    return null;
   }, [fromLocation, toLocation, vehicleType, pickupTime, routePrices]);
 
 
@@ -451,38 +479,62 @@ export function TransferSearchForm({
             </div>
           </div>
 
-          {/* Araç Tipi */}
-          <div>
-            <label className="text-sm font-semibold text-slate-700 mb-2 block">
+          {/* Araç Tipi - Dropdown */}
+          <div className="relative" ref={vehicleDropdownRef}>
+            <label className="text-xs font-semibold text-slate-600 mb-1.5 block">
               Araç Tipi (Opsiyonel)
             </label>
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => setVehicleType(undefined)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                  !vehicleType
-                    ? 'bg-cyan-600 text-white'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                }`}
-              >
-                Tümü
-              </button>
-              {Object.entries(vehicleTypeLabels).map(([value, label]) => (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => setVehicleType(value as VehicleType)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    vehicleType === value
-                      ? 'bg-cyan-600 text-white'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
+            <button
+              type="button"
+              onClick={() => setVehicleDropdownOpen(!vehicleDropdownOpen)}
+              className="w-full h-10 rounded-lg border border-slate-300 bg-white px-3 flex items-center justify-between text-sm text-slate-900 hover:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all"
+            >
+              <div className="flex items-center gap-2">
+                <Car className="w-4 h-4 text-cyan-600" />
+                <span>{vehicleType ? vehicleTypeLabels[vehicleType] : 'Tümü'}</span>
+              </div>
+              <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${vehicleDropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {vehicleDropdownOpen && (
+              <div className="absolute z-50 w-full mt-2 bg-white rounded-lg border border-slate-200 shadow-lg overflow-hidden">
+                <div className="p-2">
+                  <div className="grid grid-cols-2 gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setVehicleType(undefined);
+                        setVehicleDropdownOpen(false);
+                      }}
+                      className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left ${
+                        !vehicleType
+                          ? 'bg-cyan-600 text-white'
+                          : 'bg-slate-50 text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      Tümü
+                    </button>
+                    {Object.entries(vehicleTypeLabels).map(([value, label]) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => {
+                          setVehicleType(value as VehicleType);
+                          setVehicleDropdownOpen(false);
+                        }}
+                        className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left ${
+                          vehicleType === value
+                            ? 'bg-cyan-600 text-white'
+                            : 'bg-slate-50 text-slate-700 hover:bg-slate-100'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Fiyat Tahmini */}
@@ -491,14 +543,31 @@ export function TransferSearchForm({
               <div className="flex items-start gap-2">
                 <Info className="w-4 h-4 text-cyan-600 mt-0.5 shrink-0" />
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-cyan-900">
-                    Tahmini Fiyat: {formatUSD(priceEstimate.minUSD)} - {formatUSD(priceEstimate.maxUSD)}
-                  </p>
-                  <p className="text-xs text-cyan-700 mt-0.5">
-                    ≈ {formatTL(priceEstimate.minTL)} - {formatTL(priceEstimate.maxTL)}
-                  </p>
+                  {priceEstimate.minUSD === priceEstimate.maxUSD ? (
+                    // Tek fiyat göster (belirli bir araç tipi seçili)
+                    <>
+                      <p className="text-sm font-medium text-cyan-900">
+                        Tahmini Fiyat: {formatUSD(priceEstimate.minUSD)}
+                      </p>
+                      <p className="text-xs text-cyan-700 mt-0.5">
+                        ≈ {formatTL(priceEstimate.minTL)}
+                      </p>
+                    </>
+                  ) : (
+                    // Fiyat aralığı göster ("Tümü" seçiliyse)
+                    <>
+                      <p className="text-sm font-medium text-cyan-900">
+                        Tahmini Fiyat: {formatUSD(priceEstimate.minUSD)} - {formatUSD(priceEstimate.maxUSD)}
+                      </p>
+                      <p className="text-xs text-cyan-700 mt-0.5">
+                        ≈ {formatTL(priceEstimate.minTL)} - {formatTL(priceEstimate.maxTL)}
+                      </p>
+                    </>
+                  )}
                   <p className="text-xs text-cyan-600 mt-1">
-                    Araç tipine, yolcu sayısına ve saate göre fiyat değişebilir.
+                    {vehicleType
+                      ? 'Yolcu sayısına ve saate göre fiyat değişebilir.'
+                      : 'Araç tipine göre fiyat değişebilir.'}
                   </p>
                 </div>
               </div>

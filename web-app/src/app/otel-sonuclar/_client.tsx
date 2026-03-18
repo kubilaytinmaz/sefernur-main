@@ -1,15 +1,15 @@
 "use client";
 
 import {
-    GuestSummaryBar,
-    HotelCard,
-    HotelFilters,
-    HotelSortBar,
-    type HotelFilters as HotelFiltersType,
-    type HotelSearchFormParams,
-    type SortDirection,
-    type SortField,
-    type ViewMode
+  HotelCard,
+  HotelFilters,
+  HotelSearchEditBar,
+  HotelSortBar,
+  type HotelFilters as HotelFiltersType,
+  type HotelSearchFormParams,
+  type SortDirection,
+  type SortField,
+  type ViewMode
 } from "@/components/hotels";
 import { EmptyState, ErrorState, LoadingState } from "@/components/states/AsyncStates";
 import { calculateTotalGuests } from "@/lib/hotels/capacity-utils";
@@ -220,18 +220,23 @@ export default function OtelSonuclarPageClient() {
   }, [searchQuery.data?.data]);
 
   // Handlers
-  const handleGuestChange = useCallback((rooms: typeof searchParams.rooms) => {
-    setSearchParams(prev => ({ ...prev, rooms }));
+  const handleSearchChange = useCallback((params: {
+    cityCode: number;
+    checkIn: string;
+    checkOut: string;
+    rooms: typeof searchParams.rooms;
+  }) => {
+    setSearchParams(params);
     
     const searchParamsString = new URLSearchParams({
-      cityCode: (searchParams.cityCode ?? 164).toString(),
-      checkIn: searchParams.checkIn,
-      checkOut: searchParams.checkOut,
-      rooms: encodeURIComponent(JSON.stringify(rooms)),
+      cityCode: params.cityCode.toString(),
+      checkIn: params.checkIn,
+      checkOut: params.checkOut,
+      rooms: encodeURIComponent(JSON.stringify(params.rooms)),
     }).toString();
     
     router.push(`/otel-sonuclar?${searchParamsString}`, { scroll: false });
-  }, [router, searchParams]);
+  }, [router]);
 
   const handleSortChange = useCallback((field: SortField, direction: SortDirection) => {
     setSortField(field);
@@ -283,6 +288,20 @@ export default function OtelSonuclarPageClient() {
         </div>
       </section>
 
+      {/* Search Edit Bar - Sticky below header */}
+      <section className="sticky top-[73px] z-20 bg-gradient-to-b from-emerald-50/50 to-slate-50 border-b border-emerald-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <HotelSearchEditBar
+            cityCode={searchParams.cityCode || 164}
+            checkIn={searchParams.checkIn}
+            checkOut={searchParams.checkOut}
+            rooms={searchParams.rooms}
+            onSearch={handleSearchChange}
+            loading={searchQuery.isFetching}
+          />
+        </div>
+      </section>
+
       {/* Main Content */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="lg:grid lg:grid-cols-12 lg:gap-8">
@@ -299,13 +318,6 @@ export default function OtelSonuclarPageClient() {
 
           {/* Results */}
           <main className="lg:col-span-9 space-y-6">
-            {/* Guest Summary Bar */}
-            <GuestSummaryBar
-              rooms={searchParams.rooms}
-              onSearch={handleGuestChange}
-              loading={searchQuery.isFetching}
-            />
-
             {/* Mobile Filters Toggle */}
             <HotelFilters
               filters={filters}

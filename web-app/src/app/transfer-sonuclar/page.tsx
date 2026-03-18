@@ -11,10 +11,10 @@ import { getRouteFixedPrice } from "@/lib/transfers/pricing-v2";
 import { LOCATIONS, getRoutesByLocations } from "@/lib/transfers/transfer-locations";
 import { TransferModel, VehicleType } from "@/types/transfer";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Calendar, Car, Clock, MapPin, Users } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, MapPin, Users } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 // Yardımcı fonksiyon - yolcu sayısına göre kapasite aralığı
 function getCapacityRangeForPassengers(passengers: number) {
@@ -55,6 +55,30 @@ export default function TransferResultsPage() {
     queryFn: () => getActiveTransfers(),
   });
 
+  // Rota bazlı fiyatları cache'le (async)
+  const [routePrices, setRoutePrices] = useState<Map<string, Map<VehicleType, number>>>(new Map());
+
+  // Rota fiyatlarını async olarak çek
+  useEffect(() => {
+    if (!routeId || !transfersQuery.data) return;
+
+    const fetchRoutePrices = async () => {
+      const pricesMap = new Map<VehicleType, number>();
+      const vehicleTypes: VehicleType[] = ['sedan', 'van', 'coster', 'bus', 'vip', 'jeep'];
+      
+      for (const vehicleType of vehicleTypes) {
+        const price = await getRouteFixedPrice(routeId, vehicleType);
+        if (price !== null) {
+          pricesMap.set(vehicleType, price);
+        }
+      }
+      
+      setRoutePrices(prev => new Map(prev).set(routeId, pricesMap));
+    };
+
+    fetchRoutePrices();
+  }, [routeId, transfersQuery.data]);
+
   // Filtre state - Kapasite aralığını yolcu sayısına göre ayarla
   const [filters, setFilters] = useState<TransferFiltersState>({
     vehicleTypes: vehicleTypeParam ? [vehicleTypeParam] : [],
@@ -64,6 +88,9 @@ export default function TransferResultsPage() {
     sortBy: 'price-asc',
   });
 
+  // Mobile filtre toggle state
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
   // Yardımcı fonksiyonlar - useCallback ile
   const isNightTimeCheck = useCallback((timeStr: string) => {
     const hour = parseInt(timeStr.split(':')[0], 10);
@@ -72,14 +99,19 @@ export default function TransferResultsPage() {
 
   const getPrice = useCallback((transfer: TransferModel) => {
     let price = transfer.basePrice;
-    if (routeId) {
-      const routePrice = getRouteFixedPrice(routeId, transfer.vehicleType);
-      if (routePrice) price = routePrice;
+    
+    // Önce admin paneldeki rota fiyatlarını kontrol et
+    if (routeId && routePrices.has(routeId)) {
+      const pricesMap = routePrices.get(routeId);
+      if (pricesMap?.has(transfer.vehicleType)) {
+        price = pricesMap.get(transfer.vehicleType)!;
+      }
     }
+    
     const isNight = isNightTimeCheck(time);
     if (isNight) price = Math.round(price * 1.2);
     return price;
-  }, [routeId, time, isNightTimeCheck]);
+  }, [routeId, routePrices, time, isNightTimeCheck]);
 
   // Filtrelenmiş ve sıralanmış transferler
   const filteredTransfers = useMemo(() => {
@@ -109,9 +141,13 @@ export default function TransferResultsPage() {
 
       // Fiyat hesapla ve filtrele
       let price = transfer.basePrice;
-      if (routeId) {
-        const routePrice = getRouteFixedPrice(routeId, transfer.vehicleType);
-        if (routePrice) price = routePrice;
+      
+      // Önce admin paneldeki rota fiyatlarını kontrol et
+      if (routeId && routePrices.has(routeId)) {
+        const pricesMap = routePrices.get(routeId);
+        if (pricesMap?.has(transfer.vehicleType)) {
+          price = pricesMap.get(transfer.vehicleType)!;
+        }
       }
       
       const isNight = isNightTimeCheck(time);
@@ -143,21 +179,24 @@ export default function TransferResultsPage() {
     return results;
   }, [transfersQuery.data, filters, passengers, routeId, time, getPrice, isNightTimeCheck]);
 
-  // Fiyat aralığı hesapla
-  const priceRange = useMemo(() => {
-    if (!transfersQuery.data) return { min: 0, max: 500 };
+  // Fiyat aralığı ve tüm fiyatlar (histogram için)
+  const { priceRange, allPrices } = useMemo(() => {
+    if (!transfersQuery.data) return { priceRange: { min: 0, max: 500 }, allPrices: [] };
     
     const prices = transfersQuery.data
       .filter(t => t.capacity >= passengers)
       .map(t => getPrice(t));
     
-    if (prices.length === 0) return { min: 0, max: 500 };
+    if (prices.length === 0) return { priceRange: { min: 0, max: 500 }, allPrices: [] };
     
     return {
-      min: Math.min(...prices),
-      max: Math.max(...prices),
+      priceRange: {
+        min: Math.min(...prices),
+        max: Math.max(...prices),
+      },
+      allPrices: prices,
     };
-  }, [transfersQuery.data, passengers, routeId, time]);
+  }, [transfersQuery.data, passengers, getPrice]);
 
   // Yükleniyor durumu
   if (transfersQuery.isLoading) {
@@ -259,6 +298,8 @@ export default function TransferResultsPage() {
                 resultCount={filteredTransfers.length}
                 minPrice={Math.floor(priceRange.min)}
                 maxPrice={Math.ceil(priceRange.max)}
+                prices={allPrices}
+                passengerCount={passengers}
               />
             </div>
           </aside>
@@ -267,10 +308,17 @@ export default function TransferResultsPage() {
           <main className="flex-1">
             {/* Mobile Filter Button */}
             <div className="lg:hidden mb-4">
-              <button className="w-full py-3 px-4 bg-white border border-slate-200 rounded-lg flex items-center justify-center gap-2 text-slate-700">
-                <Car className="w-5 h-5" />
-                Filtrele ve Sırala
-              </button>
+              <TransferFilters
+                filters={filters}
+                onChange={setFilters}
+                resultCount={filteredTransfers.length}
+                minPrice={Math.floor(priceRange.min)}
+                maxPrice={Math.ceil(priceRange.max)}
+                prices={allPrices}
+                passengerCount={passengers}
+                isOpen={mobileFiltersOpen}
+                onToggle={() => setMobileFiltersOpen(!mobileFiltersOpen)}
+              />
             </div>
 
             {/* Results */}

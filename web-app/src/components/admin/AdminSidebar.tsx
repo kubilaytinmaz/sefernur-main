@@ -6,7 +6,6 @@ import {
   BarChart3,
   Building2,
   CalendarCheck,
-  Car,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -54,14 +53,10 @@ const NAV_ITEMS = [
     icon: Plane,
     subItems: [
       { label: "Araçlar", href: "/admin/transfers" },
+      { label: "Rezervasyonlar", href: "/admin/transfers/reservations" },
       { label: "Rotalar ve Fiyatlar", href: "/admin/transfers/pricing" },
       { label: "Raporlar", href: "/admin/transfers/reports" },
     ],
-  },
-  {
-    label: "Araçlar",
-    href: "/admin/cars",
-    icon: Car,
   },
   {
     label: "Rehberler",

@@ -7,22 +7,22 @@ import { FavoriteButton } from "@/components/favorites/FavoriteButton";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardContent } from "@/components/ui/Card";
 import { formatTlSarPair, sarToTry } from "@/lib/currency";
-import { getRouteFixedPrice } from "@/lib/transfers/pricing";
+import { getRouteFixedPrice } from "@/lib/transfers/pricing-v2";
 import { createSlug } from "@/lib/transfers/seo-slugs";
 import { amenityLabels, TransferModel, vehicleTypeLabels } from "@/types/transfer";
 import {
-    Briefcase,
-    Bus,
-    Car,
-    Clock,
-    Shield,
-    Star,
-    Users,
-    Wifi,
-    Wind
+  Briefcase,
+  Bus,
+  Car,
+  Clock,
+  Shield,
+  Star,
+  Users,
+  Wifi,
+  Wind
 } from "lucide-react";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface TransferResultCardProps {
   transfer: TransferModel;
@@ -42,16 +42,25 @@ export function TransferResultCard({
   const firstImage = transfer.images?.[0];
   const vehicleLabel = vehicleTypeLabels[transfer.vehicleType] || transfer.vehicleType;
 
+  // Rota bazlı fiyat state'i
+  const [routePrice, setRoutePrice] = useState<number | null>(null);
+
+  // Rota fiyatını async olarak çek
+  useEffect(() => {
+    if (routeId) {
+      getRouteFixedPrice(routeId, transfer.vehicleType).then(setRoutePrice);
+    } else {
+      setRoutePrice(null);
+    }
+  }, [routeId, transfer.vehicleType]);
+
   // Fiyat hesaplama
   const priceInfo = useMemo(() => {
     let basePrice = transfer.basePrice;
     
     // Rota bazlı fiyat varsa kullan
-    if (routeId) {
-      const routePrice = getRouteFixedPrice(routeId, transfer.vehicleType);
-      if (routePrice) {
-        basePrice = routePrice;
-      }
+    if (routePrice !== null && routePrice !== undefined) {
+      basePrice = routePrice;
     }
 
     // Gece sürşarjı hesapla
@@ -64,7 +73,7 @@ export function TransferResultCard({
       totalPrice,
       priceTl: sarToTry(totalPrice),
     };
-  }, [transfer, routeId, isNightTime]);
+  }, [transfer, routePrice, isNightTime]);
 
   // Araç ikonu
   const VehicleIcon = transfer.vehicleType === 'bus' || transfer.vehicleType === 'coster' ? Bus : Car;

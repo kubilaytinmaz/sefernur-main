@@ -1,8 +1,15 @@
 "use client";
 
+/**
+ * Transferler Sayfası - Birleşik Tasarım
+ * Popüler Turlar seçimi yapılabilir
+ * Tur seçimi yapıldığında fiyatlar dinamik olarak güncellenir
+ * Tur seçilmediğinde saatlik fiyat gösterilir
+ */
+
 import { FavoriteButton } from "@/components/favorites/FavoriteButton";
 import { EmptyState, ErrorState, LoadingState } from "@/components/states/AsyncStates";
-import { PopularServicesSection } from "@/components/transfers";
+import { PopularServicesSection, SelectionSummaryCard, TourInfoBanner } from "@/components/transfers";
 import { TransferSearchForm } from "@/components/transfers/TransferSearchForm";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardContent } from "@/components/ui/Card";
@@ -19,6 +26,7 @@ import {
   Briefcase,
   Car,
   Clock3,
+  Info,
   MapPin,
   Star,
   Truck,
@@ -26,7 +34,12 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+
+/* ────────── Feature Flag ────────── */
+
+// Yeni birleşik tasarımı aç/kapat
+const USE_UNIFIED_DESIGN = true;
 
 /* ────────── Vehicle Icon ────────── */
 
@@ -40,25 +53,12 @@ function VehicleIcon({ type, className }: { type: string; className?: string }) 
   }
 }
 
-/* ────────── Capacity Filter Options ────────── */
-
-const capacityOptions = [
-  { value: "all", label: "Tüm Kapasiteler" },
-  { value: "1-4", label: "1-4 Kişi" },
-  { value: "5-8", label: "5-8 Kişi" },
-  { value: "9-15", label: "9-15 Kişi" },
-  { value: "16+", label: "16+ Kişi" },
-];
-
 /* ────────── Main Page ────────── */
 
 export default function TransfersPage() {
   // Seçili popüler hizmetler - çoklu seçim destekli
   const [selectedServiceIds, setSelectedServiceIds] = useState<string[]>([]);
   const [selectedServices, setSelectedServices] = useState<PopularServiceModel[]>([]);
-  
-  // Saatlik kiralama süresi seçimi
-  const [selectedHours, setSelectedHours] = useState<number>(1);
 
   const transfersQuery = useQuery({
     queryKey: ["transfers", "active"],
@@ -77,7 +77,7 @@ export default function TransfersPage() {
   const router = useRouter();
   
   // Arama formu gönderildiğinde sonuçlar sayfasına yönlendir
-  const handleSearch = (params: {
+  const handleSearch = useCallback((params: {
     routeId?: string;
     fromCity: string;
     toCity: string;
@@ -89,7 +89,6 @@ export default function TransfersPage() {
     luggageCount: number;
     vehicleType?: VehicleType;
   }) => {
-    // URL parametreleri oluştur
     const searchParams = new URLSearchParams();
     if (params.fromLocationId) searchParams.set('from', params.fromLocationId);
     if (params.toLocationId) searchParams.set('to', params.toLocationId);
@@ -100,19 +99,45 @@ export default function TransfersPage() {
     if (params.routeId) searchParams.set('routeId', params.routeId);
 
     router.push(`/transfer-sonuclar?${searchParams.toString()}`);
-  };
+  }, [router]);
 
-  // Popüler hizmet seçimi (çoklu seçim toggle) - PopularServicesSection'dan gelen servisleri kullan
-  const handleServiceSelect = (serviceIds: string[], services: PopularServiceModel[]) => {
+  // Popüler hizmet seçimi (çoklu seçim toggle)
+  const handleServiceSelect = useCallback((serviceIds: string[], services: PopularServiceModel[]) => {
     setSelectedServiceIds(serviceIds);
     setSelectedServices(services);
-  };
+  }, []);
+
+  // Tek tur kaldırma
+  const handleRemoveService = useCallback((serviceId: string) => {
+    const newIds = selectedServiceIds.filter(id => id !== serviceId);
+    const newServices = selectedServices.filter(s => s.id !== serviceId);
+    setSelectedServiceIds(newIds);
+    setSelectedServices(newServices);
+  }, [selectedServiceIds, selectedServices]);
+
+  // Tüm turları temizleme
+  const handleClearAllServices = useCallback(() => {
+    setSelectedServiceIds([]);
+    setSelectedServices([]);
+  }, []);
 
   // Tüm araç tipleri için saatlik fiyatları hesapla (SAR cinsinden)
-  // TÜM turları kullanarak hesapla, sadece seçili olanları değil
   const hourlyRates = useMemo(() => {
     return calculateAllHourlyRates(allTours);
   }, [allTours]);
+
+  // Seçili turların toplam bilgileri
+  const totalHours = useMemo(() => {
+    return selectedServices.reduce((sum, svc) => sum + (svc.duration.hours ?? 0), 0);
+  }, [selectedServices]);
+
+  const totalPrice = useMemo(() => {
+    return selectedServices.reduce((sum, svc) => sum + usdToTry(svc.price.baseAmount ?? 0), 0);
+  }, [selectedServices]);
+
+  const totalKm = useMemo(() => {
+    return selectedServices.reduce((sum, svc) => sum + (svc.distance?.km ?? 0), 0);
+  }, [selectedServices]);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -149,53 +174,114 @@ export default function TransfersPage() {
         </div>
       </section>
 
-      {/* Popüler Transferler ve Hizmetler */}
-      <PopularServicesSection
-        onServiceSelect={handleServiceSelect}
-        selectedServiceIds={selectedServiceIds}
-        availableVehicles={transfers.map(t => ({
-          vehicleType: t.vehicleType,
-          basePrice: t.basePrice,
-        }))}
-      />
-
-      {/* Transfer Vehicles Section Title */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
-        <h2 className="text-lg font-bold text-slate-900">Müsait Araçlar</h2>
-        <p className="text-xs text-slate-500 mt-0.5">Size uygun transfer aracını seçin</p>
-      </section>
-
-      {/* Transfer Cards Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
-        {transfersQuery.isLoading ? (
-          <LoadingState title="Transferler yükleniyor" description="Aktif transfer verileri getiriliyor..." />
-        ) : null}
-
-        {transfersQuery.isError ? (
-          <ErrorState
-            title="Transferler alınamadı"
-            description="Lütfen daha sonra tekrar deneyin."
-            onRetry={() => transfersQuery.refetch()}
-          />
-        ) : null}
-
-        {!transfersQuery.isLoading && !transfersQuery.isError && transfers.length === 0 ? (
-          <EmptyState title="Uygun transfer bulunamadı" description="Daha sonra tekrar deneyin." />
-        ) : null}
-
-        {!transfersQuery.isLoading && !transfersQuery.isError && transfers.length > 0 ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {[...transfers].sort((a, b) => a.basePrice - b.basePrice).map((transfer) => (
-              <TransferCard
-                key={transfer.id}
-                transfer={transfer}
-                selectedServices={selectedServices}
-                hourlyRates={hourlyRates}
-                selectedHours={selectedHours}
-              />
-            ))}
+      {/* Birleşik Transfer Bölümü */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Başlık ve Bilgilendirme */}
+        <div className="mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-5">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-sky-500 flex items-center justify-center">
+                  <Star className="w-4 h-4 text-white fill-white" />
+                </span>
+                Popüler Rehberli Turlar
+              </h2>
+              <p className="mt-1.5 text-sm text-slate-600">
+                Tur seçin veya araç kartlarından saatlik fiyatları görün — Tüm turlar rehberlidir
+              </p>
+            </div>
           </div>
-        ) : null}
+
+          {/* Tur Bilgilendirme Banner */}
+          <TourInfoBanner tourCount={selectedServiceIds.length} />
+        </div>
+
+        {/* Popüler Turlar Bölümü */}
+        {(
+          <PopularServicesSection
+            onServiceSelect={handleServiceSelect}
+            selectedServiceIds={selectedServiceIds}
+            className="mb-6"
+            hideHeader
+            hideSelectionSummary
+          />
+        )}
+
+        {/* Seçim Özeti */}
+        {selectedServiceIds.length > 0 && (
+          <SelectionSummaryCard
+            selectedServices={selectedServices}
+            totalHours={totalHours}
+            totalPrice={totalPrice}
+            totalKm={totalKm}
+            onRemove={handleRemoveService}
+            onClearAll={handleClearAllServices}
+            className="mb-6"
+          />
+        )}
+
+        {/* Tur Seçilmedi Uyarısı */}
+        {selectedServiceIds.length === 0 && (
+          <div className="mb-6 bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-4 border-2 border-red-200 animate-in slide-in-from-top-2 duration-300">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center shrink-0">
+                <Info className="w-5 h-5 text-red-600" />
+              </div>
+              <div className="flex-1">
+                <h4 className="text-sm font-bold text-red-900 mb-1">
+                  Tur seçilmedi
+                </h4>
+                <p className="text-xs text-red-700 leading-relaxed">
+                  Tur seçilmediği için fiyatlandırma saatlik olarak yapılmaktadır. Saati artırmak için araca tıklayıp rezervasyon sayfasından saat seçimi yapabilirsiniz.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Müsait Araçlar Bölümü */}
+        <div>
+          <div className="mb-4">
+            <h2 className="text-lg font-bold text-slate-900">Müsait Araçlar</h2>
+            <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
+              {selectedServiceIds.length === 0
+                ? "Saatlik kiralama fiyatları (araca tıklayarak saat seçebilirsiniz)"
+                : `Seçili turlar için fiyatlar (${selectedServiceIds.length} tur)`
+              }
+              <Info className="w-3 h-3 text-cyan-600" />
+            </p>
+          </div>
+
+          {/* Transfer Cards Grid */}
+          {transfersQuery.isLoading ? (
+            <LoadingState title="Transferler yükleniyor" description="Aktif transfer verileri getiriliyor..." />
+          ) : null}
+
+          {transfersQuery.isError ? (
+            <ErrorState
+              title="Transferler alınamadı"
+              description="Lütfen daha sonra tekrar deneyin."
+              onRetry={() => transfersQuery.refetch()}
+            />
+          ) : null}
+
+          {!transfersQuery.isLoading && !transfersQuery.isError && transfers.length === 0 ? (
+            <EmptyState title="Uygun transfer bulunamadı" description="Daha sonra tekrar deneyin." />
+          ) : null}
+
+          {!transfersQuery.isLoading && !transfersQuery.isError && transfers.length > 0 ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {[...transfers].sort((a, b) => a.basePrice - b.basePrice).map((transfer) => (
+                <TransferCard
+                  key={transfer.id}
+                  transfer={transfer}
+                  selectedServices={selectedServices}
+                  hourlyRates={hourlyRates}
+                />
+              ))}
+            </div>
+          ) : null}
+        </div>
       </section>
     </div>
   );
@@ -207,39 +293,32 @@ interface TransferCardProps {
   transfer: TransferModel;
   selectedServices: PopularServiceModel[];
   hourlyRates: Record<VehicleType, number | null>;
-  selectedHours: number;
 }
 
 function TransferCard({
   transfer,
   selectedServices,
   hourlyRates,
-  selectedHours,
 }: TransferCardProps) {
   const firstImage = transfer.images?.[0];
   const vehicleLabel = vehicleTypeLabels[transfer.vehicleType] || transfer.vehicleType;
 
-  // Seçili hizmetlere göre toplam fiyat hesaplama (çoklu seçim destekli)
+  // Fiyat hesaplama
   const displayPrice = useMemo(() => {
     if (selectedServices.length === 0) {
-      // Seçili tur yoksa, saatlik fiyatı göster (TL cinsinden)
-      // Seçili saate göre fiyat hesapla
+      // Saatlik fiyat göster (varsayılan 1 saat)
       const hourlyRateUsd = hourlyRates[transfer.vehicleType];
       if (hourlyRateUsd) {
-        // Seçili saat sayısına göre fiyat hesapla
-        const totalPriceUsd = hourlyRateUsd * selectedHours;
-        return usdToTry(totalPriceUsd);
+        return usdToTry(hourlyRateUsd);
       }
-      return transfer.basePrice * selectedHours;
+      return transfer.basePrice;
     }
 
-    // Sadece seçili turların toplam fiyatını göster
+    // Seçili turlar için fiyat hesapla
     let totalPriceTl = 0;
 
-    // Her seçili hizmetin fiyatını ekle (USD → TL çevir)
     for (const service of selectedServices) {
       if (service.type === 'transfer') {
-        // Transfer hizmeti: Mesafe bazlı fiyat hesaplama
         const distanceKm = service.distance?.km || 0;
         if (distanceKm > 0) {
           const priceCalc = calculateTransferPrice({
@@ -252,12 +331,10 @@ function TransferCard({
           });
           totalPriceTl += usdToTry(priceCalc.total);
         } else {
-          // vehiclePrices kullan, yoksa baseAmount
           const servicePriceUsd = service.vehiclePrices?.[transfer.vehicleType] ?? service.price.baseAmount;
           totalPriceTl += usdToTry(servicePriceUsd);
         }
       } else {
-        // Tur/Rehber: vehiclePrices varsa onu kullan, yoksa baseAmount (USD cinsinden)
         const servicePriceUsd = service.vehiclePrices?.[transfer.vehicleType] ?? service.price.baseAmount;
         totalPriceTl += usdToTry(servicePriceUsd);
       }
@@ -266,28 +343,23 @@ function TransferCard({
     return totalPriceTl;
   }, [selectedServices, transfer, hourlyRates]);
 
-  // Fiyat değişim göstergesi - çoklu seçim destekli
+  // Fiyat etiketi
   const priceLabel = useMemo(() => {
     if (selectedServices.length === 0) {
-      return selectedHours === 24 ? 'Günlük' : `${selectedHours} Saatlik`;
+      return 'Saatlik';
     }
     if (selectedServices.length === 1) {
       const svc = selectedServices[0];
       if (svc.type === 'transfer') return 'Seçili Rota';
       return 'Transfer + ' + (svc.type === 'tour' ? 'Tur' : 'Rehber');
     }
-    // Çoklu seçim
     return `Transfer + ${selectedServices.length} Hizmet`;
-  }, [selectedServices, selectedHours]);
+  }, [selectedServices]);
 
-  // Fiyat alt açıklaması (USD/saat veya tur özeti)
+  // Fiyat alt açıklaması
   const priceSubtext = useMemo(() => {
     if (selectedServices.length === 0) {
-      const hourlyRateUsd = hourlyRates[transfer.vehicleType];
-      if (hourlyRateUsd) {
-        return `${hourlyRateUsd} USD/saat`;
-      }
-      return null;
+      return "Saat arttıkça fiyat daha uygun";
     }
     if (selectedServices.length === 1) return selectedServices[0].name;
     return selectedServices.map(s => s.name).join(' + ');
@@ -298,19 +370,15 @@ function TransferCard({
     if (selectedServices.length === 0) {
       const hourlyRateUsd = hourlyRates[transfer.vehicleType];
       if (hourlyRateUsd) {
-        // Seçili saat sayısına göre toplam USD fiyatı hesapla
-        const totalUsd = hourlyRateUsd * selectedHours;
-        return formatTlUsdPairFromUsd(totalUsd);
+        return formatTlUsdPairFromUsd(hourlyRateUsd);
       }
-      return formatTlUsdPairFromUsd(displayPrice / 38); // TL'yi USD'ye çevir (fallback)
+      return formatTlUsdPairFromUsd(displayPrice / 38);
     }
-    // Seçili tur varsa, tur fiyatını TL/USD formatında göster
-    // vehiclePrices kullanarak USD değerini hesapla
+    
     const totalUsd = selectedServices.reduce((sum, service) => {
       if (service.type === 'transfer') {
         const distanceKm = service.distance?.km || 0;
         if (distanceKm > 0) {
-          // Mesafe bazlı fiyatlamada calculateTransferPrice'dan USD değerini al
           const priceCalc = calculateTransferPrice({
             vehicleType: transfer.vehicleType,
             distanceKm,
@@ -323,18 +391,16 @@ function TransferCard({
         }
         return sum + (service.vehiclePrices?.[transfer.vehicleType] ?? service.price.baseAmount);
       }
-      // Tur için vehiclePrices kullan (USD cinsinden)
       return sum + (service.vehiclePrices?.[transfer.vehicleType] ?? service.price.baseAmount);
     }, 0);
     return formatTlUsdPairFromUsd(totalUsd);
   }, [selectedServices, transfer, hourlyRates, displayPrice]);
 
-  // Rota gösterimi - seçili tur yoksa "Saatlik Kiralama", varsa tur rotası
+  // Rota gösterimi
   const routeDisplay = useMemo(() => {
     if (selectedServices.length === 0) {
       return "Saatlik Kiralama";
     }
-    // İlk seçili turun rotasını göster
     const firstService = selectedServices[0];
     if (firstService.route) {
       return `${displayAddress(firstService.route.from)} → ${displayAddress(firstService.route.to)}`;
@@ -346,18 +412,15 @@ function TransferCard({
   const vehicleName = transfer.vehicleName || vehicleLabel;
   const vehicleSlug = `${createSlug(vehicleName)}-${transfer.id}`;
 
-  // Booking URL: İlk seçili tur veya tursuz
-  // Çoklu tur seçiminde tüm turları query param olarak gönder
+  // Booking URL
   const bookingUrl = useMemo(() => {
     if (selectedServices.length === 0) {
       return `/transfer-rezervasyon/${vehicleSlug}/tursuz`;
     }
-    // İlk turu slug olarak kullan
     const firstService = selectedServices[0];
     const tourSlug = `${createSlug(firstService.name)}-${firstService.id}`;
     const baseUrl = `/transfer-rezervasyon/${vehicleSlug}/${tourSlug}`;
 
-    // Birden fazla tur seçilmişse, ek turları query param olarak ekle
     if (selectedServices.length > 1) {
       const extraTourIds = selectedServices.slice(1).map(s => s.id).join(',');
       return `${baseUrl}?extraTours=${extraTourIds}`;
@@ -426,10 +489,15 @@ function TransferCard({
 
         {/* Content */}
         <CardContent className="p-4">
-          {/* Vehicle Title */}
-          <h3 className="font-semibold text-slate-900 text-sm line-clamp-1 group-hover:text-cyan-700 transition-colors">
-            {transfer.vehicleName || vehicleLabel}
-          </h3>
+          {/* Vehicle Title + Rehber Dahil Badge */}
+          <div className="flex items-center justify-between gap-2">
+            <h3 className="font-semibold text-slate-900 text-sm line-clamp-1 group-hover:text-cyan-700 transition-colors">
+              {transfer.vehicleName || vehicleLabel}
+            </h3>
+            <Badge className="bg-gradient-to-r from-emerald-500 to-green-500 text-white border-0 text-[10px] font-bold px-2 py-0.5 shadow-sm shrink-0">
+              Rehber Dahil
+            </Badge>
+          </div>
 
           {/* Route */}
           <div className="mt-1.5 flex items-center gap-1.5 text-xs text-slate-500">
@@ -454,34 +522,36 @@ function TransferCard({
           </div>
 
           {/* Rating + Price Row */}
-          <div className="mt-3 pt-3 border-t border-slate-100 flex items-end justify-between">
-            <div className="flex items-center gap-1">
-              {transfer.rating > 0 ? (
-                <>
-                  <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                  <span className="text-xs font-medium text-slate-700">
-                    {transfer.rating.toFixed(1)}
-                  </span>
-                  {transfer.reviewCount > 0 ? (
-                    <span className="text-[10px] text-slate-400">({transfer.reviewCount})</span>
-                  ) : null}
-                </>
-              ) : (
-                <span className="text-[10px] text-slate-400">Yeni</span>
-              )}
-            </div>
-            <div className="text-right">
-              <p className="text-[9px] text-slate-400 uppercase tracking-wider">
-                {priceLabel}
-              </p>
-              <p className="text-base font-bold text-cyan-700 leading-tight">
-                {formattedPrice}
-              </p>
-              {priceSubtext && (
-                <p className="text-[9px] text-slate-400 mt-0.5 max-w-[140px] line-clamp-2 text-right">
-                  {priceSubtext}
+          <div className="mt-3 pt-3 border-t border-slate-100">
+            <div className="flex items-end justify-between">
+              <div className="flex items-center gap-1">
+                {transfer.rating > 0 ? (
+                  <>
+                    <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                    <span className="text-xs font-medium text-slate-700">
+                      {transfer.rating.toFixed(1)}
+                    </span>
+                    {transfer.reviewCount > 0 ? (
+                      <span className="text-[10px] text-slate-400">({transfer.reviewCount})</span>
+                    ) : null}
+                  </>
+                ) : (
+                  <span className="text-[10px] text-slate-400">Yeni</span>
+                )}
+              </div>
+              <div className="text-right">
+                <p className="text-[9px] text-slate-400 uppercase tracking-wider">
+                  {priceLabel}
                 </p>
-              )}
+                <p className="text-base font-bold text-cyan-700 leading-tight">
+                  {formattedPrice}
+                </p>
+                {priceSubtext && (
+                  <p className="text-[9px] text-slate-400 mt-0.5 max-w-[140px] line-clamp-2 text-right">
+                    {priceSubtext}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </CardContent>

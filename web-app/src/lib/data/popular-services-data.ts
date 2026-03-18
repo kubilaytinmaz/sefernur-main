@@ -45,29 +45,29 @@ const DEFAULT_POPULAR_SERVICES: PopularServiceModel[] = [
   {
     id: 'service-city-tour-makkah',
     type: 'tour',
-    name: 'Mekke Şehir Turu',
+    name: 'Mekke Çevre Ziyareti',
     description: 'Mekke ve çevresindeki tarihi ve dini mekanları kapsayan rehberli tur',
     icon: '🕌',
     duration: {
-      hours: 4,
-      text: '4 saat'
+      hours: 6,
+      text: '6 saat'
     },
     distance: {
-      km: 50,
-      text: '50 km'
+      km: 80,
+      text: '80 km'
     },
     price: {
-      display: '$133\'den',
-      baseAmount: 133,
+      display: '$67\'den',
+      baseAmount: 67,
       type: 'fixed'
     },
     vehiclePrices: {
-      sedan: 107,
-      van: 133,
-      bus: 160,
-      vip: 213,
-      jeep: 187,
-      coster: 147
+      sedan: 67,
+      van: 75,
+      bus: 200,
+      vip: 107,
+      jeep: 107,
+      coster: 120
     },
     isPopular: true,
     createdAt: new Date('2024-01-01'),
@@ -76,29 +76,29 @@ const DEFAULT_POPULAR_SERVICES: PopularServiceModel[] = [
   {
     id: 'service-city-tour-madinah',
     type: 'tour',
-    name: 'Medine Şehir Turu',
+    name: 'Medine Çevre Ziyareti',
     description: 'Medine ve çevresindeki tarihi ve dini mekanları kapsayan rehberli tur',
     icon: '🕌',
     duration: {
-      hours: 4,
-      text: '4 saat'
+      hours: 6,
+      text: '6 saat'
     },
     distance: {
-      km: 40,
-      text: '40 km'
+      km: 70,
+      text: '70 km'
     },
     price: {
-      display: '$133\'den',
-      baseAmount: 133,
+      display: '$61\'den',
+      baseAmount: 61,
       type: 'fixed'
     },
     vehiclePrices: {
-      sedan: 107,
-      van: 133,
-      bus: 160,
-      vip: 213,
-      jeep: 187,
-      coster: 147
+      sedan: 61,
+      van: 67,
+      bus: 187,
+      vip: 93,
+      jeep: 93,
+      coster: 107
     },
     isPopular: true,
     createdAt: new Date('2024-01-01'),
@@ -119,17 +119,17 @@ const DEFAULT_POPULAR_SERVICES: PopularServiceModel[] = [
       text: '-'
     },
     price: {
-      display: '$267',
-      baseAmount: 267,
+      display: '$120\'den',
+      baseAmount: 120,
       type: 'fixed'
     },
     vehiclePrices: {
-      sedan: 213,
-      van: 267,
-      bus: 320,
-      vip: 400,
-      jeep: 293,
-      coster: 280
+      sedan: 120,
+      van: 160,
+      bus: 347,
+      vip: 227,
+      jeep: 227,
+      coster: 187
     },
     isPopular: true,
     createdAt: new Date('2024-01-01'),
@@ -150,27 +150,27 @@ const DEFAULT_POPULAR_SERVICES: PopularServiceModel[] = [
       text: '240 km (gidiş-dönüş)'
     },
     price: {
-      display: '$213\'den',
-      baseAmount: 213,
+      display: '$93\'den',
+      baseAmount: 93,
       type: 'fixed'
     },
     vehiclePrices: {
-      sedan: 187,
-      van: 213,
-      bus: 240,
-      vip: 320,
-      jeep: 253,
-      coster: 227
+      sedan: 93,
+      van: 107,
+      bus: 267,
+      vip: 213,
+      jeep: 213,
+      coster: 133
     },
-    isPopular: false,
+    isPopular: true,
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01')
   },
   {
     id: 'service-jeddah-city-tour',
     type: 'tour',
-    name: 'Jeddah Şehir Turu',
-    description: 'Jeddah tarihi merkez ve sahil bölgesi turu',
+    name: 'Cidde Şehir Turu',
+    description: 'Cidde tarihi merkez ve sahil bölgesi turu',
     icon: '🏙️',
     duration: {
       hours: 5,
@@ -181,79 +181,17 @@ const DEFAULT_POPULAR_SERVICES: PopularServiceModel[] = [
       text: '60 km'
     },
     price: {
-      display: '$160\'den',
-      baseAmount: 160,
+      display: '$93\'den',
+      baseAmount: 93,
       type: 'fixed'
     },
     vehiclePrices: {
-      sedan: 133,
-      van: 160,
-      bus: 187,
-      vip: 240,
-      jeep: 200,
-      coster: 173
-    },
-    isPopular: true,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01')
-  },
-  {
-    id: 'service-ziyarat-makkah',
-    type: 'tour',
-    name: 'Mekke Ziyaret Turları',
-    description: 'Mekke civarındaki önemli ziyaret yerlerini kapsayan tur',
-    icon: '🗺️',
-    duration: {
-      hours: 6,
-      text: '6 saat'
-    },
-    distance: {
-      km: 80,
-      text: '80 km'
-    },
-    price: {
-      display: '$187\'den',
-      baseAmount: 187,
-      type: 'fixed'
-    },
-    vehiclePrices: {
-      sedan: 160,
-      van: 187,
-      bus: 213,
-      vip: 267,
-      jeep: 227,
-      coster: 200
-    },
-    isPopular: true,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01')
-  },
-  {
-    id: 'service-ziyarat-madinah',
-    type: 'tour',
-    name: 'Medine Ziyaret Turları',
-    description: 'Medine civarındaki önemli ziyaret yerlerini kapsayan tur',
-    icon: '🗺️',
-    duration: {
-      hours: 6,
-      text: '6 saat'
-    },
-    distance: {
-      km: 70,
-      text: '70 km'
-    },
-    price: {
-      display: '$187\'den',
-      baseAmount: 187,
-      type: 'fixed'
-    },
-    vehiclePrices: {
-      sedan: 160,
-      van: 187,
-      bus: 213,
-      vip: 267,
-      jeep: 227,
-      coster: 200
+      sedan: 93,
+      van: 107,
+      bus: 267,
+      vip: 213,
+      jeep: 213,
+      coster: 147
     },
     isPopular: true,
     createdAt: new Date('2024-01-01'),
@@ -274,17 +212,17 @@ const DEFAULT_POPULAR_SERVICES: PopularServiceModel[] = [
       text: '-'
     },
     price: {
-      display: '$400',
-      baseAmount: 400,
+      display: '$120\'den',
+      baseAmount: 120,
       type: 'fixed'
     },
     vehiclePrices: {
-      sedan: 320,
-      van: 400,
-      bus: 480,
-      vip: 587,
-      jeep: 453,
-      coster: 427
+      sedan: 120,
+      van: 160,
+      bus: 347,
+      vip: 227,
+      jeep: 227,
+      coster: 187
     },
     isPopular: false,
     createdAt: new Date('2024-01-01'),
@@ -305,17 +243,17 @@ const DEFAULT_POPULAR_SERVICES: PopularServiceModel[] = [
       text: '100 km'
     },
     price: {
-      display: '$133\'den',
-      baseAmount: 133,
+      display: '$67\'den',
+      baseAmount: 67,
       type: 'fixed'
     },
     vehiclePrices: {
-      sedan: 107,
-      van: 133,
-      bus: 160,
-      vip: 213,
-      jeep: 187,
-      coster: 147
+      sedan: 67,
+      van: 93,
+      bus: 267,
+      vip: 133,
+      jeep: 133,
+      coster: 120
     },
     route: {
       from: 'Havalimanı',
@@ -340,21 +278,94 @@ const DEFAULT_POPULAR_SERVICES: PopularServiceModel[] = [
       text: '400 km'
     },
     price: {
-      display: '$267\'den',
-      baseAmount: 267,
+      display: '$120\'den',
+      baseAmount: 120,
       type: 'fixed'
     },
     vehiclePrices: {
-      sedan: 213,
-      van: 267,
-      bus: 320,
-      vip: 400,
-      jeep: 293,
-      coster: 280
+      sedan: 120,
+      van: 160,
+      bus: 347,
+      vip: 227,
+      jeep: 227,
+      coster: 187
     },
     route: {
       from: 'Mekke',
       to: 'Medine'
+    },
+    isPopular: true,
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-01')
+  },
+  {
+    id: 'service-complete-tour-package',
+    type: 'tour',
+    name: 'Tüm Tur Paketi',
+    description: 'Mekke, Medine, Taif ve Cidde\'yi kapsayan kapsamlı 4 günlük tur paketi - Tüm kutsal mekanları keşfedin',
+    icon: '🌟',
+    duration: {
+      hours: 25,
+      text: '4 gün (25 saat)'
+    },
+    distance: {
+      km: 450,
+      text: '450 km (toplam)'
+    },
+    price: {
+      display: '$314\'den',
+      baseAmount: 314,
+      type: 'fixed'
+    },
+    vehiclePrices: {
+      sedan: 314,
+      van: 347,
+      bus: 933,
+      vip: 626,
+      jeep: 626,
+      coster: 466
+    },
+    tourDetails: {
+      highlights: [
+        'Mekke Çevre Ziyareti',
+        'Medine Çevre Ziyareti',
+        'Taif Günübirlik Turu',
+        'Cidde Şehir Turu',
+        'Kabe ve Mescid-i Haram',
+        'Mescid-i Nebevi',
+        'Cidde Tarihi Bölge',
+        'Taif Dağları ve Bahçeleri'
+      ],
+      includes: [
+        '4 günlük rehberli tur',
+        'Tüm giriş ücretleri',
+        'Klimalı araç',
+        'Profesyonel rehber',
+        'Otellerden alış-bırakış',
+        'Su servisi',
+        'Özel tur programı'
+      ],
+      minParticipants: 2,
+      maxParticipants: 45,
+      fullDescription: 'Bu kapsamlı tur paketi ile Suudi Arabistan\'ın en önemli dini ve tarihi mekanlarını 4 günde keşfedin. Mekke\'de Kabe ve Mescid-i Haram\'ı ziyaret edin, Medine\'de Mescid-i Nebevi\'nin huzurunu yaşayın, Taif\'in serin dağlarında vakit geçirin ve Cidde\'nin tarihi sokaklarında gezinin. Profesyonel rehberlerimiz eşliğinde unutulmaz bir deneyim yaşayacaksınız.',
+      stopsDescription: [
+        {
+          stopName: '1. Gün - Mekke Çevre Ziyareti',
+          description: 'Mekke ve çevresindeki tarihi ve dini mekanları kapsayan rehberli tur. Kabe, Mescid-i Haram, Arafat, Mina ve Muzdelife ziyaretleri.'
+        },
+        {
+          stopName: '2. Gün - Medine Çevre Ziyareti',
+          description: 'Medine ve çevresindeki tarihi ve dini mekanları kapsayan rehberli tur. Mescid-i Nebevi, Kuba Mescidi, Kıbleteyn Mescidi ve Uhud Dağı ziyaretleri.'
+        },
+        {
+          stopName: '3. Gün - Taif Günübirlik Turu',
+          description: 'Taif şehrini kapsayan günübirlik tur. Taif dağları, tarihi çarşı, rose bahçeleri ve Şeddan sarayı ziyaretleri.'
+        },
+        {
+          stopName: '4. Gün - Cidde Şehir Turu',
+          description: 'Cidde tarihi merkez ve sahil bölgesi turu. Al-Balad tarihi bölge, Corniche sahil yolu ve Naseef Evi ziyaretleri.'
+        }
+      ]
     },
     isPopular: true,
     createdAt: new Date('2024-01-01'),

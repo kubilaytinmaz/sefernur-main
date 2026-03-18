@@ -4,7 +4,6 @@ import { Column, DataTable } from "@/components/admin/DataTable";
 import { Pagination } from "@/components/admin/Pagination";
 import { SearchInput } from "@/components/admin/SearchInput";
 import { StatCard } from "@/components/admin/StatCard";
-import { formatTlSarPair, sarToTry } from "@/lib/currency";
 import { deleteTransfer, getAllTransfers, updateTransfer } from "@/lib/data/transfers-data";
 import { displayAddress } from "@/types/address";
 import { TransferModel, amenityLabels, vehicleTypeLabels } from "@/types/transfer";
@@ -20,7 +19,6 @@ import {
   Power,
   Star,
   Trash2,
-  TrendingUp,
   X
 } from "lucide-react";
 import Link from "next/link";
@@ -30,17 +28,15 @@ const PAGE_SIZE = 15;
 
 // ─── Filter Types ─────────────────────────────────────────────────────────
 type CapacityRange = "all" | "1-4" | "5-8" | "9-15" | "16+";
-type PriceRange = "all" | "0-1000" | "1000-3000" | "3000-5000" | "5000+";
 type PopularFilter = "all" | "popular" | "not-popular";
 type ActiveFilter = "all" | "active" | "inactive";
-type SortField = "price" | "capacity" | "name" | "rating" | "createdAt";
+type SortField = "capacity" | "name" | "rating" | "createdAt";
 type SortDirection = "asc" | "desc";
 
 interface TransferFilters {
   search: string;
   vehicleType: string;
   capacityRange: CapacityRange;
-  priceRange: PriceRange;
   fromCity: string;
   toCity: string;
   popularFilter: PopularFilter;
@@ -57,7 +53,6 @@ const initialFilters: TransferFilters = {
   search: "",
   vehicleType: "",
   capacityRange: "all",
-  priceRange: "all",
   fromCity: "",
   toCity: "",
   popularFilter: "all",
@@ -78,13 +73,6 @@ function getCapacityRange(capacity: number): CapacityRange {
   return "16+";
 }
 
-function getPriceRange(price: number): PriceRange {
-  if (price < 1000) return "0-1000";
-  if (price < 3000) return "1000-3000";
-  if (price < 5000) return "3000-5000";
-  return "5000+";
-}
-
 function extractCity(address: string): string {
   const parts = address.split(",").map((p) => p.trim().toLowerCase());
   return parts.find((p) => p.length > 2 && p.length < 20) || "";
@@ -93,11 +81,9 @@ function extractCity(address: string): string {
 function exportToCSV(transfers: TransferModel[]) {
   const headers = [
     "ID",
-    "Güzergah",
     "Araç Tipi",
     "Araç Adı",
     "Kapasite",
-    "Fiyat",
     "Firma",
     "Puan",
     "Aktif",
@@ -106,11 +92,9 @@ function exportToCSV(transfers: TransferModel[]) {
 
   const rows = transfers.map((t) => [
     t.id,
-    `${displayAddress(t.fromAddress)} → ${displayAddress(t.toAddress)}`,
     vehicleTypeLabels[t.vehicleType] || t.vehicleType,
     t.vehicleName,
     t.capacity.toString(),
-    t.basePrice.toString(),
     t.company,
     t.rating.toString(),
     t.isActive ? "Evet" : "Hayır",
@@ -165,9 +149,6 @@ export default function AdminTransfersPage() {
       total: data.length,
       active: data.filter((t) => t.isActive).length,
       popular: data.filter((t) => t.isPopular).length,
-      avgPrice: data.length > 0
-        ? Math.round(data.reduce((sum, t) => sum + t.basePrice, 0) / data.length)
-        : 0,
       avgRating: data.length > 0
         ? (data.reduce((sum, t) => sum + t.rating, 0) / data.length).toFixed(1)
         : "0.0",
@@ -216,11 +197,6 @@ export default function AdminTransfersPage() {
       items = items.filter((t) => getCapacityRange(t.capacity) === filters.capacityRange);
     }
 
-    // Price range filter
-    if (filters.priceRange !== "all") {
-      items = items.filter((t) => getPriceRange(t.basePrice) === filters.priceRange);
-    }
-
     // City filters
     if (filters.fromCity) {
       items = items.filter((t) =>
@@ -256,9 +232,6 @@ export default function AdminTransfersPage() {
     items.sort((a, b) => {
       let comparison = 0;
       switch (sort.field) {
-        case "price":
-          comparison = a.basePrice - b.basePrice;
-          break;
         case "capacity":
           comparison = a.capacity - b.capacity;
           break;
@@ -401,16 +374,6 @@ export default function AdminTransfersPage() {
       className: "w-12",
     },
     {
-      key: "route",
-      header: "Güzergah",
-      render: (t) => (
-        <div className="max-w-[200px]">
-          <p className="truncate text-sm font-medium text-gray-900">{displayAddress(t.fromAddress)}</p>
-          <p className="truncate text-xs text-gray-500">→ {displayAddress(t.toAddress)}</p>
-        </div>
-      ),
-    },
-    {
       key: "vehicle",
       header: "Araç",
       render: (t) => (
@@ -419,15 +382,6 @@ export default function AdminTransfersPage() {
           <p className="text-xs text-gray-500">{vehicleTypeLabels[t.vehicleType] ?? t.vehicleType}</p>
         </div>
       ),
-    },
-    {
-      key: "price",
-      header: "Fiyat",
-      render: (t) => {
-        // TL'ye çevir ve USD ile birlikte göster
-        const priceTl = sarToTry(t.basePrice);
-        return <span className="font-medium">{formatTlSarPair(priceTl, t.basePrice)}</span>;
-      },
     },
     {
       key: "capacity",
@@ -563,13 +517,6 @@ export default function AdminTransfersPage() {
           iconBg="bg-amber-50"
         />
         <StatCard
-          title="Ortalama Fiyat"
-          value={`₺${stats.avgPrice.toLocaleString("tr-TR")}`}
-          icon={TrendingUp}
-          iconColor="text-purple-600"
-          iconBg="bg-purple-50"
-        />
-        <StatCard
           title="Ortalama Puan"
           value={stats.avgRating}
           icon={Star}
@@ -599,14 +546,13 @@ export default function AdminTransfersPage() {
           Filtreler
           {(filters.vehicleType ||
             filters.capacityRange !== "all" ||
-            filters.priceRange !== "all" ||
             filters.fromCity ||
             filters.toCity ||
             filters.popularFilter !== "all" ||
             filters.activeFilter !== "all" ||
             filters.company) && (
             <span className="ml-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-xs text-white">
-              {[filters.vehicleType, filters.capacityRange !== "all", filters.priceRange !== "all", filters.fromCity, filters.toCity, filters.popularFilter !== "all", filters.activeFilter !== "all", filters.company].filter(Boolean).length}
+              {[filters.vehicleType, filters.capacityRange !== "all", filters.fromCity, filters.toCity, filters.popularFilter !== "all", filters.activeFilter !== "all", filters.company].filter(Boolean).length}
             </span>
           )}
         </button>
@@ -665,22 +611,6 @@ export default function AdminTransfersPage() {
                 <option value="5-8">5-8 Kişi</option>
                 <option value="9-15">9-15 Kişi</option>
                 <option value="16+">16+ Kişi</option>
-              </select>
-            </div>
-
-            {/* Price Range */}
-            <div>
-              <label className="mb-1.5 block text-xs font-medium text-gray-500">Fiyat Aralığı</label>
-              <select
-                value={filters.priceRange}
-                onChange={(e) => updateFilter("priceRange", e.target.value as PriceRange)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-              >
-                <option value="all">Tümü</option>
-                <option value="0-1000">₺0 - ₺1.000</option>
-                <option value="1000-3000">₺1.000 - ₺3.000</option>
-                <option value="3000-5000">₺3.000 - ₺5.000</option>
-                <option value="5000+">₺5.000+</option>
               </select>
             </div>
 
@@ -769,7 +699,6 @@ export default function AdminTransfersPage() {
             <label className="mb-2 block text-xs font-medium text-gray-500">Sıralama</label>
             <div className="flex flex-wrap gap-2">
               {[
-                { field: "price" as SortField, label: "Fiyat" },
                 { field: "capacity" as SortField, label: "Kapasite" },
                 { field: "name" as SortField, label: "İsim" },
                 { field: "rating" as SortField, label: "Puan" },
@@ -904,27 +833,6 @@ export default function AdminTransfersPage() {
                 </div>
               )}
 
-              {/* Route */}
-              <div className="rounded-xl bg-gray-50 p-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex-1">
-                    <p className="text-xs font-medium text-gray-500">Kalkış</p>
-                    <p className="text-sm font-medium text-gray-900">
-                      {displayAddress(previewTransfer.fromAddress)}
-                    </p>
-                  </div>
-                  <div className="flex-shrink-0">
-                    <Plane className="h-5 w-5 text-emerald-500" />
-                  </div>
-                  <div className="flex-1 text-right">
-                    <p className="text-xs font-medium text-gray-500">Varış</p>
-                    <p className="text-sm font-medium text-gray-900">
-                      {displayAddress(previewTransfer.toAddress)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
               {/* Vehicle Info */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -944,12 +852,6 @@ export default function AdminTransfersPage() {
                 <div>
                   <p className="text-xs font-medium text-gray-500">Bagaj Kapasitesi</p>
                   <p className="text-sm font-semibold text-gray-900">{previewTransfer.luggageCapacity} adet</p>
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-gray-500">Fiyat</p>
-                  <p className="text-lg font-bold text-emerald-600">
-                    ₺{previewTransfer.basePrice.toLocaleString("tr-TR")}
-                  </p>
                 </div>
                 <div>
                   <p className="text-xs font-medium text-gray-500">Puan</p>

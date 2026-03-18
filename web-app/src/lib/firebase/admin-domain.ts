@@ -296,6 +296,126 @@ export async function getReservationStats(): Promise<ReservationStats> {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
+// TRANSFER RESERVATIONS
+// ═══════════════════════════════════════════════════════════════════════
+
+export interface TransferReservationFilters extends Omit<ReservationFilters, "type"> {
+  transferId?: string;
+  includeTours?: boolean;
+}
+
+export async function getTransferReservations(
+  filters?: TransferReservationFilters,
+): Promise<ReservationModel[]> {
+  const constraints: QueryConstraint[] = [];
+
+  // Sadece transfer ve transfer_tour tipindeki rezervasyonları getir
+  constraints.push(where("type", "in", ["transfer", "transfer_tour"]));
+
+  if (filters?.status) constraints.push(where("status", "==", filters.status));
+  if (filters?.source) constraints.push(where("source", "==", filters.source));
+  if (filters?.maxResults) constraints.push(limit(filters.maxResults));
+
+  const items = await fetchAll(COLLECTIONS.RESERVATIONS, constraints, mapReservation);
+
+  let filtered = items;
+
+  // Transfer ID filtresi (meta içinde transferId kontrolü)
+  if (filters?.transferId) {
+    filtered = filtered.filter((r) =>
+      r.meta?.transferId === filters.transferId
+    );
+  }
+
+  // Tur içeren rezervasyonları filtrele
+  if (filters?.includeTours === false) {
+    filtered = filtered.filter((r) => r.type === "transfer");
+  } else if (filters?.includeTours === true) {
+    filtered = filtered.filter((r) => r.type === "transfer_tour");
+  }
+
+  // Tarih filtreleri
+  if (filters?.startAfter) {
+    filtered = filtered.filter((r) => r.startDate >= filters.startAfter!);
+  }
+  if (filters?.startBefore) {
+    filtered = filtered.filter((r) => r.startDate <= filters.startBefore!);
+  }
+
+  return sortByCreatedAtDesc(filtered);
+}
+
+export async function getReservationsByTransferId(
+  transferId: string,
+): Promise<ReservationModel[]> {
+  return getTransferReservations({ transferId });
+}
+
+export interface TransferReservationStats extends ReservationStats {
+  transferOnly: number;
+  transferWithTour: number;
+  todayReservations: number;
+  upcomingReservations: number;
+  averagePrice: number;
+}
+
+export async function getTransferReservationStats(): Promise<TransferReservationStats> {
+  const all = await getTransferReservations();
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const stats: TransferReservationStats = {
+    total: all.length,
+    pending: 0,
+    confirmed: 0,
+    cancelled: 0,
+    completed: 0,
+    totalRevenue: 0,
+    transferOnly: 0,
+    transferWithTour: 0,
+    todayReservations: 0,
+    upcomingReservations: 0,
+    averagePrice: 0,
+  };
+
+  let totalPrice = 0;
+
+  for (const r of all) {
+    stats[r.status]++;
+    
+    if (r.status === "confirmed" || r.status === "completed") {
+      stats.totalRevenue += r.price;
+    }
+
+    if (r.type === "transfer") {
+      stats.transferOnly++;
+    } else if (r.type === "transfer_tour") {
+      stats.transferWithTour++;
+    }
+
+    // Bugünkü rezervasyonlar
+    if (r.startDate >= today && r.startDate < tomorrow) {
+      stats.todayReservations++;
+    }
+
+    // Gelecek rezervasyonlar (bugünden sonra)
+    if (r.startDate >= tomorrow) {
+      stats.upcomingReservations++;
+    }
+
+    totalPrice += r.price;
+  }
+
+  if (all.length > 0) {
+    stats.averagePrice = totalPrice / all.length;
+  }
+
+  return stats;
+}
+
+// ═══════════════════════════════════════════════════════════════════════
 // USERS
 // ═══════════════════════════════════════════════════════════════════════
 

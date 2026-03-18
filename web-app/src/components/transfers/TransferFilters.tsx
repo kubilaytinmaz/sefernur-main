@@ -1,24 +1,23 @@
-// Transfer Filtreleme Bileşeni - Oteller sayfasındaki gibi
+// Transfer Filtreleme Bileşeni - Modern Tasarım
 // Araç tipi, kapasite, fiyat aralığı ve özelliklere göre filtreleme
+// Otel filtreleri ile tutarlı, modern ve kullanıcı dostu tasarım
 
 "use client";
 
-import { amenityLabels, VehicleAmenity, VehicleType, vehicleTypeLabels } from "@/types/transfer";
-import {
-    Bluetooth,
-    Car,
-    ChevronDown,
-    ChevronUp,
-    DollarSign,
-    Shield,
-    SlidersHorizontal,
-    Tv,
-    Usb,
-    Users,
-    Wifi,
-    Wind
-} from "lucide-react";
-import { useState } from "react";
+import { Badge } from "@/components/ui/Badge";
+import { cn } from "@/lib/utils";
+import { VehicleAmenity, VehicleType } from "@/types/transfer";
+import { ChevronDown, Filter, SlidersHorizontal, X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+// Alt bileşenler
+import { AmenitiesFilter } from "./filters/AmenitiesFilter";
+import { CapacityFilter } from "./filters/CapacityFilter";
+import { PriceRangeSlider } from "./filters/PriceRangeSlider";
+import { SortOptions } from "./filters/SortOptions";
+import { VehicleTypeFilter } from "./filters/VehicleTypeFilter";
+
+/* ────────── Types ────────── */
 
 export interface TransferFiltersState {
   vehicleTypes: VehicleType[];
@@ -34,35 +33,53 @@ interface TransferFiltersProps {
   resultCount: number;
   minPrice?: number;
   maxPrice?: number;
+  prices?: number[]; // Tüm fiyatlar - histogram için
+  passengerCount?: number; // URL'den gelen yolcu sayısı
+  isOpen?: boolean; // Mobile için
+  onToggle?: () => void;
 }
 
-const CAPACITY_OPTIONS = [
-  { label: '1-3 Kişi', min: 1, max: 3 },
-  { label: '4-6 Kişi', min: 4, max: 6 },
-  { label: '7-10 Kişi', min: 7, max: 10 },
-  { label: '11-20 Kişi', min: 11, max: 20 },
-  { label: '20+ Kişi', min: 20, max: 999 },
-];
+/* ────────── Helper Functions ────────── */
 
-const SORT_OPTIONS = [
-  { value: 'price-asc', label: 'Fiyat (Artan)' },
-  { value: 'price-desc', label: 'Fiyat (Azalan)' },
-  { value: 'capacity-asc', label: 'Kapasite (Artan)' },
-  { value: 'rating-desc', label: 'Değerlendirme' },
-];
+/**
+ * Yolcu sayısına göre varsayılan kapasite aralığı
+ */
+function getCapacityRangeForPassengers(passengers: number): { min: number; max: number } {
+  if (passengers <= 3) return { min: 1, max: 999 };
+  if (passengers <= 6) return { min: 4, max: 999 };
+  if (passengers <= 10) return { min: 7, max: 999 };
+  if (passengers <= 20) return { min: 11, max: 999 };
+  return { min: 20, max: 999 };
+}
 
-const AMENITY_ICONS: Record<VehicleAmenity, React.ReactNode> = {
-  insurance: <Shield className="w-4 h-4" />,
-  air_condition: <Wind className="w-4 h-4" />,
-  wifi: <Wifi className="w-4 h-4" />,
-  comfort: <Car className="w-4 h-4" />,
-  usb: <Usb className="w-4 h-4" />,
-  water: <DollarSign className="w-4 h-4" />,
-  snacks: <DollarSign className="w-4 h-4" />,
-  tv: <Tv className="w-4 h-4" />,
-  bluetooth: <Bluetooth className="w-4 h-4" />,
-  gps: <DollarSign className="w-4 h-4" />,
-};
+/* ────────── Active Filters Badge ────────── */
+
+function ActiveFiltersBadge({
+  filters,
+  passengerCount = 1,
+}: {
+  filters: TransferFiltersState;
+  passengerCount?: number;
+}) {
+  const defaultCapacity = getCapacityRangeForPassengers(passengerCount);
+  
+  const count = [
+    filters.vehicleTypes.length > 0,
+    filters.capacityRange.min !== defaultCapacity.min || filters.capacityRange.max !== defaultCapacity.max,
+    filters.priceRange.min > 0,
+    filters.amenities.length > 0,
+  ].filter(Boolean).length;
+
+  if (count === 0) return null;
+
+  return (
+    <Badge className="bg-cyan-100 text-cyan-700 border border-cyan-200 text-xs font-medium">
+      {count} aktif
+    </Badge>
+  );
+}
+
+/* ────────── Main Component ────────── */
 
 export function TransferFilters({
   filters,
@@ -70,266 +87,165 @@ export function TransferFilters({
   resultCount,
   minPrice = 0,
   maxPrice = 500,
+  prices = [],
+  passengerCount = 1,
+  isOpen,
+  onToggle,
 }: TransferFiltersProps) {
-  const [expandedSections, setExpandedSections] = useState({
-    vehicleType: true,
-    capacity: true,
-    price: true,
-    amenities: false,
-    sort: false,
-  });
+  const [localFilters, setLocalFilters] = useState<TransferFiltersState>(filters);
+  const ref = useRef<HTMLDivElement>(null);
 
-  const toggleSection = (section: keyof typeof expandedSections) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section],
-    }));
-  };
+  // State senkronizasyonu - parent'tan gelen filters değiştiğinde localFilters'ı güncelle
+  useEffect(() => {
+    setLocalFilters(filters);
+  }, [filters]);
 
-  const toggleVehicleType = (type: VehicleType) => {
-    const newTypes = filters.vehicleTypes.includes(type)
-      ? filters.vehicleTypes.filter(t => t !== type)
-      : [...filters.vehicleTypes, type];
-    onChange({ ...filters, vehicleTypes: newTypes });
-  };
+  // Dinamik varsayılan fiyat aralığı
+  const defaultPriceRange = useMemo(() => {
+    if (prices.length === 0) return [minPrice, maxPrice] as [number, number];
+    const actualMin = Math.min(...prices);
+    const actualMax = Math.max(...prices);
+    return [actualMin, actualMax] as [number, number];
+  }, [prices, minPrice, maxPrice]);
 
-  const toggleCapacity = (min: number, max: number) => {
-    const isSame = filters.capacityRange.min === min && filters.capacityRange.max === max;
-    onChange({
-      ...filters,
-      capacityRange: isSame ? { min: 0, max: 999 } : { min, max },
-    });
-  };
+  // İlk yüklemede fiyat aralığı yoksa varsayılanı kullan
+  useEffect(() => {
+    if (prices.length > 0 && localFilters.priceRange.min === 0 && localFilters.priceRange.max === 500) {
+      setLocalFilters(prev => ({
+        ...prev,
+        priceRange: { min: defaultPriceRange[0], max: defaultPriceRange[1] }
+      }));
+    }
+  }, [defaultPriceRange, prices, localFilters.priceRange]);
 
-  const toggleAmenity = (amenity: VehicleAmenity) => {
-    const newAmenities = filters.amenities.includes(amenity)
-      ? filters.amenities.filter(a => a !== amenity)
-      : [...filters.amenities, amenity];
-    onChange({ ...filters, amenities: newAmenities });
-  };
+  const updateFilter = useCallback(
+    <K extends keyof TransferFiltersState>(key: K, value: TransferFiltersState[K]) => {
+      const newFilters = { ...localFilters, [key]: value };
+      setLocalFilters(newFilters);
+      onChange(newFilters);
+    },
+    [localFilters, onChange],
+  );
 
-  const clearFilters = () => {
-    onChange({
+  const clearFilters = useCallback(() => {
+    const cleared: TransferFiltersState = {
       vehicleTypes: [],
-      capacityRange: { min: 0, max: 999 },
-      priceRange: { min: minPrice, max: maxPrice },
+      capacityRange: getCapacityRangeForPassengers(passengerCount),
+      priceRange: { min: defaultPriceRange[0], max: defaultPriceRange[1] },
       amenities: [],
       sortBy: 'price-asc',
-    });
-  };
+    };
+    setLocalFilters(cleared);
+    onChange(cleared);
+  }, [onChange, defaultPriceRange, passengerCount]);
 
-  const hasActiveFilters = 
-    filters.vehicleTypes.length > 0 ||
-    filters.capacityRange.min > 0 ||
-    filters.capacityRange.max < 999 ||
-    filters.amenities.length > 0;
+  const hasActiveFilters = useMemo(() => {
+    const defaultCapacity = getCapacityRangeForPassengers(passengerCount);
+    return (
+      localFilters.vehicleTypes.length > 0 ||
+      localFilters.capacityRange.min !== defaultCapacity.min ||
+      localFilters.capacityRange.max !== defaultCapacity.max ||
+      localFilters.amenities.length > 0
+    );
+  }, [localFilters, passengerCount]);
 
-  return (
+  const content = (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between pb-3 border-b border-slate-200">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="w-5 h-5 text-cyan-600" />
-          <h3 className="font-semibold text-slate-900">Filtreler</h3>
+          <SlidersHorizontal className="w-4 h-4 text-cyan-600" />
+          <h3 className="text-sm font-semibold text-slate-900">Filtreler</h3>
+          <ActiveFiltersBadge filters={localFilters} passengerCount={passengerCount} />
         </div>
         {hasActiveFilters && (
           <button
+            type="button"
             onClick={clearFilters}
-            className="text-xs text-cyan-600 hover:text-cyan-700 font-medium"
+            className="text-xs font-medium text-red-600 hover:text-red-700 flex items-center gap-1 cursor-pointer"
           >
+            <X className="w-3 h-3" />
             Temizle
           </button>
         )}
       </div>
 
-      {/* Sonuç Sayısı */}
-      <div className="text-sm text-slate-600">
-        {resultCount} araç bulundu
+      {/* Results Count */}
+      <div className="text-xs text-slate-600 bg-slate-50 rounded-lg px-3 py-2">
+        <span className="font-bold text-slate-900">{resultCount}</span> araç bulundu
       </div>
 
-      {/* Araç Tipi */}
-      <div className="border-b border-slate-100 pb-4">
+      {/* Price Range with Histogram */}
+      <PriceRangeSlider
+        value={[localFilters.priceRange.min, localFilters.priceRange.max]}
+        onChange={(value) => updateFilter("priceRange", { min: value[0], max: value[1] })}
+        prices={prices}
+      />
+
+      {/* Vehicle Type - Grid Cards */}
+      <VehicleTypeFilter
+        selected={localFilters.vehicleTypes}
+        onChange={(value) => updateFilter("vehicleTypes", value)}
+      />
+
+      {/* Capacity - Smart Range */}
+      <CapacityFilter
+        value={localFilters.capacityRange}
+        onChange={(value) => updateFilter("capacityRange", value)}
+        passengerCount={passengerCount}
+      />
+
+      {/* Amenities - Categorized */}
+      <AmenitiesFilter
+        selected={localFilters.amenities}
+        onChange={(value) => updateFilter("amenities", value)}
+      />
+
+      {/* Sort Options */}
+      <SortOptions
+        value={localFilters.sortBy}
+        onChange={(value) => updateFilter("sortBy", value)}
+      />
+    </div>
+  );
+
+  // Mobile: Collapsible
+  if (isOpen !== undefined) {
+    return (
+      <div className="lg:hidden" ref={ref}>
         <button
-          onClick={() => toggleSection('vehicleType')}
-          className="w-full flex items-center justify-between py-2"
+          type="button"
+          onClick={onToggle}
+          className={cn(
+            "w-full flex items-center justify-between gap-3 p-3.5 bg-white border rounded-xl transition-colors cursor-pointer",
+            hasActiveFilters ? "border-cyan-300 shadow-sm" : "border-slate-200 hover:border-cyan-300"
+          )}
         >
-          <span className="text-sm font-semibold text-slate-700">Araç Tipi</span>
-          {expandedSections.vehicleType ? (
-            <ChevronUp className="w-4 h-4 text-slate-400" />
+          <div className="flex items-center gap-2">
+            <Filter className="w-4 h-4 text-cyan-600" />
+            <span className="text-sm font-semibold text-slate-900">Filtreler</span>
+            <ActiveFiltersBadge filters={localFilters} passengerCount={passengerCount} />
+          </div>
+          {isOpen ? (
+            <ChevronDown className="w-4 h-4 text-slate-400 rotate-180" />
           ) : (
             <ChevronDown className="w-4 h-4 text-slate-400" />
           )}
         </button>
-        
-        {expandedSections.vehicleType && (
-          <div className="space-y-2 mt-2">
-            {(Object.entries(vehicleTypeLabels) as [VehicleType, string][]).map(([type, label]) => (
-              <label key={type} className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={filters.vehicleTypes.includes(type)}
-                  onChange={() => toggleVehicleType(type)}
-                  className="w-4 h-4 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500"
-                />
-                <span className="text-sm text-slate-700">{label}</span>
-              </label>
-            ))}
-          </div>
-        )}
-      </div>
 
-      {/* Kapasite */}
-      <div className="border-b border-slate-100 pb-4">
-        <button
-          onClick={() => toggleSection('capacity')}
-          className="w-full flex items-center justify-between py-2"
-        >
-          <span className="text-sm font-semibold text-slate-700">Kapasite</span>
-          {expandedSections.capacity ? (
-            <ChevronUp className="w-4 h-4 text-slate-400" />
-          ) : (
-            <ChevronDown className="w-4 h-4 text-slate-400" />
-          )}
-        </button>
-        
-        {expandedSections.capacity && (
-          <div className="space-y-2 mt-2">
-            {CAPACITY_OPTIONS.map((option) => {
-              const isSelected = filters.capacityRange.min === option.min && filters.capacityRange.max === option.max;
-              return (
-                <button
-                  key={option.label}
-                  onClick={() => toggleCapacity(option.min, option.max)}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                    isSelected
-                      ? 'bg-cyan-50 text-cyan-700 border border-cyan-200'
-                      : 'hover:bg-slate-50 text-slate-700 border border-transparent'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4" />
-                    {option.label}
-                  </div>
-                </button>
-              );
-            })}
+        {isOpen && (
+          <div className="mt-3 p-4 bg-white border border-slate-200 rounded-xl">
+            {content}
           </div>
         )}
       </div>
+    );
+  }
 
-      {/* Fiyat Aralığı */}
-      <div className="border-b border-slate-100 pb-4">
-        <button
-          onClick={() => toggleSection('price')}
-          className="w-full flex items-center justify-between py-2"
-        >
-          <span className="text-sm font-semibold text-slate-700">Fiyat Aralığı (USD)</span>
-          {expandedSections.price ? (
-            <ChevronUp className="w-4 h-4 text-slate-400" />
-          ) : (
-            <ChevronDown className="w-4 h-4 text-slate-400" />
-          )}
-        </button>
-        
-        {expandedSections.price && (
-          <div className="space-y-3 mt-2">
-            <div className="flex items-center gap-2">
-              <input
-                type="number"
-                min={minPrice}
-                max={maxPrice}
-                value={filters.priceRange.min}
-                onChange={(e) => onChange({
-                  ...filters,
-                  priceRange: { ...filters.priceRange, min: Number(e.target.value) }
-                })}
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
-                placeholder="Min"
-              />
-              <span className="text-slate-400">-</span>
-              <input
-                type="number"
-                min={minPrice}
-                max={maxPrice}
-                value={filters.priceRange.max}
-                onChange={(e) => onChange({
-                  ...filters,
-                  priceRange: { ...filters.priceRange, max: Number(e.target.value) }
-                })}
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
-                placeholder="Max"
-              />
-            </div>
-            <div className="text-xs text-slate-500">
-              ${filters.priceRange.min} - ${filters.priceRange.max}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Özellikler */}
-      <div className="border-b border-slate-100 pb-4">
-        <button
-          onClick={() => toggleSection('amenities')}
-          className="w-full flex items-center justify-between py-2"
-        >
-          <span className="text-sm font-semibold text-slate-700">Özellikler</span>
-          {expandedSections.amenities ? (
-            <ChevronUp className="w-4 h-4 text-slate-400" />
-          ) : (
-            <ChevronDown className="w-4 h-4 text-slate-400" />
-          )}
-        </button>
-        
-        {expandedSections.amenities && (
-          <div className="space-y-2 mt-2">
-            {(Object.entries(amenityLabels) as [VehicleAmenity, string][]).map(([amenity, label]) => (
-              <label key={amenity} className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={filters.amenities.includes(amenity)}
-                  onChange={() => toggleAmenity(amenity)}
-                  className="w-4 h-4 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500"
-                />
-                <span className="text-sm text-slate-700">{label}</span>
-              </label>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Sıralama */}
-      <div>
-        <button
-          onClick={() => toggleSection('sort')}
-          className="w-full flex items-center justify-between py-2"
-        >
-          <span className="text-sm font-semibold text-slate-700">Sıralama</span>
-          {expandedSections.sort ? (
-            <ChevronUp className="w-4 h-4 text-slate-400" />
-          ) : (
-            <ChevronDown className="w-4 h-4 text-slate-400" />
-          )}
-        </button>
-        
-        {expandedSections.sort && (
-          <div className="space-y-2 mt-2">
-            {SORT_OPTIONS.map((option) => (
-              <button
-                key={option.value}
-                onClick={() => onChange({ ...filters, sortBy: option.value as any })}
-                className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                  filters.sortBy === option.value
-                    ? 'bg-cyan-50 text-cyan-700 border border-cyan-200'
-                    : 'hover:bg-slate-50 text-slate-700 border border-transparent'
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
+  // Desktop: Always visible - Compact Design
+  return (
+    <div className="hidden lg:block p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+      {content}
     </div>
   );
 }

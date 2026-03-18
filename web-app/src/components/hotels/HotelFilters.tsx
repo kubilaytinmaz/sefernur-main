@@ -249,19 +249,19 @@ function PriceRangeSlider({
       </div>
 
       {/* Slider Track */}
-      <div 
+      <div
         ref={trackRef}
-        className="relative h-6 flex items-center"
+        className="relative h-6 flex items-center isolate"
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
       >
         {/* Background Track */}
-        <div className="absolute w-full h-1.5 bg-slate-200 rounded-full top-1/2 -translate-y-1/2" />
+        <div className="absolute w-full h-1.5 bg-slate-200 rounded-full top-1/2 -translate-y-1/2 z-0" />
         
         {/* Active Range */}
         <div
-          className="absolute h-1.5 bg-emerald-500 rounded-full top-1/2 -translate-y-1/2"
+          className="absolute h-1.5 bg-emerald-500 rounded-full top-1/2 -translate-y-1/2 z-0"
           style={{ left: `${minPercent}%`, width: `${maxPercent - minPercent}%` }}
         />
         
@@ -273,7 +273,7 @@ function PriceRangeSlider({
           step={step}
           value={min}
           onChange={handleMinChange}
-          className="absolute w-full h-full opacity-0 cursor-pointer z-10"
+          className="absolute w-full h-full opacity-0 cursor-pointer z-0"
           style={{ pointerEvents: isDragging === null ? "auto" : "none" }}
         />
         
@@ -284,17 +284,17 @@ function PriceRangeSlider({
           step={step}
           value={max}
           onChange={handleMaxChange}
-          className="absolute w-full h-full opacity-0 cursor-pointer z-10"
+          className="absolute w-full h-full opacity-0 cursor-pointer z-0"
           style={{ pointerEvents: isDragging === null ? "auto" : "none" }}
         />
         
         {/* Min Thumb */}
         <div
           className={cn(
-            "absolute w-4 h-4 bg-white border-2 border-emerald-500 rounded-full shadow-md z-20 cursor-grab active:cursor-grabbing transition-transform",
+            "absolute w-4 h-4 bg-white border-2 border-emerald-500 rounded-full shadow-md z-[1] cursor-grab active:cursor-grabbing transition-transform",
             isDragging === "min" && "scale-125"
           )}
-          style={{ 
+          style={{
             left: `calc(${minPercent}% - 8px)`,
             top: "50%",
             transform: "translateY(-50%)"
@@ -305,10 +305,10 @@ function PriceRangeSlider({
         {/* Max Thumb */}
         <div
           className={cn(
-            "absolute w-4 h-4 bg-white border-2 border-emerald-500 rounded-full shadow-md z-20 cursor-grab active:cursor-grabbing transition-transform",
+            "absolute w-4 h-4 bg-white border-2 border-emerald-500 rounded-full shadow-md z-[1] cursor-grab active:cursor-grabbing transition-transform",
             isDragging === "max" && "scale-125"
           )}
-          style={{ 
+          style={{
             left: `calc(${maxPercent}% - 8px)`,
             top: "50%",
             transform: "translateY(-50%)"

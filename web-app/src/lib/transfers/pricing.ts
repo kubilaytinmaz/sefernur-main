@@ -14,46 +14,46 @@ export interface TransferPricing {
 // Araç tipine göre fiyatlandırma (varsayılan, rota bazlı override edilir)
 export const VEHICLE_PRICING: Record<VehicleType, TransferPricing> = {
   sedan: {
-    basePrice: 40, // JED-Mekke baz fiyatı (~150 SAR)
-    pricePerKm: 0.07, // ~0.25 SAR/km
-    nightSurcharge: 5, // ~20 SAR
-    waitingFeePerHour: 3, // ~10 SAR
-    luggageFee: 1, // ~4 SAR
+    basePrice: 67, // JED-Mekke baz fiyatı (250 SAR → $67)
+    pricePerKm: 0.09, // ~0.33 SAR/km
+    nightSurcharge: 7, // ~25 SAR
+    waitingFeePerHour: 4, // ~15 SAR
+    luggageFee: 1, // ~5 SAR
   },
   van: {
-    basePrice: 53, // JED-Mekke baz fiyatı (~200 SAR)
-    pricePerKm: 0.10, // ~0.35 SAR/km
-    nightSurcharge: 8, // ~30 SAR
-    waitingFeePerHour: 4, // ~15 SAR
-    luggageFee: 1, // ~4 SAR
+    basePrice: 93, // JED-Mekke Staria fiyatı (350 SAR → $93)
+    pricePerKm: 0.12, // ~0.45 SAR/km
+    nightSurcharge: 9, // ~35 SAR
+    waitingFeePerHour: 5, // ~18 SAR
+    luggageFee: 1, // ~5 SAR
   },
   bus: {
-    basePrice: 133, // Büyük gruplar için (~500 SAR)
-    pricePerKm: 0.13, // ~0.5 SAR/km
-    nightSurcharge: 13, // ~50 SAR
-    waitingFeePerHour: 5, // ~20 SAR
+    basePrice: 267, // Otobüs (1000 SAR → $267)
+    pricePerKm: 0.20, // ~0.75 SAR/km
+    nightSurcharge: 27, // ~100 SAR
+    waitingFeePerHour: 7, // ~25 SAR
     luggageFee: 0, // Otobüste fazla bagaj ücreti yok
   },
   vip: {
-    basePrice: 80, // VIP araçlar (~300 SAR)
-    pricePerKm: 0.10, // ~0.4 SAR/km
-    nightSurcharge: 11, // ~40 SAR
-    waitingFeePerHour: 5, // ~20 SAR
+    basePrice: 133, // GMC VIP (500 SAR → $133)
+    pricePerKm: 0.15, // ~0.55 SAR/km
+    nightSurcharge: 13, // ~50 SAR
+    waitingFeePerHour: 7, // ~25 SAR
     luggageFee: 3, // ~10 SAR
   },
   jeep: {
-    basePrice: 53, // (~200 SAR)
-    pricePerKm: 0.08, // ~0.3 SAR/km
-    nightSurcharge: 7, // ~25 SAR
-    waitingFeePerHour: 3, // ~12 SAR
-    luggageFee: 1, // ~4 SAR
+    basePrice: 133, // Jeep = VIP fiyatı (500 SAR → $133)
+    pricePerKm: 0.15, // ~0.55 SAR/km
+    nightSurcharge: 13, // ~50 SAR
+    waitingFeePerHour: 7, // ~25 SAR
+    luggageFee: 3, // ~10 SAR
   },
   coster: {
-    basePrice: 67, // Toyota Hiace baz fiyatı (~250 SAR)
-    pricePerKm: 0.10, // ~0.4 SAR/km
-    nightSurcharge: 8, // ~30 SAR
-    waitingFeePerHour: 4, // ~15 SAR
-    luggageFee: 1, // ~4 SAR
+    basePrice: 120, // Toyota Haice (450 SAR → $120)
+    pricePerKm: 0.14, // ~0.52 SAR/km
+    nightSurcharge: 12, // ~45 SAR
+    waitingFeePerHour: 5, // ~20 SAR
+    luggageFee: 1, // ~5 SAR
   },
 };
 
@@ -66,33 +66,50 @@ export interface RouteFixedPrice {
 }
 
 export const ROUTE_FIXED_PRICES: RouteFixedPrice[] = [
-  // Jeddah Havalimanı (JED) ↔ Mekke (~150 SAR = $40)
-  { routeId: 'jeddah-airport-mecca', sedan: 40, van: 53, coster: 67 },
-  { routeId: 'mecca-jeddah-airport', sedan: 40, van: 53, coster: 67 },
+  // Cidde Havalimanı (JED) → Mekke (250/350/450 SAR → $67/$93/$120)
+  { routeId: 'jeddah-airport-mecca', sedan: 67, van: 93, coster: 120 },
+  // Mekke → Cidde Havalimanı (200/300/400 SAR → $53/$80/$107)
+  { routeId: 'mecca-jeddah-airport', sedan: 53, van: 80, coster: 107 },
   
-  // Jeddah Havalimanı (JED) ↔ Medine (~250 SAR = $67)
-  { routeId: 'jeddah-airport-medina', sedan: 67, van: 80, coster: 93 },
-  { routeId: 'medina-jeddah-airport', sedan: 67, van: 80, coster: 93 },
+  // Cidde Havalimanı (JED) ↔ Medine (450/600/700 SAR → $120/$160/$187)
+  { routeId: 'jeddah-airport-medina', sedan: 120, van: 160, coster: 187 },
+  { routeId: 'medina-jeddah-airport', sedan: 120, van: 160, coster: 187 },
   
-  // Mekke ↔ Medine (~250 SAR = $67)
-  { routeId: 'mecca-medina', sedan: 67, van: 80, coster: 93 },
-  { routeId: 'medina-mecca', sedan: 67, van: 80, coster: 93 },
+  // Mekke ↔ Medine (450/600/700 SAR → $120/$160/$187)
+  { routeId: 'mecca-medina', sedan: 120, van: 160, coster: 187 },
+  { routeId: 'medina-mecca', sedan: 120, van: 160, coster: 187 },
   
-  // Medine Havalimanı (MED) ↔ Mekke (tahmini ~300 SAR = $80)
-  { routeId: 'medina-airport-mecca', sedan: 80, van: 93, coster: 107 },
-  { routeId: 'mecca-medina-airport', sedan: 80, van: 93, coster: 107 },
+  // Medine Havalimanı (MED) ↔ Mekke (hesaplanmış: ~530/720/900 SAR)
+  { routeId: 'medina-airport-mecca', sedan: 141, van: 192, coster: 240 },
+  { routeId: 'mecca-medina-airport', sedan: 141, van: 192, coster: 240 },
   
-  // Medine Havalimanı (MED) ↔ Medine Şehir (tahmini ~30 SAR = $8)
-  { routeId: 'medina-airport-medina', sedan: 8, van: 11, coster: 13 },
-  { routeId: 'medina-medina-airport', sedan: 8, van: 11, coster: 13 },
+  // Medine Havalimanı (MED) ↔ Medine Şehir (80/120/200 SAR → $21/$32/$53)
+  { routeId: 'medina-airport-medina', sedan: 21, van: 32, coster: 53 },
+  { routeId: 'medina-medina-airport', sedan: 21, van: 32, coster: 53 },
   
-  // Mekke Şehir İçi (tahmini ~20 SAR = $5)
-  { routeId: 'mecca-haram-to-hotel', sedan: 5, van: 8, coster: 11 },
-  { routeId: 'mecca-hotel-to-haram', sedan: 5, van: 8, coster: 11 },
+  // Mekke → Tren İstasyonu (80/100/150 SAR → $21/$27/$40)
+  { routeId: 'mecca-train-station', sedan: 21, van: 27, coster: 40 },
+  { routeId: 'train-station-mecca', sedan: 21, van: 27, coster: 40 },
+
+  // Medine → Tren İstasyonu (80/100/150 SAR → $21/$27/$40)
+  { routeId: 'medina-train-station', sedan: 21, van: 27, coster: 40 },
+  { routeId: 'train-station-medina', sedan: 21, van: 27, coster: 40 },
+
+  // Mekke → Taif (350/400/500 SAR → $93/$107/$133)
+  { routeId: 'mecca-taif', sedan: 93, van: 107, coster: 133 },
+  { routeId: 'taif-mecca', sedan: 93, van: 107, coster: 133 },
   
-  // Medine Şehir İçi (tahmini ~20 SAR = $5)
-  { routeId: 'medine-prophet-to-hotel', sedan: 5, van: 8, coster: 11 },
-  { routeId: 'medine-hotel-to-prophet', sedan: 5, van: 8, coster: 11 },
+  // Mekke → Hudeybiye (150/180/250 SAR → $40/$48/$67)
+  { routeId: 'mecca-hudeybiye', sedan: 40, van: 48, coster: 67 },
+  
+  // Mekke → Cirane (150/180/250 SAR → $40/$48/$67)
+  { routeId: 'mecca-cirane', sedan: 40, van: 48, coster: 67 },
+  
+  // Mekke → Aişe Tenim (70/120/200 SAR → $19/$32/$53)
+  { routeId: 'mecca-aisha-tanim', sedan: 19, van: 32, coster: 53 },
+  
+  // Mekke → Bedir → Medine (550/650/800 SAR → $147/$173/$213)
+  { routeId: 'mecca-badr-medina', sedan: 147, van: 173, coster: 213 },
 ];
 
 export interface PriceCalculationInput {
