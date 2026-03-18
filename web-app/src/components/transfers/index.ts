@@ -1,6 +1,8 @@
 // Transfer bileşenleri için index dosyası
 export { DatePicker } from "./DatePicker";
 export type { DatePickerProps } from "./DatePicker";
+export { TransferSearchEditBar } from "./TransferSearchEditBar";
+export type { TransferSearchEditBarProps } from "./TransferSearchEditBar";
 export { TransferSearchForm } from "./TransferSearchForm";
 export type { TransferSearchParams } from "./TransferSearchForm";
 

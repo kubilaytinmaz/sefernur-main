@@ -6,6 +6,7 @@
 import { EmptyState, ErrorState, LoadingState } from "@/components/states/AsyncStates";
 import { TransferFilters, TransferFiltersState } from "@/components/transfers/TransferFilters";
 import { TransferResultCard } from "@/components/transfers/TransferResultCard";
+import { TransferSearchEditBar } from "@/components/transfers/TransferSearchEditBar";
 import { getActiveTransfers } from "@/lib/data/transfers-data";
 import { getRouteFixedPrice } from "@/lib/transfers/pricing-v2";
 import { LOCATIONS, getRoutesByLocations } from "@/lib/transfers/transfer-locations";
@@ -13,7 +14,7 @@ import { TransferModel, VehicleType } from "@/types/transfer";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Calendar, Clock, MapPin, Users } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 // Yardımcı fonksiyon - yolcu sayısına göre kapasite aralığı
@@ -27,11 +28,12 @@ function getCapacityRangeForPassengers(passengers: number) {
 
 export default function TransferResultsPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   
   // URL parametrelerini al
-  const fromLocationId = searchParams.get('from');
-  const toLocationId = searchParams.get('to');
-  const dateStr = searchParams.get('date');
+  const fromLocationId = searchParams.get('from') || '';
+  const toLocationId = searchParams.get('to') || '';
+  const dateStr = searchParams.get('date') || new Date().toISOString().split('T')[0];
   const time = searchParams.get('time') || '09:00';
   const passengers = parseInt(searchParams.get('passengers') || '1');
   const vehicleTypeParam = searchParams.get('vehicleType') as VehicleType | null;
@@ -198,6 +200,30 @@ export default function TransferResultsPage() {
     };
   }, [transfersQuery.data, passengers, getPrice]);
 
+  // Arama değiştiğinde URL'yi güncelle
+  const handleSearchChange = useCallback((params: {
+    fromLocationId: string;
+    toLocationId: string;
+    date: string;
+    time: string;
+    passengers: number;
+  }) => {
+    // Yeni rota ID'sini hesapla
+    const routes = getRoutesByLocations(params.fromLocationId, params.toLocationId);
+    const newRouteId = routes[0]?.id || routeIdParam;
+
+    const searchParamsString = new URLSearchParams({
+      from: params.fromLocationId,
+      to: params.toLocationId,
+      date: params.date,
+      time: params.time,
+      passengers: params.passengers.toString(),
+      ...(newRouteId && { routeId: newRouteId }),
+    }).toString();
+    
+    router.push(`/transfer-sonuclar?${searchParamsString}`, { scroll: false });
+  }, [router, routeIdParam]);
+
   // Yükleniyor durumu
   if (transfersQuery.isLoading) {
     return (
@@ -285,6 +311,21 @@ export default function TransferResultsPage() {
           </div>
         </div>
       </div>
+
+      {/* Search Edit Bar - Sticky below header */}
+      <section className="sticky top-[73px] z-20 bg-gradient-to-b from-emerald-50/50 to-slate-50 border-b border-emerald-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <TransferSearchEditBar
+            fromLocationId={fromLocationId}
+            toLocationId={toLocationId}
+            date={dateStr}
+            time={time}
+            passengers={passengers}
+            onSearch={handleSearchChange}
+            loading={transfersQuery.isFetching}
+          />
+        </div>
+      </section>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

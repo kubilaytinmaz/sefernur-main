@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><result command="searchhotels" tID="1773806423100003" ip="46.196.168.128"  date="2026-03-18 04:00:23" version="4.0" elapsedTime="0.0042960643768311"><request><successful>FALSE</successful><error><class>RequestController</class><code>26</code><postXml><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<customer xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <username>birlikgrup</username>
+    <password>********************************</password>
+    <id>2285355</id>
+    <source>1</source>
+    <product>hotel</product>
+    <language>en</language>
+    <request command="searchhotels">
+        <bookingDetails>
+            <fromDate>2026-03-18</fromDate>
+            <toDate>2026-03-19</toDate>
+            <currency>520</currency>
+            <rooms no="1">
+                <room runno="0">
+                    <adultsCode>1</adultsCode>
+                    <children no="0"></children>
+                    <rateBasis>-1</rateBasis>
+                    <passengerNationality>5</passengerNationality>
+                    <passengerCountryOfResidence>5</passengerCountryOfResidence>
+                </room>
+            </rooms>
+        </bookingDetails>
+        <return>
+            <filters xmlns:a="http://us.dotwconnect.com/xsd/atomicCondition" xmlns:c="http://us.dotwconnect.com/xsd/complexCondition">
+                <noPrice>true</noPrice>
+                <city>164</city>
+            </filters>
+            <fields>
+                <field>hotelName</field>
+                <field>address</field>
+                <field>rating</field>
+                <field>hotelImages</field>
+                <field>description1</field>
+                <field>geoPoint</field>
+                <field>cityName</field>
+                <field>countryName</field>
+            </fields>
+        </return>
+    </request>
+</customer>]]></postXml><details>XML request NOT XSD VALID</details><extraDetails><xsd_error file='searchhotelsStatic.xsd'><error_message>Element &#039;city&#039;: This element is not expected. Expected is one of ( rateTypes, {http://us.dotwconnect.com/xsd/complexCondition}condition ).</error_message></xsd_error></extraDetails></error></request></result>

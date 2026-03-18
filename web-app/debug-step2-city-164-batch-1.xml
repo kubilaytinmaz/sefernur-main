@@ -1,0 +1,1795 @@
+<?xml version="1.0" encoding="UTF-8"?><result command="searchhotels" tID="1773843361100001" ip="46.196.170.191"  date="2026-03-18 14:16:01" version="4.0" elapsedTime="0.066611051559448"><currencyShort>USD</currencyShort><hotels count="13"><hotel runno="0" preferred="no" exclusive="no" cityname="MAKKAH" hotelid="2236075"><hotelName>Makkah al Aziziah EX (Holiday Inn Makkah Al Aziziah)</hotelName><address>8324 Masjid Ash Shaikh Bin Baz Makkah</address><fullAddress><hotelStreetAddress>8324 Masjid Ash Shaikh Bin Baz Makkah</hotelStreetAddress><hotelZipCode>24243 2928</hotelZipCode><hotelCountry>SAUDI ARABIA</hotelCountry><hotelState></hotelState><hotelCity>MAKKAH</hotelCity></fullAddress><rating>563</rating><hotelImages count="30"><thumb><![CDATA[https://static-images.webbeds.com/0/image/55eef1ee-eafe-44ea-bbc0-2501ebd6cb0d.jpg]]></thumb>    <image runno="0">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/55eef1ee-eafe-44ea-bbc0-2501ebd6cb0d.jpg]]></url>
+    </image>    <image runno="1">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/f9f3f6c5-0fb8-4355-af2e-fbe0bae1c930.jpg]]></url>
+    </image>    <image runno="2">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/aabe6d19-3828-4bf6-829a-1b75bd8706ff.jpg]]></url>
+    </image>    <image runno="3">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/2297e978-e27c-412e-93f0-6ec4412da77c.jpg]]></url>
+    </image>    <image runno="4">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/b3b96b09-eca8-481d-b4fe-cb0978673037.jpg]]></url>
+    </image>    <image runno="5">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/a145c8dd-a0aa-4f1e-9dbd-9d8b2e054f9e.jpg]]></url>
+    </image>    <image runno="6">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/2bfd15e1-5f7d-4e33-b520-1511f176ee6d.jpg]]></url>
+    </image>    <image runno="7">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/f951f054-56e6-4249-a116-578cd97d6a98.jpg]]></url>
+    </image>    <image runno="8">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/332119ea-b5ca-4c27-99bb-573b3d620f4d.jpg]]></url>
+    </image>    <image runno="9">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/47f6e473-c6de-4041-82cd-00e08da2914c.jpg]]></url>
+    </image>    <image runno="10">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/2d00c097-ac6a-4746-92b1-eb03a72afb81.jpg]]></url>
+    </image>    <image runno="11">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/3a2e47d9-2c07-4cfa-876f-7551565d75be.jpg]]></url>
+    </image>    <image runno="12">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/e1f20634-acf3-4d3a-a5ed-f0da8e329e0f.jpg]]></url>
+    </image>    <image runno="13">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/3d5b2496-6be2-435c-ae09-8f7dacf3984e.jpg]]></url>
+    </image>    <image runno="14">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/d3cf66bc-6696-450d-b2b0-5f0b2e626a35.jpg]]></url>
+    </image>    <image runno="15">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/2e69da27-3368-45ef-93ab-9c04ddac1100.jpg]]></url>
+    </image>    <image runno="16">
+        <alt></alt>
+        <category id="87315">Swimming pool-spa</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/037c041b-ab66-446b-9bc0-824fb1573d7d.jpg]]></url>
+    </image>    <image runno="17">
+        <alt></alt>
+        <category id="87315">Swimming pool-spa</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/ac79827f-97a1-4ab9-a467-d94f10ca58bc.jpg]]></url>
+    </image>    <image runno="18">
+        <alt></alt>
+        <category id="87325">Sport Facilities</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/79c82785-8a8c-4309-a5d3-66c3c7182519.jpg]]></url>
+    </image>    <image runno="19">
+        <alt></alt>
+        <category id="87325">Sport Facilities</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/792f66b8-e3b2-4d7c-b498-2931a143bca7.jpg]]></url>
+    </image>    <image runno="20">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/6d33cd28-7c02-45db-819c-d5bab5c2b1d3.jpg]]></url>
+    </image>    <image runno="21">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/baa04698-d382-4857-9f34-6ef88b6eb9fe.jpg]]></url>
+    </image>    <image runno="22">
+        <alt></alt>
+        <category id="87345">Restaurant-cafeteria</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/38fa8d52-aab0-4002-a167-7b5810d90efc.jpg]]></url>
+    </image>    <image runno="23">
+        <alt></alt>
+        <category id="87345">Restaurant-cafeteria</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/0335f4ad-4e84-4d2f-a37d-19d4876d76d3.jpg]]></url>
+    </image>    <image runno="24">
+        <alt></alt>
+        <category id="87355">Work-area</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/c8cc8c64-9018-44f4-8ab6-050e5e77afdd.jpg]]></url>
+    </image>    <image runno="25">
+        <alt></alt>
+        <category id="103345">Amenities</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/18554e90-c9f7-487d-a5d6-6596b78a97b9.jpg]]></url>
+    </image>    <image runno="26">
+        <alt></alt>
+        <category id="103345">Amenities</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/23c3fd14-ea58-4263-b81a-9994799ff3c9.jpg]]></url>
+    </image>    <image runno="27">
+        <alt></alt>
+        <category id="103345">Amenities</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/0e19194c-f39f-4524-b234-84ddc66523ea.jpg]]></url>
+    </image>    <image runno="28">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/64c52c4e-50ef-4671-acd7-57d5365fdd34.jpg]]></url>
+    </image>    <image runno="29">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/79b68a8f-ffbd-4bc3-a8d4-7accce15c5be.jpg]]></url>
+    </image></hotelImages><description1><language id="EN" name="English"><![CDATA[Located in Makkah, Holiday Inn Makkah Al Aziziah is a 5-star hotel offering air-conditioned accommodations with free Wi-Fi. Rooms feature flat-screen TVs with satellite channels, desks, safes, minibars, iPod docking stations, and private bathrooms with complimentary toiletries and hair dryers. The hotel has 3 restaurants including Al Majad, 2 coffee shops/cafes, and offers 24-hour room service. A buffet breakfast is available. Guests can enjoy amenities such as 2 indoor swimming pools, a health club, a steam room, a terrace, a wellness area with a sauna and hot spring bath, a fitness center, a shared lounge, and a garden. The hotel provides free private parking, a 24-hour front desk, concierge services, limo/town car service, dry cleaning/laundry services, and free babysitting. A complimentary area shuttle and a complimentary shuttle bus service to and from Masjid Al Haram on Thursday and Friday are available. King Abdulaziz International Airport is nearby.]]></language></description1><description2><language id="EN" name="English"><![CDATA[The Makkah al Aziziah EX (Holiday Inn Makkah Al Aziziah) is a  hotel.]]></language></description2><geoPoint><lat>21.416300</lat><lng>39.860161</lng></geoPoint><cityName>MAKKAH</cityName><cityCode>164</cityCode><countryName>SAUDI ARABIA</countryName><countryCode>4</countryCode><preferred>no</preferred><hotelCheckIn>16:00</hotelCheckIn><hotelCheckOut>12:00</hotelCheckOut></hotel><hotel runno="1" preferred="no" exclusive="no" cityname="MAKKAH" hotelid="5415495"><hotelName>Emaar Al Khalil</hotelName><address>Al Hajlah street 24 Makkah 24231 Saudi Arabia</address><fullAddress><hotelStreetAddress>Al Hajlah street 24 Makkah 24231 Saudi Arabia</hotelStreetAddress><hotelZipCode></hotelZipCode><hotelCountry>SAUDI ARABIA</hotelCountry><hotelState></hotelState><hotelCity>MAKKAH</hotelCity></fullAddress><rating>561</rating><hotelImages count="25"><thumb><![CDATA[https://static-images.webbeds.com/0/image/4f39183e-f998-4980-ae4d-585ee921d990.jpg]]></thumb>    <image runno="0">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/4f39183e-f998-4980-ae4d-585ee921d990.jpg]]></url>
+    </image>    <image runno="1">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/1da3e247-8ae4-4744-a28a-a4bd5b773b3e.jpg]]></url>
+    </image>    <image runno="2">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/87915395-7451-407b-a9ab-d34ba80e9313.jpg]]></url>
+    </image>    <image runno="3">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/bcc16513-70f4-44ef-b9a2-9309bc1ea2a1.jpg]]></url>
+    </image>    <image runno="4">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/2e16c1c0-28e7-4882-93a5-402fb683e437.jpg]]></url>
+    </image>    <image runno="5">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/66d16a8b-f74b-43f4-b035-4184bdc51eea.jpg]]></url>
+    </image>    <image runno="6">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/1487f6e3-a23f-40d6-bc84-bf0de276156e.jpg]]></url>
+    </image>    <image runno="7">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/363113d0-c417-436a-a3e8-53ae91751c81.jpg]]></url>
+    </image>    <image runno="8">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/98d33077-c8bb-47c3-aebf-8b07ab836bef.jpg]]></url>
+    </image>    <image runno="9">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/ff6e4d36-7825-4e02-8efb-b9671ef5f445.jpg]]></url>
+    </image>    <image runno="10">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/84f624f9-b141-46ca-b9e5-ad41fca1b474.jpg]]></url>
+    </image>    <image runno="11">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/60c0f329-ea51-4c08-a084-325abf28c24f.jpg]]></url>
+    </image>    <image runno="12">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/c4c4ce70-2fe2-4eb5-80f5-0bc139ef2b29.jpg]]></url>
+    </image>    <image runno="13">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/15983f53-4f8b-4685-b0b0-460ec5413d87.jpg]]></url>
+    </image>    <image runno="14">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/5320f5e8-166b-4db8-a70c-eb30c21fd57a.jpg]]></url>
+    </image>    <image runno="15">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/f8e37d69-eada-47d7-8d89-b7396769937d.jpg]]></url>
+    </image>    <image runno="16">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/9b61e62d-f619-4f02-9a76-a77ba7e4e4ec.jpg]]></url>
+    </image>    <image runno="17">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/b5ab8104-9647-48f7-998b-ae92b1b42df3.jpg]]></url>
+    </image>    <image runno="18">
+        <alt></alt>
+        <category id="87345">Restaurant-cafeteria</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/6a1e5a90-05bf-479b-af5b-bbd0d62ae7a6.jpg]]></url>
+    </image>    <image runno="19">
+        <alt></alt>
+        <category id="87345">Restaurant-cafeteria</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/98332b0b-2709-4f36-b007-043059551a62.jpg]]></url>
+    </image>    <image runno="20">
+        <alt></alt>
+        <category id="87345">Restaurant-cafeteria</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/755a6bfd-ad56-4eab-b0e5-7f59fa7b9bc6.jpg]]></url>
+    </image>    <image runno="21">
+        <alt></alt>
+        <category id="87345">Restaurant-cafeteria</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/f4f67691-c784-4ad1-86a6-a6ecd9fce193.jpg]]></url>
+    </image>    <image runno="22">
+        <alt></alt>
+        <category id="87355">Work-area</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/88a13aa6-877c-46b2-96a9-9c0051eb50e1.jpg]]></url>
+    </image>    <image runno="23">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/c0e30212-61c1-4c24-b097-e6cd98c099a5.jpg]]></url>
+    </image>    <image runno="24">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/491ca000-4d2b-45c0-9eca-f3e87ed6e5cb.jpg]]></url>
+    </image></hotelImages><description1><language id="EN" name="English"><![CDATA[Located in Makkah, Emaar Al Khalil offers air-conditioned rooms with flat-screen TVs. It is situated approximately 650 meters from Masjid Al Haram. The hotel features a 24-hour front desk where staff speaking Arabic and English can assist guests. Complimentary wireless internet access is available. Buffet breakfasts are available daily from 6:00 AM to 10:00 AM for a fee. Popular points of interest near the hotel include Zamzam Well and Masjid Al Haram King Fahd Gate. King Abdulaziz International Airport is 92 km away.]]></language></description1><description2><language id="EN" name="English"><![CDATA[The Emaar Al Khalil is a  hotel.]]></language></description2><geoPoint><lat>21.413940</lat><lng>39.822315</lng></geoPoint><cityName>MAKKAH</cityName><cityCode>164</cityCode><countryName>SAUDI ARABIA</countryName><countryCode>4</countryCode><preferred>no</preferred><hotelCheckIn>16:00</hotelCheckIn><hotelCheckOut>13:00</hotelCheckOut></hotel><hotel runno="2" preferred="no" exclusive="no" cityname="MAKKAH" hotelid="5434475"><hotelName>Worth Elite Hotel</hotelName><address>Ibrahim Al Khalil Road, Mecca, Saudi Arabia</address><fullAddress><hotelStreetAddress>Ibrahim Al Khalil Road, Mecca, Saudi Arabia</hotelStreetAddress><hotelZipCode></hotelZipCode><hotelCountry>SAUDI ARABIA</hotelCountry><hotelState></hotelState><hotelCity>MAKKAH</hotelCity></fullAddress><rating>561</rating><hotelImages count="29"><thumb><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434475/SiSdVpuR_491bcc5753ca0208c2636c129c0917c7.jpg]]></thumb>    <image runno="0">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434475/SiSdVpuR_491bcc5753ca0208c2636c129c0917c7.jpg]]></url>
+    </image>    <image runno="1">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/a5242d52-6a4a-4450-8428-b5748771dc7e.jpg]]></url>
+    </image>    <image runno="2">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/11ccc7d0-f094-4f29-b757-96bf91822437.jpg]]></url>
+    </image>    <image runno="3">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434475/ejnNUDwR_728e722e46b3ab928d98633db6ad41b0.jpg]]></url>
+    </image>    <image runno="4">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434475/IM3NiAlV_9591858fa8b84e64473e8722adcdc8a7.jpg]]></url>
+    </image>    <image runno="5">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434475/jjr0y1Av_254000791ec3fc145ada40470342f9ad.jpg]]></url>
+    </image>    <image runno="6">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434475/l9ZHpEac_b33118a6b29803de64f378e0cae2c524.jpg]]></url>
+    </image>    <image runno="7">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/a7f67463-4553-4c42-80e1-3825f00a5a80.jpg]]></url>
+    </image>    <image runno="8">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/2a48e8b3-f541-4678-8ca0-c9f2db530b62.jpg]]></url>
+    </image>    <image runno="9">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/5fa57f29-f5ac-42d3-a079-ad4c811ec5cb.jpg]]></url>
+    </image>    <image runno="10">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434475/kvAlDvmT_9a40971b8e140ec7f2675313bd3a63fa.jpg]]></url>
+    </image>    <image runno="11">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434475/nbKYR2Yy_985c4d7927da13e036f165ca2a14d14d.jpg]]></url>
+    </image>    <image runno="12">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/872fde99-7982-4d54-87b2-9fe99adaacc7.jpg]]></url>
+    </image>    <image runno="13">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/265ef543-dc3f-4e4b-bad5-444648954225.jpg]]></url>
+    </image>    <image runno="14">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/5df806e8-0a17-4445-a766-db2dbeac3380.jpg]]></url>
+    </image>    <image runno="15">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/153156a9-ac81-4cef-a9c6-ebec6766fce1.jpg]]></url>
+    </image>    <image runno="16">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/2152a05d-7b8e-41cb-8ae4-74abd640d049.jpg]]></url>
+    </image>    <image runno="17">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/5af73a63-0864-4819-a789-e48c5a0e4756.jpg]]></url>
+    </image>    <image runno="18">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/f55c953f-d979-48af-b6b4-c1bc183680f8.jpg]]></url>
+    </image>    <image runno="19">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/42b25226-d0c5-4070-abaa-1c5c5902f553.jpg]]></url>
+    </image>    <image runno="20">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/b9408906-938b-499b-82c0-22442f43a877.jpg]]></url>
+    </image>    <image runno="21">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/706358d5-f4de-42c6-af2e-d7ce0601ef2b.jpg]]></url>
+    </image>    <image runno="22">
+        <alt></alt>
+        <category id="87345">Restaurant-cafeteria</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/091da031-3eb9-436b-8f98-626cf74e27a7.jpg]]></url>
+    </image>    <image runno="23">
+        <alt></alt>
+        <category id="103345">Amenities</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/81e4d258-066f-4441-98b9-257810ab0611.jpg]]></url>
+    </image>    <image runno="24">
+        <alt></alt>
+        <category id="103355">Surroundings</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/3e0162f4-d49d-4837-a628-73be2d2a1abf.jpg]]></url>
+    </image>    <image runno="25">
+        <alt></alt>
+        <category id="103355">Surroundings</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/225ba00f-f742-425d-86b4-e0064a26f790.jpg]]></url>
+    </image>    <image runno="26">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/8f4eb778-c506-461a-80be-9527894a1ec9.jpg]]></url>
+    </image>    <image runno="27">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/65e0dc1a-8330-4882-815a-dfc0c6293d2e.jpg]]></url>
+    </image>    <image runno="28">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/789eb466-cc09-45ee-b624-f0b81e3faf08.jpg]]></url>
+    </image></hotelImages><description1><language id="EN" name="English"><![CDATA[Located in Mecca, Worth Elite Hotel is a 3-star hotel offering air-conditioned rooms with city views and free WiFi. Each room includes a desk, a flat-screen TV, a private bathroom with free toiletries, bed linen, and towels. The hotel is located a short walk from the Great Mosque of Makkah and Abraj Al-Bait Towers, and 1.1 km from Masjid Al Haram and Kaaba. Amenities include a 24-hour front desk with English and French-speaking staff, luggage storage, concierge services, an elevator, and complimentary wireless internet access. King Abdulaziz International Airport is 92 km away.]]></language></description1><description2><language id="EN" name="English"><![CDATA[The Worth Elite Hotel is a  hotel.]]></language></description2><geoPoint><lat>21.415113</lat><lng>39.822899</lng></geoPoint><cityName>MAKKAH</cityName><cityCode>164</cityCode><countryName>SAUDI ARABIA</countryName><countryCode>4</countryCode><preferred>no</preferred><hotelCheckIn>16:00</hotelCheckIn><hotelCheckOut>12:00</hotelCheckOut></hotel><hotel runno="3" preferred="yes" exclusive="no" cityname="MAKKAH" hotelid="4935665"><hotelName>Hotel 21 Makkah</hotelName><address>Al Masjid Al Haram Rd, Al Mursalat, Mecca 24247, Saudi Arabia</address><fullAddress><hotelStreetAddress>Al Masjid Al Haram Rd, Al Mursalat, Mecca 24247, Saudi Arabia</hotelStreetAddress><hotelZipCode></hotelZipCode><hotelCountry>SAUDI ARABIA</hotelCountry><hotelState></hotelState><hotelCity>MAKKAH</hotelCity></fullAddress><rating>561</rating><hotelImages count="29"><thumb><![CDATA[https://us.dotwconnect.com/poze_hotel/49/4935665/FH5gzQEq_160839a268760f375f7de7aeafb17ea4.jpg]]></thumb>    <image runno="0">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/49/4935665/FH5gzQEq_160839a268760f375f7de7aeafb17ea4.jpg]]></url>
+    </image>    <image runno="1">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/bbfc47e8-3cc5-4a86-ab98-15b84268a73c.jpg]]></url>
+    </image>    <image runno="2">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/be3fc311-9027-4262-bdfe-2f03aaefd28b.jpg]]></url>
+    </image>    <image runno="3">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/43ac16c2-3585-4b1a-b305-5cdb0c71a34c.jpg]]></url>
+    </image>    <image runno="4">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/49/4935665/aP2l1xYO_b9c09b1600cbe8b52b4ca94515604e5d.jpg]]></url>
+    </image>    <image runno="5">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/49/4935665/1A8PFRIO_f02d8f515b8ce78564487c9141c24d6d.jpg]]></url>
+    </image>    <image runno="6">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/49/4935665/gyw2KrtR_1132dc4e04b3232ab933f3f7479b5b78.jpg]]></url>
+    </image>    <image runno="7">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/1305d7fa-a2f0-4f56-81ed-a44710089aaa.jpg]]></url>
+    </image>    <image runno="8">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/4a944c19-6d1b-45a4-9769-737bf2efdf9e.jpg]]></url>
+    </image>    <image runno="9">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/49/4935665/VqFMQ29I_e459d5f760ab41147d936af8fd75c093.jpg]]></url>
+    </image>    <image runno="10">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/49/4935665/5dFXGIUP_b89c4cc90e26a826ef04a7adfea8c40d.jpg]]></url>
+    </image>    <image runno="11">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/49/4935665/EhPeTo2R_c6967dfc5f95155b17a7634f95d28c09.jpg]]></url>
+    </image>    <image runno="12">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/49/4935665/RPhQvaYD_85ccbf17df3de88338ff0d892d0efd26.jpg]]></url>
+    </image>    <image runno="13">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/49/4935665/jHZMpy3K_bd7d95b4af0c12efbc59d01ca23ce304.jpg]]></url>
+    </image>    <image runno="14">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/49/4935665/PO6FVzm8_d7b7499022262701862e22b2b66e5e87.jpg]]></url>
+    </image>    <image runno="15">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/9b4cbc64-6e17-449d-910e-48643fe534a2.jpg]]></url>
+    </image>    <image runno="16">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/a30c933f-81d4-43a8-b03d-532b3aaafbb7.jpg]]></url>
+    </image>    <image runno="17">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/a7955e47-9241-436e-975d-7ebf175b7326.jpg]]></url>
+    </image>    <image runno="18">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/49/4935665/fx9ciV3b_d78ffdd5383a8189e1c65d5da6c3d8c7.jpg]]></url>
+    </image>    <image runno="19">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/49/4935665/vJx8TNW8_c6b313d5ebcc8fd1ae019ba11bf11747.jpg]]></url>
+    </image>    <image runno="20">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/6dbf4caa-b277-4181-a9c5-6f623754228c.jpg]]></url>
+    </image>    <image runno="21">
+        <alt></alt>
+        <category id="87325">Sport Facilities</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/da33788e-937a-430c-86d1-da04be4e430d.jpg]]></url>
+    </image>    <image runno="22">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/bece8f53-adda-46e8-8ec6-375a9400343e.jpg]]></url>
+    </image>    <image runno="23">
+        <alt></alt>
+        <category id="87345">Restaurant-cafeteria</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/de361283-67c8-4b38-b5e6-cef6792c5bbf.jpg]]></url>
+    </image>    <image runno="24">
+        <alt></alt>
+        <category id="87345">Restaurant-cafeteria</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/9c038ab2-4f82-47cc-9fd6-58b4179b73d9.jpg]]></url>
+    </image>    <image runno="25">
+        <alt></alt>
+        <category id="87345">Restaurant-cafeteria</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/748b40f7-60cd-4226-b924-779ddf6ca71f.jpg]]></url>
+    </image>    <image runno="26">
+        <alt></alt>
+        <category id="87345">Restaurant-cafeteria</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/9bc69957-3486-4f0f-8c65-e56df100f415.jpg]]></url>
+    </image>    <image runno="27">
+        <alt></alt>
+        <category id="103355">Surroundings</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/09155af5-cd59-42f7-9914-fcbfc8963733.jpg]]></url>
+    </image>    <image runno="28">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/44394590-76df-4ce4-81d5-e954076fbadc.jpg]]></url>
+    </image></hotelImages><description1><language id="EN" name="English"><![CDATA[Hotel 21 Makkah offers air-conditioned guestrooms with complimentary wireless internet access, phones, safes, and blackout drapes/curtains. The hotel features a restaurant, a business center, and a 24-hour front desk. Coffee and tea are available in a common area. Buffet breakfasts are served daily from 7:00 AM to 10:00 AM for a fee. Nearby attractions include Makkah Mall, Faqih Mosque, and Al Jamarat. King Abdulaziz International Airport is the nearest major airport.]]></language></description1><description2><language id="EN" name="English"><![CDATA[The Hotel 21 Makkah is a  hotel.]]></language></description2><geoPoint><lat>21.402443</lat><lng>39.877419</lng></geoPoint><cityName>MAKKAH</cityName><cityCode>164</cityCode><countryName>SAUDI ARABIA</countryName><countryCode>4</countryCode><preferred>yes</preferred><hotelCheckIn>16:00</hotelCheckIn><hotelCheckOut>13:00</hotelCheckOut></hotel><hotel runno="4" preferred="no" exclusive="no" cityname="MAKKAH" hotelid="4481055"><hotelName>Mira Ajyad</hotelName><address>Ajyad Al Sadd</address><fullAddress><hotelStreetAddress>Ajyad Al Sadd</hotelStreetAddress><hotelZipCode>24231</hotelZipCode><hotelCountry>SAUDI ARABIA</hotelCountry><hotelState></hotelState><hotelCity>MAKKAH</hotelCity></fullAddress><rating>562</rating><hotelImages count="13"><thumb><![CDATA[https://us.dotwconnect.com/poze_hotel/44/4481055/9CQbBfYz_d2b5ca33bd970f64a6301fa75ae2eb22.png]]></thumb>    <image runno="0">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/44/4481055/9CQbBfYz_d2b5ca33bd970f64a6301fa75ae2eb22.png]]></url>
+    </image>    <image runno="1">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/44/4481055/bW5JQNZq_53f9b97016c9019596fb41ee648dcf84.jpg]]></url>
+    </image>    <image runno="2">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/1aad10ef-68fc-41d7-b767-a8d97070e05a.jpg]]></url>
+    </image>    <image runno="3">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/44/4481055/oq6BevRQ_d2b5ca33bd970f64a6301fa75ae2eb22.png]]></url>
+    </image>    <image runno="4">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/44/4481055/NM9UBMJ6_cfe90b10ceb576b295634590a3c0f66a.jpg]]></url>
+    </image>    <image runno="5">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/d203726a-ff86-4a2f-bc24-adefdd28b96a.jpg]]></url>
+    </image>    <image runno="6">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/75b6dd2b-4bfb-4009-9fcc-91f9a63928ff.jpg]]></url>
+    </image>    <image runno="7">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/acd1827b-9b56-42c0-96c2-4b8b74157040.jpg]]></url>
+    </image>    <image runno="8">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/a48ab1f0-bf37-46cc-b6fc-a7c8f47d8fb7.jpg]]></url>
+    </image>    <image runno="9">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/44/4481055/Uof7pOL6_d2b5ca33bd970f64a6301fa75ae2eb22.png]]></url>
+    </image>    <image runno="10">
+        <alt></alt>
+        <category id="87355">Work-area</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/36dad52e-bd41-40f9-8150-a281245b222f.jpg]]></url>
+    </image>    <image runno="11">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/c777fb53-278e-42f5-97d7-20ccf3f4890a.jpg]]></url>
+    </image>    <image runno="12">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/ecdd7290-0419-481d-aa8a-0959454ca26b.jpg]]></url>
+    </image></hotelImages><description1><language id="EN" name="English"><![CDATA[Ideally located in the Ajyad district of Makkah, Mira Ajyad Hotel is less than 1 km from Masjid Al Haram, 4.4 km from Abraj Al Bait and 9 km from Makkah Mall. Among the facilities of this property are a restaurant and a 24-hour front desk. Around the clock and room service, in addition to free WiFi throughout, the property offers a shared lounge area, a concierge service and currency exchange for guests. All guest rooms at this hotel are air conditioned and come with a seating area, a flat-screen TV with satellite channels, a safety deposit box and a private bathroom with a bidet, a hairdryer and free toiletries. The rooms at Mira Ajyad Hotel also include bed linen and towels. Hira Cave is 9 km from the accommodation, while Mount Arafat is 21 km away. The nearest airport is King Abdulaziz International Airport, 99 km from Mira Ajyad Hotel.]]></language></description1><description2><language id="EN" name="English"><![CDATA[The Mira Ajyad is a  hotel.]]></language></description2><geoPoint><lat>21.420471</lat><lng>39.830406</lng></geoPoint><cityName>MAKKAH</cityName><cityCode>164</cityCode><countryName>SAUDI ARABIA</countryName><countryCode>4</countryCode><preferred>no</preferred><hotelCheckIn>16:00</hotelCheckIn><hotelCheckOut>12:00</hotelCheckOut></hotel><hotel runno="5" preferred="no" exclusive="no" cityname="MAKKAH" hotelid="5898805"><hotelName>Cent Al Azizia Hotel Makkah</hotelName><address>9VX9+MJ9, Al Sheikh Abdallah Khayat, Makkah 24243, Saudi Arabia</address><fullAddress><hotelStreetAddress>9VX9+MJ9, Al Sheikh Abdallah Khayat, Makkah 24243, Saudi Arabia</hotelStreetAddress><hotelZipCode></hotelZipCode><hotelCountry>SAUDI ARABIA</hotelCountry><hotelState></hotelState><hotelCity>MAKKAH</hotelCity></fullAddress><rating>561</rating><hotelImages count="59"><thumb><![CDATA[https://us.dotwconnect.com/poze_hotel/58/5898805/Dk8Yd0wE_3aa457266aa9df7946fe4f909144bac0.png]]></thumb>    <image runno="0">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/58/5898805/Dk8Yd0wE_3aa457266aa9df7946fe4f909144bac0.png]]></url>
+    </image>    <image runno="1">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/58/5898805/qyE2SlxK_4cf2e31a0328db31dc5d142b467401b5.png]]></url>
+    </image>    <image runno="2">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/3a2d9635-51ff-4033-a88e-ca7aee69528a.jpg]]></url>
+    </image>    <image runno="3">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/2efd5abe-4510-4255-a2c0-6b50711703e1.jpg]]></url>
+    </image>    <image runno="4">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/ba181916-fed7-4a1e-a702-1cf91ad42672.jpg]]></url>
+    </image>    <image runno="5">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/04ad38cf-a4af-4f87-9155-03e92af47c86.jpg]]></url>
+    </image>    <image runno="6">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/662f80e8-395c-4bf3-a183-31992b6d7222.jpg]]></url>
+    </image>    <image runno="7">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/12633945-0236-44dc-9c14-0f0b6d88dacb.jpg]]></url>
+    </image>    <image runno="8">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/3db7e0b8-559d-40a8-8442-ec568e48450c.jpg]]></url>
+    </image>    <image runno="9">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/3d4c3f93-c8ac-4fd1-850f-fee4784a9a22.jpg]]></url>
+    </image>    <image runno="10">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/58/5898805/wUM5UwpD_e3aef2de96a0735fe692439de0499c94.png]]></url>
+    </image>    <image runno="11">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/58/5898805/CRAWCum4_2dd0f3fddf846fb72bbd6cc26e2fd88d.png]]></url>
+    </image>    <image runno="12">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/58/5898805/96NR0zaT_28b5314df28f998f5511e5035a1d49c2.png]]></url>
+    </image>    <image runno="13">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/c1fcd72f-ef02-4d59-8121-93d2607ea7dd.jpg]]></url>
+    </image>    <image runno="14">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/bd722b6a-da45-472b-88ed-f5e35da1e778.jpg]]></url>
+    </image>    <image runno="15">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/151aa2e4-6d57-4725-9391-d18b9c59a29e.jpg]]></url>
+    </image>    <image runno="16">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/99ec6041-7763-496e-a6f6-8e2d34108112.jpg]]></url>
+    </image>    <image runno="17">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/55f05469-59a7-4a2d-a03f-62374f4f3eea.jpg]]></url>
+    </image>    <image runno="18">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/e95a9ec1-6313-45e5-9da8-4e7b5c085060.jpg]]></url>
+    </image>    <image runno="19">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/27a782f1-387f-4df9-ab9c-8d6cdf2d1165.jpg]]></url>
+    </image>    <image runno="20">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/fe28ff60-485e-441c-9f22-cc40acf9a6ac.jpg]]></url>
+    </image>    <image runno="21">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/58/5898805/dVvDV9zU_e827d4a39113b7a5e61f007e6e7880ee.png]]></url>
+    </image>    <image runno="22">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/58/5898805/UmJk5kzf_beee6b215ad69578382f94e533845ac3.png]]></url>
+    </image>    <image runno="23">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/7e83f063-2a82-4e19-a52d-93aad7b676f3.jpg]]></url>
+    </image>    <image runno="24">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/6271f255-27c0-456a-8962-9813502be121.jpg]]></url>
+    </image>    <image runno="25">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/7a70a9b1-d942-47e4-b699-487d7185d32f.jpg]]></url>
+    </image>    <image runno="26">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/1166b096-2a05-4cc0-9b80-8c73744d148b.jpg]]></url>
+    </image>    <image runno="27">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/bfa3e6b0-d697-468c-950a-43be55f94d06.jpg]]></url>
+    </image>    <image runno="28">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/38948aec-b67b-42f5-9bc1-51949e3ad0d5.jpg]]></url>
+    </image>    <image runno="29">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/2ea56679-abcd-463d-ba42-d49f119006b2.jpg]]></url>
+    </image>    <image runno="30">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/bcd44f1b-13ad-42ed-925c-e2d1de937d50.jpg]]></url>
+    </image>    <image runno="31">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/5ae82820-49f1-4143-b22d-d2430a328b91.jpg]]></url>
+    </image>    <image runno="32">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/07052f54-7e71-488a-8b44-f99ef92e9f58.jpg]]></url>
+    </image>    <image runno="33">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/22aca5b8-c5d9-4935-a6dc-fcc15baf939c.jpg]]></url>
+    </image>    <image runno="34">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/58/5898805/tp2vGbnQ_b30c633232cba938e9c299b7aa6e0574.png]]></url>
+    </image>    <image runno="35">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/58/5898805/U4ilGDzg_43eb1cd6b07a37643998d5fa05f863d8.png]]></url>
+    </image>    <image runno="36">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/29916b75-ea4c-45da-9d79-7f59a4aff0ae.jpg]]></url>
+    </image>    <image runno="37">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/aa0c68c7-1ef1-46b8-91ed-e049f0e92ff8.jpg]]></url>
+    </image>    <image runno="38">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/e19d7341-cf92-4cce-b279-39387a33c2c1.jpg]]></url>
+    </image>    <image runno="39">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/737d1faa-54f0-43f2-b4bf-05a1d85c0c45.jpg]]></url>
+    </image>    <image runno="40">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/83296b42-ff35-485e-8c03-5c15c7992b46.jpg]]></url>
+    </image>    <image runno="41">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/08c45004-eab6-4751-a176-ea577f79dcbd.jpg]]></url>
+    </image>    <image runno="42">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/63e12a56-0bae-41dc-b915-c661c7345f70.jpg]]></url>
+    </image>    <image runno="43">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/e1d401ff-cdf7-4251-bba3-e161a4477c69.jpg]]></url>
+    </image>    <image runno="44">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/ffbba23b-153a-4197-bd4f-dd9a9faf3e1b.jpg]]></url>
+    </image>    <image runno="45">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/bf08bc9f-2f91-4003-bcba-641df9c3246c.jpg]]></url>
+    </image>    <image runno="46">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/182c2e16-281e-4fad-a8c0-1d5d0220bd53.jpg]]></url>
+    </image>    <image runno="47">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/7c0d59b9-08f5-417f-b2d5-0f49e066d263.jpg]]></url>
+    </image>    <image runno="48">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/5c86dc1a-5bcf-4523-a865-61b1bf5292c1.jpg]]></url>
+    </image>    <image runno="49">
+        <alt></alt>
+        <category id="87355">Work-area</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/be39a035-56fa-4046-97c7-d71547a49f0c.jpg]]></url>
+    </image>    <image runno="50">
+        <alt></alt>
+        <category id="87355">Work-area</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/d3cb8142-1aa1-4c7a-b431-91cf833c2332.jpg]]></url>
+    </image>    <image runno="51">
+        <alt></alt>
+        <category id="87355">Work-area</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/fecf8050-3cf6-446c-b092-eb7959fdc60b.jpg]]></url>
+    </image>    <image runno="52">
+        <alt></alt>
+        <category id="103345">Amenities</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/8cdae257-e629-4e90-ad40-43743da19bfc.jpg]]></url>
+    </image>    <image runno="53">
+        <alt></alt>
+        <category id="103345">Amenities</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/1019979c-c8b6-41e5-b5c8-d482ed02483f.jpg]]></url>
+    </image>    <image runno="54">
+        <alt></alt>
+        <category id="103355">Surroundings</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/05308f2d-a575-45d5-87e2-b72a1bd79099.jpg]]></url>
+    </image>    <image runno="55">
+        <alt></alt>
+        <category id="103355">Surroundings</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/f444f902-c95e-48c7-995a-c17ca4b50d53.jpg]]></url>
+    </image>    <image runno="56">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/64232a7e-945d-495b-9911-ea0a0517a616.jpg]]></url>
+    </image>    <image runno="57">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/8d08545e-665e-4782-8660-bd830fed73a8.jpg]]></url>
+    </image>    <image runno="58">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/e32281e4-614a-4d20-95ea-0c6b22f60d3e.jpg]]></url>
+    </image></hotelImages><description1><language id="EN" name="English"><![CDATA[With a stay in this property, you&#039;ll be nearby from Nearby attractions include Hira Cave by<br />
+11 km and Zamzam Well by 5 km. The nearest airport is King Abdulaziz International Airport by 96 km.<br />
+<br />
+Facilities and services include a wi-fi access and air conditioning. <br />
+<br />
+Rooms come equipped with an air conditioning, private bathrooms, hairdryers, work desks, showers, and TV.<br />
+<br />
+Address: Al Sheikh Abdallah Khayat, Makkah 24243, Saudi Arabia]]></language></description1><description2><language id="EN" name="English"><![CDATA[The Cent Al Azizia Hotel Makkah is a  hotel.]]></language></description2><geoPoint><lat>21.399157</lat><lng>39.831001</lng></geoPoint><cityName>MAKKAH</cityName><cityCode>164</cityCode><countryName>SAUDI ARABIA</countryName><countryCode>4</countryCode><preferred>no</preferred><hotelCheckIn>15:00</hotelCheckIn><hotelCheckOut>12:00</hotelCheckOut></hotel><hotel runno="6" preferred="no" exclusive="no" cityname="MAKKAH" hotelid="5898815"><hotelName>Cent Al Khair Hotel Makkah</hotelName><address>Al Khansa, Makkah 24238, Saudi Arabia</address><fullAddress><hotelStreetAddress>Al Khansa, Makkah 24238, Saudi Arabia</hotelStreetAddress><hotelZipCode></hotelZipCode><hotelCountry>SAUDI ARABIA</hotelCountry><hotelState></hotelState><hotelCity>MAKKAH</hotelCity></fullAddress><rating>560</rating><hotelImages count="29"><thumb><![CDATA[https://us.dotwconnect.com/poze_hotel/58/5898815/XHLvd3vx_d6a08e513a31ba88028ba98497834f83.png]]></thumb>    <image runno="0">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/58/5898815/XHLvd3vx_d6a08e513a31ba88028ba98497834f83.png]]></url>
+    </image>    <image runno="1">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/16310252-d109-4b9f-a57e-9377dc5c2848.jpg]]></url>
+    </image>    <image runno="2">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/58/5898815/4dkdLiXL_7ab1272c6adba0633c89a2d37bccaa6c.png]]></url>
+    </image>    <image runno="3">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/58/5898815/OvKBtDBy_19e8dd49203bf7b24be2e2d5bee43052.png]]></url>
+    </image>    <image runno="4">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/2a365a33-706a-493f-bdcc-eec1eefd0b73.jpg]]></url>
+    </image>    <image runno="5">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/5a70dc15-421d-4098-ba1b-9bd2e19bdba4.jpg]]></url>
+    </image>    <image runno="6">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/4a19ac9f-44ce-47c9-ad88-758a0f754552.jpg]]></url>
+    </image>    <image runno="7">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/f15aee65-0ddc-490d-8730-eb009b6b8b3e.jpg]]></url>
+    </image>    <image runno="8">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/0a0d7a9a-1bd1-4af9-9888-9d93ef98330e.jpg]]></url>
+    </image>    <image runno="9">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/fb1f36e9-24fe-4faf-ad3d-7c34339cf2d7.jpg]]></url>
+    </image>    <image runno="10">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/58/5898815/NPqJMnij_759e0376f5eb591e6940411154a07267.png]]></url>
+    </image>    <image runno="11">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/58/5898815/G3p5iVzF_b8b55c74a9a6358720aea3f3f6407f87.png]]></url>
+    </image>    <image runno="12">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/e507a045-825e-4010-b719-83a1b4f14671.jpg]]></url>
+    </image>    <image runno="13">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/885e6687-fbb4-4c95-8db8-a507ef4e6d37.jpg]]></url>
+    </image>    <image runno="14">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/520d8baf-5c53-4938-a936-d4b12723e226.jpg]]></url>
+    </image>    <image runno="15">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/60282511-472e-469d-a5fb-7788835b4267.jpg]]></url>
+    </image>    <image runno="16">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/07e605a8-f7eb-43c4-9400-c8def70cc96d.jpg]]></url>
+    </image>    <image runno="17">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/aca68571-cb48-4885-bd7b-2641e352f0d8.jpg]]></url>
+    </image>    <image runno="18">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/bb3159de-24cd-43c5-8c81-203dc31c7558.jpg]]></url>
+    </image>    <image runno="19">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/58/5898815/IPPpY39O_e5dad2a230ffa593d24c3d27f9682a04.png]]></url>
+    </image>    <image runno="20">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/58/5898815/x20kMq2Q_4163265b626a084e457db655cec91e7d.png]]></url>
+    </image>    <image runno="21">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/58/5898815/hSduNgRh_6840cb0aa3cd4bfcd579ae0c29da17a8.png]]></url>
+    </image>    <image runno="22">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/2c621daa-e302-4315-9784-68cd4f0748d3.jpg]]></url>
+    </image>    <image runno="23">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/5395fe2a-acd6-472c-b2ea-d158515dc8df.jpg]]></url>
+    </image>    <image runno="24">
+        <alt></alt>
+        <category id="87315">Swimming pool-spa</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/0292ea91-ecda-4bc7-acee-3254a838e3b3.jpg]]></url>
+    </image>    <image runno="25">
+        <alt></alt>
+        <category id="87355">Work-area</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/5553ec7b-e67c-4f6d-873c-385f37eb6118.jpg]]></url>
+    </image>    <image runno="26">
+        <alt></alt>
+        <category id="103355">Surroundings</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/1df57830-9c3e-4315-8b46-47a660225e5c.jpg]]></url>
+    </image>    <image runno="27">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/dfc668bd-2123-4832-9c56-e228e5b1bcf2.jpg]]></url>
+    </image>    <image runno="28">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/96c9aa9d-801f-4adc-8034-4dc28def0b27.jpg]]></url>
+    </image></hotelImages><description1><language id="EN" name="English"><![CDATA[With a stay in this property, nearby attractions include Makkah Museum by 5 km and 7 km from Zamzam Wheel. The nearest airport is King Abdulaziz International Airport by 74 km.<br />
+<br />
+Facilities and services include a wi-fi access, elevator, and  air conditioning. <br />
+<br />
+Rooms come equipped with an air conditioning, private bathrooms, hairdryers, showers, and TV.<br />
+<br />
+Address: Al Sheikh Abdallah Khayat, Makkah 24243, Saudi Arabia]]></language></description1><description2><language id="EN" name="English"><![CDATA[The Cent Al Khair Hotel Makkah is a  hotel.]]></language></description2><geoPoint><lat>21.440628</lat><lng>39.841881</lng></geoPoint><cityName>MAKKAH</cityName><cityCode>164</cityCode><countryName>SAUDI ARABIA</countryName><countryCode>4</countryCode><preferred>no</preferred><hotelCheckIn>15:00</hotelCheckIn><hotelCheckOut>12:00</hotelCheckOut></hotel><hotel runno="7" preferred="no" exclusive="no" cityname="MAKKAH" hotelid="4469965"><hotelName>Danat Al Diafa</hotelName><address>Al Masjid Al Haram Road 2458</address><fullAddress><hotelStreetAddress>Al Masjid Al Haram Road 2458</hotelStreetAddress><hotelZipCode>42211</hotelZipCode><hotelCountry>SAUDI ARABIA</hotelCountry><hotelState></hotelState><hotelCity>MAKKAH</hotelCity></fullAddress><rating>561</rating><hotelImages count="2"><thumb><![CDATA[https://us.dotwconnect.com/poze_hotel/44/4469965/8a4qXLie_d2b5ca33bd970f64a6301fa75ae2eb22.png]]></thumb>    <image runno="0">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/44/4469965/8a4qXLie_d2b5ca33bd970f64a6301fa75ae2eb22.png]]></url>
+    </image>    <image runno="1">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/44/4469965/rz3ZTb1O_d2b5ca33bd970f64a6301fa75ae2eb22.png]]></url>
+    </image></hotelImages><description1><language id="EN" name="English"><![CDATA[-]]></language></description1><description2><language id="EN" name="English"><![CDATA[The Danat Al Diafa is a  hotel.]]></language></description2><geoPoint><lat>21.434725</lat><lng>39.848213</lng></geoPoint><cityName>MAKKAH</cityName><cityCode>164</cityCode><countryName>SAUDI ARABIA</countryName><countryCode>4</countryCode><preferred>no</preferred><hotelCheckIn>16:00</hotelCheckIn><hotelCheckOut>12:00</hotelCheckOut></hotel><hotel runno="8" preferred="no" exclusive="no" cityname="MAKKAH" hotelid="2367055"><hotelName>Batoul Ajyad Hotel</hotelName><address>Ajyad StreetReea Bakhsh District</address><fullAddress><hotelStreetAddress>Ajyad StreetReea Bakhsh District</hotelStreetAddress><hotelZipCode>21955</hotelZipCode><hotelCountry>SAUDI ARABIA</hotelCountry><hotelState></hotelState><hotelCity>MAKKAH</hotelCity></fullAddress><rating>562</rating><hotelImages count="31"><thumb><![CDATA[https://static-images.webbeds.com/0/image/9ca1b739-758c-4d94-abe3-d622570fa065.jpg]]></thumb>    <image runno="0">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/9ca1b739-758c-4d94-abe3-d622570fa065.jpg]]></url>
+    </image>    <image runno="1">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/62f32542-54a2-4316-b464-3f1e71debe7e.jpg]]></url>
+    </image>    <image runno="2">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/e520ae26-ff19-4357-b505-071c8bb3cf61.jpg]]></url>
+    </image>    <image runno="3">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/ccafa3a6-fecd-439e-9924-5227b39fa3ab.jpg]]></url>
+    </image>    <image runno="4">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/f022c234-86d6-4cd3-b419-d78a2b081422.jpg]]></url>
+    </image>    <image runno="5">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/da777a47-3119-409d-b5b9-2731836a261c.jpg]]></url>
+    </image>    <image runno="6">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/b1d072c7-8e9e-4e16-a4ba-776589576435.jpg]]></url>
+    </image>    <image runno="7">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/cc55aac5-1f03-4249-ba9e-1d047f19ddc8.jpg]]></url>
+    </image>    <image runno="8">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/1cd106cf-4a41-455f-9f25-50e66adb7b63.jpg]]></url>
+    </image>    <image runno="9">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/15fb24cb-ff61-4ffd-a720-2be169581a31.jpg]]></url>
+    </image>    <image runno="10">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/e926dd81-0a4a-479c-91ac-936e090f1234.jpg]]></url>
+    </image>    <image runno="11">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/e40cffa0-be16-4c75-a74e-171a05f9bb0e.jpg]]></url>
+    </image>    <image runno="12">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/9a9c0ed2-da29-46be-972e-5163087e70f3.jpg]]></url>
+    </image>    <image runno="13">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/207d02d3-90ad-4af8-8fdc-c04807695bb0.jpg]]></url>
+    </image>    <image runno="14">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/64b38b79-8061-4bc2-90f9-ec53dc1381c7.jpg]]></url>
+    </image>    <image runno="15">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/7c04c685-0137-417a-a863-31c0d4495a68.jpg]]></url>
+    </image>    <image runno="16">
+        <alt></alt>
+        <category id="87315">Swimming pool-spa</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/50b65ceb-a54c-43df-bbe8-ab9c2a23ca13.jpg]]></url>
+    </image>    <image runno="17">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/07ab47d2-aa07-4ca2-bdc8-3e6807c38c93.jpg]]></url>
+    </image>    <image runno="18">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/c4b98a30-5ef4-4179-b59f-5d304d404202.jpg]]></url>
+    </image>    <image runno="19">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/1b80c8b0-45dd-46db-98ad-52576ff5709d.jpg]]></url>
+    </image>    <image runno="20">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/f2fa2959-6e57-43df-af4b-415d3b03c5a3.jpg]]></url>
+    </image>    <image runno="21">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/1cd27421-0f2f-4259-afb7-ce11752c7030.jpg]]></url>
+    </image>    <image runno="22">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/2c031716-85a9-420c-9eeb-cc3638d67d98.jpg]]></url>
+    </image>    <image runno="23">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/9738b6c0-1293-406e-9c65-7394d0822bcc.jpg]]></url>
+    </image>    <image runno="24">
+        <alt></alt>
+        <category id="87345">Restaurant-cafeteria</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/bb815afc-f229-4337-bd96-c5c976bbc2ba.jpg]]></url>
+    </image>    <image runno="25">
+        <alt></alt>
+        <category id="87355">Work-area</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/69b01626-00d3-4b31-afe4-59d02e5869ce.jpg]]></url>
+    </image>    <image runno="26">
+        <alt></alt>
+        <category id="87355">Work-area</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/0c77d59f-aa7c-4888-b5bd-70f053e1e9ea.jpg]]></url>
+    </image>    <image runno="27">
+        <alt></alt>
+        <category id="103355">Surroundings</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/62d5c50d-6db8-4af3-ad7d-81d1b9651868.jpg]]></url>
+    </image>    <image runno="28">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/d3b8c45f-623c-4cf0-af79-0b0fa6bc1e38.jpg]]></url>
+    </image>    <image runno="29">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/b2af9e29-ce9c-454f-b2bf-ae035261c981.jpg]]></url>
+    </image>    <image runno="30">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/9b1e7b3b-1ce2-4247-9b03-b9006e3c3783.jpg]]></url>
+    </image></hotelImages><description1><language id="EN" name="English"><![CDATA[Batoul Ajyad Hotel offers modern, air-conditioned accommodations in Mecca, 1200 meters from the Holy Haram and Abraj Al-Bait Towers. Each of the 298 rooms includes Wi-Fi, a flat-screen TV with cable programming, a mini-fridge, a safety deposit box, and an electric kettle. Private bathrooms feature a shower, complimentary toiletries, and a hair dryer. The hotel provides a restaurant, coffee shop, and room service (during limited hours). A buffet breakfast is available daily (for a fee). Amenities include a 24-hour front desk, luggage storage, dry cleaning/laundry services, and a television in a common area. A 24-hour shuttle bus service to and from the Holy Haram is available. The multilingual reception staff speaks Arabic, English, and Urdu. Limited parking is available. King Abdulaziz International Airport is 85 km away.]]></language></description1><description2><language id="EN" name="English"><![CDATA[The Batoul Ajyad Hotel is a  hotel.]]></language></description2><geoPoint><lat>21.407583</lat><lng>39.829586</lng></geoPoint><cityName>MAKKAH</cityName><cityCode>164</cityCode><countryName>SAUDI ARABIA</countryName><countryCode>4</countryCode><preferred>no</preferred><hotelCheckIn>16:00</hotelCheckIn><hotelCheckOut>13:00</hotelCheckOut></hotel><hotel runno="9" preferred="no" exclusive="no" cityname="MAKKAH" hotelid="5434365"><hotelName>ABRAJ ALMISK HOTEL</hotelName><address>Al-Mansour Street, Al-Mansour Street, next to Bin Hassan Mosque</address><fullAddress><hotelStreetAddress>Al-Mansour Street, Al-Mansour Street, next to Bin Hassan Mosque</hotelStreetAddress><hotelZipCode>24231</hotelZipCode><hotelCountry>SAUDI ARABIA</hotelCountry><hotelState></hotelState><hotelCity>MAKKAH</hotelCity></fullAddress><rating>562</rating><hotelImages count="45"><thumb><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434365/Zzwj1mC8_61e6b049339ef0995598def365b43016.jpg]]></thumb>    <image runno="0">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434365/Zzwj1mC8_61e6b049339ef0995598def365b43016.jpg]]></url>
+    </image>    <image runno="1">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434365/xazaOwGl_bb5f4b422a75365685f7e00b898926d3.jpg]]></url>
+    </image>    <image runno="2">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434365/vHy6CKW1_ddb38d3e3520f738f53c314ea8f37516.jpg]]></url>
+    </image>    <image runno="3">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/48cb7f2a-0e3a-4f1a-8215-e23fd51ae973.jpg]]></url>
+    </image>    <image runno="4">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/241e717a-e9c5-409e-ba81-36e64ac252c4.jpg]]></url>
+    </image>    <image runno="5">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/cc9cb68c-d8f9-497e-9d91-5169f595fd61.jpg]]></url>
+    </image>    <image runno="6">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/bc1adc12-8b8f-4656-b544-7821a4f91609.jpg]]></url>
+    </image>    <image runno="7">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434365/G20ZnxNV_b53e17e9603a9714424b03811d30a34c.jpg]]></url>
+    </image>    <image runno="8">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434365/LzmOKcNv_50f0c3f460e13ad885535d88916f967c.jpg]]></url>
+    </image>    <image runno="9">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434365/9k9cBedy_3ec42b6577229ca148cd272bf9020b7e.jpg]]></url>
+    </image>    <image runno="10">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434365/vusmPjpz_08cc175eed2955034b820d9b2c22c957.jpg]]></url>
+    </image>    <image runno="11">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434365/DIp6LCvU_cab2cf2fbde95079281ddcbd02190d0f.jpg]]></url>
+    </image>    <image runno="12">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434365/BSeOqbuC_2716f23bad72c00459cc5de1a9b28d96.jpg]]></url>
+    </image>    <image runno="13">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/e11d47a6-eb52-4b1d-9b62-73e26ef3181b.jpg]]></url>
+    </image>    <image runno="14">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/6902e32e-c1b4-446f-b1c0-d53739e15db6.jpg]]></url>
+    </image>    <image runno="15">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/55e766ca-7a52-4133-9d45-0c63291c0753.jpg]]></url>
+    </image>    <image runno="16">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/bf68d398-7478-448f-862b-c5d5d9eb675c.jpg]]></url>
+    </image>    <image runno="17">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/204b793e-a8c1-4d7d-bcba-330c890c8826.jpg]]></url>
+    </image>    <image runno="18">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/cb6b106a-75ba-4104-8745-42858f7e332d.jpg]]></url>
+    </image>    <image runno="19">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434365/WOD0XZOF_e9699bbe12abe1503ffbb76f88d72091.jpg]]></url>
+    </image>    <image runno="20">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434365/FsrXho9U_1b50cc4226ca8a007b71d9419313d0ed.jpg]]></url>
+    </image>    <image runno="21">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434365/Me3tszqS_b0b3401066afc1981b67630fd2def7cc.jpg]]></url>
+    </image>    <image runno="22">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434365/hzflhocV_4d3b2e19fa9b45ea8bdebe3df13962de.jpg]]></url>
+    </image>    <image runno="23">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/28c662be-8f69-483f-8a0c-c5a42c16a04e.jpg]]></url>
+    </image>    <image runno="24">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/a26fc80f-1ff8-41fb-8272-6c86219faef1.jpg]]></url>
+    </image>    <image runno="25">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/b04fc9fc-39d3-41ae-aaea-8437efb9c93c.jpg]]></url>
+    </image>    <image runno="26">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/26e8e1d9-2c30-4171-bdd7-39719fd8a100.jpg]]></url>
+    </image>    <image runno="27">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/317a3fad-3d93-48c6-8077-ece263da0671.jpg]]></url>
+    </image>    <image runno="28">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434365/ad8rOiL0_224f333362b6d9f3115fec94f278f77e.jpg]]></url>
+    </image>    <image runno="29">
+        <alt></alt>
+        <category id="48849">Leisure and Sport Facilities</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434365/gWUa0ikC_1ab611b01ff7e8206bd6bc3b14c1a767.jpg]]></url>
+    </image>    <image runno="30">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434365/CKiDsxJg_9d6dd3556114a69f19c339e516a850c7.jpg]]></url>
+    </image>    <image runno="31">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/54/5434365/H3kXn4Fq_7899dd54b2eec73bdfece5b643753567.jpg]]></url>
+    </image>    <image runno="32">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/6f0f970a-d034-4ed3-8ae1-e646f6a59aca.jpg]]></url>
+    </image>    <image runno="33">
+        <alt></alt>
+        <category id="87315">Swimming pool-spa</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/668f4712-d3c1-42f6-895e-bc8aadbe3fa4.jpg]]></url>
+    </image>    <image runno="34">
+        <alt></alt>
+        <category id="87315">Swimming pool-spa</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/b798c325-fc70-4239-abfb-e8bec961352a.jpg]]></url>
+    </image>    <image runno="35">
+        <alt></alt>
+        <category id="87325">Sport Facilities</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/4122f311-cf54-4f2d-b880-3f6c95855cf0.jpg]]></url>
+    </image>    <image runno="36">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/c9dcef3f-9448-4eeb-949d-4c9ca3ecf948.jpg]]></url>
+    </image>    <image runno="37">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/af8a2e1e-877e-4ca0-8b6a-83043b39d1f1.jpg]]></url>
+    </image>    <image runno="38">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/1ff37e19-d122-4f0b-a995-2f068034d78a.jpg]]></url>
+    </image>    <image runno="39">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/5b711f67-2710-4c92-b322-952c0cdc10b8.jpg]]></url>
+    </image>    <image runno="40">
+        <alt></alt>
+        <category id="103345">Amenities</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/cb5e9a8f-ddd7-4723-a1c8-113ea9cb2f07.jpg]]></url>
+    </image>    <image runno="41">
+        <alt></alt>
+        <category id="103355">Surroundings</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/68636cfb-56f1-405b-abe9-2459565b9e2c.jpg]]></url>
+    </image>    <image runno="42">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/0828b450-fdbb-4638-9e38-5a4fb3597b77.jpg]]></url>
+    </image>    <image runno="43">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/d16a42e5-8005-4780-b54b-7260a351a35d.jpg]]></url>
+    </image>    <image runno="44">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/1bf49a90-5a3d-4b4b-a37b-70ee42b41727.jpg]]></url>
+    </image></hotelImages><description1><language id="EN" name="English"><![CDATA[Abraj Almisk Hotel in Makkah (Az Zahra) offers 80 guestrooms with complimentary wireless internet access and satellite programming. Bathrooms provide bathtubs or showers. The hotel features a 24-hour front desk, an elevator, and designated smoking areas. It is located within a 5-minute drive of the Great Mosque of Makkah and Abraj Al-Bait Towers, and approximately 1 km from 60th Street. The nearest major airport is King Abdulaziz Intl. Airport (JED), 92.6 km away.]]></language></description1><description2><language id="EN" name="English"><![CDATA[The ABRAJ ALMISK HOTEL is a  hotel.]]></language></description2><geoPoint><lat>21.427513</lat><lng>39.805866</lng></geoPoint><cityName>MAKKAH</cityName><cityCode>164</cityCode><countryName>SAUDI ARABIA</countryName><countryCode>4</countryCode><preferred>no</preferred><hotelCheckIn>16:00</hotelCheckIn><hotelCheckOut>12:00</hotelCheckOut></hotel><hotel runno="10" preferred="no" exclusive="no" cityname="MAKKAH" hotelid="5336075"><hotelName>Qasr Al sahab Makkah</hotelName><address>Al Aelam street- 3945 , Makkah , Al Aziziah, Saudi Arabia 24243</address><fullAddress><hotelStreetAddress>Al Aelam street- 3945 , Makkah , Al Aziziah, Saudi Arabia 24243</hotelStreetAddress><hotelZipCode></hotelZipCode><hotelCountry>SAUDI ARABIA</hotelCountry><hotelState></hotelState><hotelCity>MAKKAH</hotelCity></fullAddress><rating>561</rating><hotelImages count="62"><thumb><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/R2m0FWTy_c0c8b4f76bbb35a5650cc4685d433443.jpeg]]></thumb>    <image runno="0">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/R2m0FWTy_c0c8b4f76bbb35a5650cc4685d433443.jpeg]]></url>
+    </image>    <image runno="1">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/rB2ZeNF1_cb56c044baa6aa7c0cd1ce80805fee47.jpg]]></url>
+    </image>    <image runno="2">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/44188c2c-17f7-4c40-8cdd-6503c2b91c5a.jpg]]></url>
+    </image>    <image runno="3">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/671f0a53-49bc-4d0f-b2f5-1d074f972635.jpg]]></url>
+    </image>    <image runno="4">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/77b51989-9e66-4e82-9c48-869e1384e0bd.jpg]]></url>
+    </image>    <image runno="5">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/8IBPzBbJ_1fb80b091908b859215c9d95fffa7424.jpg]]></url>
+    </image>    <image runno="6">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/BqiLUgye_25abff1c1dcc42be34bb09add15ce920.jpg]]></url>
+    </image>    <image runno="7">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/HoVR5Ove_622152389a6929f69426c65349326ad3.jpg]]></url>
+    </image>    <image runno="8">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/ykV9kHRJ_9b37738a9e6206f2cb462d172c914dec.jpg]]></url>
+    </image>    <image runno="9">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/jyqbUw7d_9ba2fe5349b8c1c2665eef8e57ad0221.jpeg]]></url>
+    </image>    <image runno="10">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/9ed3a8d7-ebcd-4e36-8ce5-d164066b1414.jpg]]></url>
+    </image>    <image runno="11">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/cb597aef-afde-428c-817a-a38adbc90430.jpg]]></url>
+    </image>    <image runno="12">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/97a74cef-3695-4b1a-aa76-fa420ef21e71.jpg]]></url>
+    </image>    <image runno="13">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/I10ffaEd_92b11a8c1292b11fce9fc456de80a0e5.jpg]]></url>
+    </image>    <image runno="14">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/sKpbUJoI_c9e30739549b38e47fc34b4bffe9142c.jpg]]></url>
+    </image>    <image runno="15">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/ZIjHPECt_423b8b956075e864938fc6055a95afec.jpg]]></url>
+    </image>    <image runno="16">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/R8xCO75G_510d10eb68a76d1d925f2f5860f4ed01.jpg]]></url>
+    </image>    <image runno="17">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/lCpR3mf3_db443aaf3f62a1d955a38fbcb579744e.jpg]]></url>
+    </image>    <image runno="18">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/102a1a8c-47c0-4a6e-a362-9b169939d136.jpg]]></url>
+    </image>    <image runno="19">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/be8e3a69-ff57-409e-86ae-2797c40b9fa7.jpg]]></url>
+    </image>    <image runno="20">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/13f7bac5-5075-462a-bfd4-5bf8fd2346f6.jpg]]></url>
+    </image>    <image runno="21">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/4624400d-46f9-460a-83b8-86e370ae2fa5.jpg]]></url>
+    </image>    <image runno="22">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/5bc34eca-0a84-4239-a31c-a0419f198b6b.jpg]]></url>
+    </image>    <image runno="23">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/a2174178-d678-45d7-965e-580b92c44654.jpg]]></url>
+    </image>    <image runno="24">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/3ed7c073-2b9d-4b50-b47d-287838053890.jpg]]></url>
+    </image>    <image runno="25">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/6b3ee7d7-6194-4abf-bd89-694b8425121a.jpg]]></url>
+    </image>    <image runno="26">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/ceab813d-b4bb-48d1-afa6-27dc455ec8aa.jpg]]></url>
+    </image>    <image runno="27">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/0CQIAdna_29d7bae1227e47c5958d77f1d66346ca.jpg]]></url>
+    </image>    <image runno="28">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/HRrL8viJ_8aad08ea89c71ff0e340d2b459cd04f5.jpg]]></url>
+    </image>    <image runno="29">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/SAZDkpJI_2df463d1607cac064dc29c1036096d4d.jpg]]></url>
+    </image>    <image runno="30">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/0iJZzRZM_26e3004fa3da7adf946a8e430526e55d.jpg]]></url>
+    </image>    <image runno="31">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/FaYwXSWR_f0af0c81b3574244f0fe7613bed1061e.jpg]]></url>
+    </image>    <image runno="32">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/Fr6ZU1VN_82945c621907f37de24a71036d3445c8.jpg]]></url>
+    </image>    <image runno="33">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/yVIvkg84_d63a4150cbeb79014efc8c19d125b770.jpg]]></url>
+    </image>    <image runno="34">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/HOUWqE3h_bf9aee9072c845f2f5aed68453860a9e.jpg]]></url>
+    </image>    <image runno="35">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/P8Us4vLc_8aad08ea89c71ff0e340d2b459cd04f5.jpg]]></url>
+    </image>    <image runno="36">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/WN6t9zcj_d669636dfaa9484fabe286f8f5d7d36d.jpg]]></url>
+    </image>    <image runno="37">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/fzC1rbpj_766583a9577bf16e655b535ab316247d.jpg]]></url>
+    </image>    <image runno="38">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/Gf0cboXZ_6e6c31ca329c2b60c0eacaf08891df6f.jpg]]></url>
+    </image>    <image runno="39">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/ReLkOLrY_35ab09d3bca1fac351a180d9441a1b36.jpg]]></url>
+    </image>    <image runno="40">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/LZkTfuVQ_b5705d5035064e04aaaf3c4a2aab188a.jpg]]></url>
+    </image>    <image runno="41">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/QPQUKZrJ_24ef08f3720d32b1d28ebaf7520aaa5d.jpg]]></url>
+    </image>    <image runno="42">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/lMOXq0D9_6e395ba9f66f929403ff505cdb532b49.jpg]]></url>
+    </image>    <image runno="43">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/53/5336075/WyzR09oM_4b84fc06a16061c90d554c0f36921485.jpg]]></url>
+    </image>    <image runno="44">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/fd573ebe-4489-435d-a8f8-34a5cd2e6fd4.jpg]]></url>
+    </image>    <image runno="45">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/dd3d8c22-9c0d-4d8b-8e29-95f9c90379d1.jpg]]></url>
+    </image>    <image runno="46">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/2047c408-88d3-4b1c-8a4e-748497b2331f.jpg]]></url>
+    </image>    <image runno="47">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/f17746aa-3841-4037-b87f-4a627a1552fd.jpg]]></url>
+    </image>    <image runno="48">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/8f4b45ee-15b6-4e55-943d-bc49f57ea85f.jpg]]></url>
+    </image>    <image runno="49">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/cf65c486-7456-4198-b349-f51cac997ed6.jpg]]></url>
+    </image>    <image runno="50">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/7e7b47fa-8c9f-4d59-ada5-66f63cf500f0.jpg]]></url>
+    </image>    <image runno="51">
+        <alt></alt>
+        <category id="87315">Swimming pool-spa</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/1bdded9a-f530-4074-9fb8-2acddf950ee1.jpg]]></url>
+    </image>    <image runno="52">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/3c538712-eba1-4834-a732-77da412ce80d.jpg]]></url>
+    </image>    <image runno="53">
+        <alt></alt>
+        <category id="87345">Restaurant-cafeteria</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/f7cb2af0-0f5d-4190-8fa7-082f5bc25de7.jpg]]></url>
+    </image>    <image runno="54">
+        <alt></alt>
+        <category id="87345">Restaurant-cafeteria</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/8d3b4491-de10-4448-b556-a43209493e26.jpg]]></url>
+    </image>    <image runno="55">
+        <alt></alt>
+        <category id="103355">Surroundings</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/7b9cfa8b-a7ba-4033-9035-32e15af7c656.jpg]]></url>
+    </image>    <image runno="56">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/7f90171a-418d-432a-b2ca-704798fd5185.jpg]]></url>
+    </image>    <image runno="57">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/671c0fe9-29ce-461a-b700-1cee6b922424.jpg]]></url>
+    </image>    <image runno="58">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/635693eb-a880-44ed-85a7-2db231a1836b.jpg]]></url>
+    </image>    <image runno="59">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/d80b3284-8e98-491c-a668-7a6dfa2d840a.jpg]]></url>
+    </image>    <image runno="60">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/5b696f55-b2f1-462c-a0ab-d346ae5711cc.jpg]]></url>
+    </image>    <image runno="61">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/c431ba72-186e-4706-bf62-5724244e2bcd.jpg]]></url>
+    </image></hotelImages><description1><language id="EN" name="English"><![CDATA[Located in Makkah, Qasr Al Sahab Hotel Makkah offers accommodation with a restaurant, bar, and complimentary wireless internet access throughout the property. Guests can enjoy a buffet breakfast daily from 6:00 AM to 10:00 AM for a fee. The hotel features a 24-hour front desk, luggage storage, an elevator, and free private parking. The 56 guestrooms include minibars, phones, safes, electric kettles, and bathrooms with showers and slippers. Room service and family rooms are available. The hotel is within a 10-minute drive of Makkah Mall and 6.1 km from Masjid Al Haram. King Abdulaziz International Airport is 98 km away.]]></language></description1><description2><language id="EN" name="English"><![CDATA[The Qasr Al sahab Makkah is a  hotel.]]></language></description2><geoPoint><lat>21.402617</lat><lng>39.870201</lng></geoPoint><cityName>MAKKAH</cityName><cityCode>164</cityCode><countryName>SAUDI ARABIA</countryName><countryCode>4</countryCode><preferred>no</preferred><hotelCheckIn>16:00</hotelCheckIn><hotelCheckOut>14:00</hotelCheckOut></hotel><hotel runno="11" preferred="no" exclusive="no" cityname="MAKKAH" hotelid="5657425"><hotelName>Mahd Al Resala 3 Hotel</hotelName><address>Al Hujoon Street, 24231 Makkah, Saudi Arabia</address><fullAddress><hotelStreetAddress>Al Hujoon Street, 24231 Makkah, Saudi Arabia</hotelStreetAddress><hotelZipCode>24231</hotelZipCode><hotelCountry>SAUDI ARABIA</hotelCountry><hotelState></hotelState><hotelCity>MAKKAH</hotelCity></fullAddress><rating>561</rating><hotelImages count="47"><thumb><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/mGZSBhBn_32310ab5b000424e8f18b30ada7aef3b.jpg]]></thumb>    <image runno="0">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/mGZSBhBn_32310ab5b000424e8f18b30ada7aef3b.jpg]]></url>
+    </image>    <image runno="1">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/ho59WAjX_8c2d1dd77ead142d5a926fc930147bf7.jpg]]></url>
+    </image>    <image runno="2">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/68bc8d7d-515f-4297-a02b-5b48c422b2aa.jpg]]></url>
+    </image>    <image runno="3">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/37f2dc59-9464-40f7-9a55-e092b811fd98.jpg]]></url>
+    </image>    <image runno="4">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/2YhqJkHG_6a8543cdf266a251d1f81ee4636d5a52.jpg]]></url>
+    </image>    <image runno="5">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/7yqld7i0_5ab08a0bf08237bee1f68b91b579225a.jpg]]></url>
+    </image>    <image runno="6">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/8abfd942-4405-450f-8de5-c20612ce7913.jpg]]></url>
+    </image>    <image runno="7">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/ff4facd2-5545-4765-ad6d-22ed952a4a72.jpg]]></url>
+    </image>    <image runno="8">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/eafa4564-859c-4e50-ae01-3ecd5a07b19a.jpg]]></url>
+    </image>    <image runno="9">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/cbc90958-db7e-4b35-896c-1fc9d454fba7.jpg]]></url>
+    </image>    <image runno="10">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/90501392-8d1a-45ae-b27c-25da21add4ef.jpg]]></url>
+    </image>    <image runno="11">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/4Qc7w3Er_528a8029f032634aefe6746f8ec74e14.jpg]]></url>
+    </image>    <image runno="12">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/KsYcbMQS_dea57dd39263e162bfa437fa192616a9.jpg]]></url>
+    </image>    <image runno="13">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/otFRchQa_fd48f440b1d5fabf2ca3d0684e32acd2.jpg]]></url>
+    </image>    <image runno="14">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/tlHi6ewO_afc4aa56fde6725fba8fcf13eadda08e.jpg]]></url>
+    </image>    <image runno="15">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/zsSWCq8b_204579b503636526778f8606763e0fe6.jpg]]></url>
+    </image>    <image runno="16">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/Cc8vgA3j_8f69b3f4415d0f64916c083bb622acb4.jpg]]></url>
+    </image>    <image runno="17">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/Uzf0iUMS_efea786c993fd4db2a8c47bb57a44c21.jpg]]></url>
+    </image>    <image runno="18">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/Kc6P1vVk_ecbf8048d1f9a9b41d7f24ba62842cc6.jpg]]></url>
+    </image>    <image runno="19">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/Kxurwcaa_57930372033ae4e17021fb79c4fe841f.jpg]]></url>
+    </image>    <image runno="20">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/a562f0fe-55b4-46a5-bc28-23cee11c238d.jpg]]></url>
+    </image>    <image runno="21">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/69afd2e6-7dde-4748-b52a-f731c8427514.jpg]]></url>
+    </image>    <image runno="22">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/5fe70185-7dee-40b5-b244-919a8bbd6526.jpg]]></url>
+    </image>    <image runno="23">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/b2b42e11-d71f-49d4-a29d-5d2e96fbfb5c.jpg]]></url>
+    </image>    <image runno="24">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/5e940f29-6412-4662-9e22-8c07ae50066d.jpg]]></url>
+    </image>    <image runno="25">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/5Qs3AdJo_f55dfbe59f5bcbb8d956542a68a27634.jpg]]></url>
+    </image>    <image runno="26">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/KNEE1QJi_585605e2d486b2f0c28947532b6a7d18.jpg]]></url>
+    </image>    <image runno="27">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/6DeE1zCe_fdb75eb0dbef460c83629d1ab99797b9.jpg]]></url>
+    </image>    <image runno="28">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/GCr1ntmH_92994ab99ede788c47cd67c41a156255.jpg]]></url>
+    </image>    <image runno="29">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/LOXxkUCf_f55844315dbde1fa5e571f9c2cf02047.jpg]]></url>
+    </image>    <image runno="30">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/sVkLTI6D_fdca9dc22f8ee9a239fc0db08de8704f.jpg]]></url>
+    </image>    <image runno="31">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/Eu7GxC9D_85e408d18047c511f8915775865deac5.jpg]]></url>
+    </image>    <image runno="32">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/56/5657425/E6greRA9_ed9a4bcd3287dfe24ea7267a3a29b899.jpg]]></url>
+    </image>    <image runno="33">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/1c1df9d3-62d0-4d60-9949-ed36b31355f6.jpg]]></url>
+    </image>    <image runno="34">
+        <alt></alt>
+        <category id="87315">Swimming pool-spa</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/c0e1f1f1-615d-4c00-b190-6f62df4543fd.jpg]]></url>
+    </image>    <image runno="35">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/56ca1c0f-e201-4c03-9d08-caa1ac1463e9.jpg]]></url>
+    </image>    <image runno="36">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/c2f989ce-59b4-4d9a-b4a2-45cea71647b6.jpg]]></url>
+    </image>    <image runno="37">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/cf152c26-6524-43e2-8bb4-611f1c777612.jpg]]></url>
+    </image>    <image runno="38">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/4157f09e-2e5f-4f80-b146-2e76255074b9.jpg]]></url>
+    </image>    <image runno="39">
+        <alt></alt>
+        <category id="87345">Restaurant-cafeteria</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/c3140c13-6259-4c54-bfd7-6aacca5786f3.jpg]]></url>
+    </image>    <image runno="40">
+        <alt></alt>
+        <category id="87345">Restaurant-cafeteria</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/28f5d130-756c-462b-8067-e9bcb77a2cdc.jpg]]></url>
+    </image>    <image runno="41">
+        <alt></alt>
+        <category id="87355">Work-area</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/3358e9c9-f36c-4170-b110-4bd4f4ddf5bd.jpg]]></url>
+    </image>    <image runno="42">
+        <alt></alt>
+        <category id="87355">Work-area</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/083189bf-969e-4dea-9ee1-5ab745a3d150.jpg]]></url>
+    </image>    <image runno="43">
+        <alt></alt>
+        <category id="87355">Work-area</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/634c90ae-f84b-44b5-9a02-40e40392e7f4.jpg]]></url>
+    </image>    <image runno="44">
+        <alt></alt>
+        <category id="103345">Amenities</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/5dc6a204-5a59-4244-877c-b434028c3e83.jpg]]></url>
+    </image>    <image runno="45">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/c8c93651-18b0-4b6d-8c48-8f9082ffb2ce.jpg]]></url>
+    </image>    <image runno="46">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/9b8f2dc5-07d4-4cde-ba79-80709308dc25.jpg]]></url>
+    </image></hotelImages><description1><language id="EN" name="English"><![CDATA[Located in Makkah (Al Hujun), Mahd Al Resala 3 Hotel offers 87 air-conditioned rooms featuring LCD televisions and complimentary wireless internet access. Guests can enjoy 24-hour room service. The hotel provides a 24-hour front desk, laundry facilities, designated smoking areas, safes, and coffee/tea makers. Rooms also include phones with free local calls. It is a 5-minute drive from Great Mosque of Makkah and 6 minutes from Abraj Al-Bait Towers. Al Malaa Cemetery is 0.1 km away.<br />
+<br />
+Nearby attractions include:<br />
+Al Malaa Cemetery - 0.1 km / 0.1 mi<br />
+Masjid Al-Jinn - 0.4 km / 0.2 mi<br />
+Great Mosque of Makkah - 1.5 km / 0.9 mi<br />
+Safa and Marwah - 1.7 km / 1 mi<br />
+Well of Zamzam - 1.8 km / 1.1 mi<br />
+Al-Salam Gate - 1.8 km / 1.1 mi<br />
+Maqam Ibrahim - 1.8 km / 1.1 mi<br />
+Kaaba - 1.8 km / 1.1 mi<br />
+Black Stone - 1.8 km / 1.1 mi<br />
+King Fahad Gate - 2.1 km / 1.3 mi<br />
+Abraj Al Bait Hajar Tower - 2.2 km / 1.3 mi<br />
+Alkhalil Courtyard - 2.2 km / 1.4 mi<br />
+Abraj Al-Bait Towers - 2.2 km / 1.4 mi<br />
+Souk Al-Khalil - 2.3 km / 1.4 mi<br />
+60th Street - 2.5 km / 1.6 mi]]></language></description1><description2><language id="EN" name="English"><![CDATA[The Mahd Al Resala 3 Hotel is a  hotel.]]></language></description2><geoPoint><lat>21.439188</lat><lng>39.817200</lng></geoPoint><cityName>MAKKAH</cityName><cityCode>164</cityCode><countryName>SAUDI ARABIA</countryName><countryCode>4</countryCode><preferred>no</preferred><hotelCheckIn>16:00</hotelCheckIn><hotelCheckOut>12:00</hotelCheckOut></hotel><hotel runno="12" preferred="no" exclusive="no" cityname="MAKKAH" hotelid="5282665"><hotelName>EMAAR INTERNATIONAL</hotelName><address>2570-2583 Al Haram Mosque, Al Jummayzah, Mecca 24236, Saudi Arabia</address><fullAddress><hotelStreetAddress>2570-2583 Al Haram Mosque, Al Jummayzah, Mecca 24236, Saudi Arabia</hotelStreetAddress><hotelZipCode>24236</hotelZipCode><hotelCountry>SAUDI ARABIA</hotelCountry><hotelState></hotelState><hotelCity>MAKKAH</hotelCity></fullAddress><rating>559</rating><hotelImages count="40"><thumb><![CDATA[https://us.dotwconnect.com/poze_hotel/52/5282665/V52DTK99_421556c539e7a51c64bf268d209d3c88.png]]></thumb>    <image runno="0">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/52/5282665/V52DTK99_421556c539e7a51c64bf268d209d3c88.png]]></url>
+    </image>    <image runno="1">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/52/5282665/t8URATwV_9e681533a39000ae0d9700cb134dae19.jpg]]></url>
+    </image>    <image runno="2">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/2cf327c4-9abc-4fd7-89b8-caac805e5bd1.jpg]]></url>
+    </image>    <image runno="3">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/7c22a752-90a4-44a4-b930-28a1114d5cdd.jpg]]></url>
+    </image>    <image runno="4">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/8b71572e-9ef2-4e94-b2a8-abb9f28f3373.jpg]]></url>
+    </image>    <image runno="5">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/52/5282665/qLY7K0q8_6b1a28b10ab671861c7d1f8bd785896b.jpg]]></url>
+    </image>    <image runno="6">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/52/5282665/uLqU3ypV_8077aa7d39951db37e6be50cd51b56e4.jpg]]></url>
+    </image>    <image runno="7">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/52/5282665/SpJKEROe_e9f09cbc52971f3c90d233e1673989e5.jpg]]></url>
+    </image>    <image runno="8">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/52/5282665/qxMdloeU_f614744cfcd877031e05dec1ed29c081.jpg]]></url>
+    </image>    <image runno="9">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/52/5282665/HENl7V4W_4ee56034a23b156ee43688511626374d.jpg]]></url>
+    </image>    <image runno="10">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/52/5282665/8lXh3tA6_fe17a6ab1ed73e4b391d07d23be30b04.jpg]]></url>
+    </image>    <image runno="11">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/e261728d-2dd2-4178-80fb-a035f0e55f40.jpg]]></url>
+    </image>    <image runno="12">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/c6e3581c-02c1-4c33-966d-67b838a431eb.jpg]]></url>
+    </image>    <image runno="13">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/5342cb59-a61b-4136-99eb-426d4429517a.jpg]]></url>
+    </image>    <image runno="14">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/3b6e04e0-3df2-472c-ae02-6b0fd3d7a0a4.jpg]]></url>
+    </image>    <image runno="15">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/86cb8f04-5758-44c9-a1e5-b47e088d463c.jpg]]></url>
+    </image>    <image runno="16">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/3086bd37-add4-40f2-b738-a6deef693e16.jpg]]></url>
+    </image>    <image runno="17">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/e4141551-4450-43c0-983c-da37ca68ad6b.jpg]]></url>
+    </image>    <image runno="18">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/edbf41f8-75e1-434a-9ea5-26ae444e30de.jpg]]></url>
+    </image>    <image runno="19">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/52/5282665/4fAZZPB9_a97af703268dff5472f9263f2675e2fe.png]]></url>
+    </image>    <image runno="20">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/52/5282665/z7VjN5ZN_ac49f8d4ae6c6cba6c6f4750fb62b35e.png]]></url>
+    </image>    <image runno="21">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/52/5282665/uN7fZDXl_365be040cf5302a1520ed496e0f6828e.png]]></url>
+    </image>    <image runno="22">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/52/5282665/o72WRq8v_11a926e98aa58d2c1443bd5180436c09.png]]></url>
+    </image>    <image runno="23">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/52/5282665/GLAK5XOU_b62219ea7a69ad0cfd8bdb318dc84fef.png]]></url>
+    </image>    <image runno="24">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/52/5282665/NmGQehIR_e20eeb33b6332098e6661c3acfa67c4f.png]]></url>
+    </image>    <image runno="25">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/e896ad57-ca1d-4c8a-a3cb-fd53fbbb0109.jpg]]></url>
+    </image>    <image runno="26">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/f9583b5c-d1c8-45ce-8c75-fe4205038df5.jpg]]></url>
+    </image>    <image runno="27">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/f1819740-b32d-42ea-ab76-b15bf4db69f8.jpg]]></url>
+    </image>    <image runno="28">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/65b1779c-1fd5-4f97-a708-d67211893afd.jpg]]></url>
+    </image>    <image runno="29">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/9764ea45-61fd-4615-914f-e82fb9e247d0.jpg]]></url>
+    </image>    <image runno="30">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/9fefd028-4f5f-4dac-90e6-896ca64fe531.jpg]]></url>
+    </image>    <image runno="31">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/52/5282665/eBG2z1I5_8077aa7d39951db37e6be50cd51b56e4.jpg]]></url>
+    </image>    <image runno="32">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/52/5282665/SEdXb1qm_33d50e365a2678826f52d2db052215ed.jpg]]></url>
+    </image>    <image runno="33">
+        <alt></alt>
+        <category id="75183">Other</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/9b04f25a-26c9-429e-af3b-a81e08c78a72.jpg]]></url>
+    </image>    <image runno="34">
+        <alt></alt>
+        <category id="87315">Swimming pool-spa</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/bd37a974-b5de-4d99-abe3-c652493a5d6f.jpg]]></url>
+    </image>    <image runno="35">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/e90109c2-0a8e-41d4-b8c8-37bca46f630a.jpg]]></url>
+    </image>    <image runno="36">
+        <alt></alt>
+        <category id="87345">Restaurant-cafeteria</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/26f6e803-a25a-41c8-8cbc-1fb06dd7c89f.jpg]]></url>
+    </image>    <image runno="37">
+        <alt></alt>
+        <category id="87355">Work-area</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/8e80e58e-6ba3-485e-b49a-1d71fa4688d5.jpg]]></url>
+    </image>    <image runno="38">
+        <alt></alt>
+        <category id="87355">Work-area</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/0a1734cd-f3c1-4757-bb3b-858b7cbca553.jpg]]></url>
+    </image>    <image runno="39">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/0983cd08-694c-4069-96b5-4603295560f4.jpg]]></url>
+    </image></hotelImages><description1><language id="EN" name="English"><![CDATA[Located in Makkah, Emaar International is a 1-star hotel offering air-conditioned rooms with private bathrooms. It features a restaurant and designated smoking areas. Complimentary wireless internet access is available. Each room is equipped with a flat-screen TV, a kettle, and a hairdryer. Conveniences include a safe, and irons/ironing boards can be requested. Housekeeping is provided daily. The hotel is non-smoking. The 24-hour front desk staff speaks Arabic and English and can provide information about the area. Luggage storage is available. Masjid Al-Jinn is 1.1 km away, while the Great Mosque of Makkah and Kaaba are within 5.7 km. King Abdulaziz International Airport is 91.6-95 km away.]]></language></description1><description2><language id="EN" name="English"><![CDATA[The EMAAR INTERNATIONAL is a  hotel.]]></language></description2><geoPoint><lat>21.439310</lat><lng>39.834339</lng></geoPoint><cityName>MAKKAH</cityName><cityCode>164</cityCode><countryName>SAUDI ARABIA</countryName><countryCode>4</countryCode><preferred>no</preferred><hotelCheckIn>16:00</hotelCheckIn><hotelCheckOut>14:00</hotelCheckOut></hotel></hotels><successful>TRUE</successful></result>

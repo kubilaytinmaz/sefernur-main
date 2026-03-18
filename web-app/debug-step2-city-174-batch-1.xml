@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><result command="searchhotels" tID="1773843362100001" ip="46.196.170.191"  date="2026-03-18 14:16:02" version="4.0" elapsedTime="0.032821178436279"><currencyShort>USD</currencyShort><hotels count="2"><hotel runno="0" preferred="no" exclusive="no" cityname="MADINAH" hotelid="5913165"><hotelName>Lafif Hotel Al-Khaldia</hotelName><address>Jabbar Ibn Sakhr, Al Khalidiyyah, Madinah</address><fullAddress><hotelStreetAddress>Jabbar Ibn Sakhr, Al Khalidiyyah, Madinah</hotelStreetAddress><hotelZipCode>42317</hotelZipCode><hotelCountry>SAUDI ARABIA</hotelCountry><hotelState></hotelState><hotelCity>MADINAH</hotelCity></fullAddress><rating>559</rating><hotelImages count="27"><thumb><![CDATA[https://static-images.webbeds.com/0/image/7e96076c-ffde-4c6a-adfa-95511f76de7a.jpg]]></thumb>    <image runno="0">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/7e96076c-ffde-4c6a-adfa-95511f76de7a.jpg]]></url>
+    </image>    <image runno="1">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/59/5913165/uf5N8xLB_c26be60cfd1ba40772b5ac48b95ab19b.png]]></url>
+    </image>    <image runno="2">
+        <alt></alt>
+        <category id="48819">Lobby</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/ba874a93-793c-41b4-b466-2a92885b1af7.jpg]]></url>
+    </image>    <image runno="3">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/59/5913165/jvlIaRVK_3effce62dea4532e61d21f7c0be4ba43.png]]></url>
+    </image>    <image runno="4">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/59/5913165/IUcpW7Ad_4f11c4a023f29c528f91b9ea7e4b6d01.png]]></url>
+    </image>    <image runno="5">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/59/5913165/vdCruy0X_a715a7802863d797b17b2bd2ca5a32c3.png]]></url>
+    </image>    <image runno="6">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/7ee5631c-2e76-4513-9d3b-4490f176a81d.jpg]]></url>
+    </image>    <image runno="7">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/59/5913165/yhf8wswN_b64810fde7027715e614449aff1d595f.png]]></url>
+    </image>    <image runno="8">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/f0611fa0-31c3-471e-b53f-34ce45408bb6.jpg]]></url>
+    </image>    <image runno="9">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/59/5913165/ILZDd832_900f53f4274b62426298909232c24ed6.png]]></url>
+    </image>    <image runno="10">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/0a9ee099-ccb2-4526-9472-38fdd619d220.jpg]]></url>
+    </image>    <image runno="11">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/59/5913165/uknzf3x9_72a9ab2bbccadf3d20bc747fbb6a5dce.png]]></url>
+    </image>    <image runno="12">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/777b121c-d2c3-480d-8e23-b021814e21d8.jpg]]></url>
+    </image>    <image runno="13">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/59/5913165/evr1gO2i_27a2d64d07fdc53db9c4fc1a4addb0e0.png]]></url>
+    </image>    <image runno="14">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/59/5913165/cOi4CsVo_f4d01949f87c2597efd961356790a2d8.png]]></url>
+    </image>    <image runno="15">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/59/5913165/CGASgN8L_f89fb4bdb84f4e3617f5198abf451bd9.png]]></url>
+    </image>    <image runno="16">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/59/5913165/P8HroLSO_37e2b52f19da778fba43ab3c1897f840.png]]></url>
+    </image>    <image runno="17">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/59/5913165/zXjnH0xC_dc78d13a95344a4147b0b2657c851cda.png]]></url>
+    </image>    <image runno="18">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/59/5913165/kO2TUnHG_f6aac84a83343a247532b533b0ef059f.png]]></url>
+    </image>    <image runno="19">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/59/5913165/dX7LkgKz_22b1ec8dd34d48dd4f41941d15a75823.png]]></url>
+    </image>    <image runno="20">
+        <alt></alt>
+        <category id="48839">Amenities and Services</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/59/5913165/QGz1LIc0_fda678910bfe16cf8364d4f432abba00.png]]></url>
+    </image>    <image runno="21">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/050c908b-5432-4e0f-92a8-d505613711fc.jpg]]></url>
+    </image>    <image runno="22">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/663ad834-fe12-425c-98f2-6a21361091bf.jpg]]></url>
+    </image>    <image runno="23">
+        <alt></alt>
+        <category id="87335">Lounge</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/83dba756-bcb7-4cfe-a0c8-7d91e6291805.jpg]]></url>
+    </image>    <image runno="24">
+        <alt></alt>
+        <category id="103345">Amenities</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/79254d29-72fd-48b9-a22f-b595a0ffd9e6.jpg]]></url>
+    </image>    <image runno="25">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/15ae6462-ae55-491b-b6ae-0b6479163b14.jpg]]></url>
+    </image>    <image runno="26">
+        <alt></alt>
+        <category id="103365">Bathroom</category>
+        <url><![CDATA[https://static-images.webbeds.com/0/image/ba23b5e9-e313-4a89-b7b7-c9b3e2d51a29.jpg]]></url>
+    </image></hotelImages><description1><language id="EN" name="English"><![CDATA[The property is located 5 km from Knowledge Economic City, 5 km from Dar Al Madinah Museum, 6 km from Jabal Ahad Garden Park, 10 km from King Fahad Garden, and 12 km from Prince Mohammad bin Abdulaziz International Airport.<br />
+<br />
+Facilities and services include a 24-hour reception, air conditioning, a bar, car parking, conference/banquet facilities (extra charge), an elevator, free Wi-Fi, ironing facilities (extra charge), laundry facilities (extra charge), a restaurant, wireless internet, wheelchair access, and a non-smoking property.<br />
+<br />
+Rooms feature air-conditioning, a private bathroom, free WiFi, a TV, and a work desk.<br />
+<br />
+Address Jabbar Ibn Sakhr, Al Khalidiyyah, Madinah 42317, Saudi Arabia]]></language></description1><description2><language id="EN" name="English"><![CDATA[The Lafif Hotel Al-Khaldia is a  hotel.]]></language></description2><geoPoint><lat>24.462982</lat><lng>39.655720</lng></geoPoint><cityName>MADINAH</cityName><cityCode>174</cityCode><countryName>SAUDI ARABIA</countryName><countryCode>4</countryCode><preferred>no</preferred><hotelCheckIn>15:00</hotelCheckIn><hotelCheckOut>12:00</hotelCheckOut></hotel><hotel runno="1" preferred="no" exclusive="no" cityname="MADINAH" hotelid="2367535"><hotelName>Al Mukhtara Al Gharbi</hotelName><address>Salman Al Farsi Street Al Hram 42313</address><fullAddress><hotelStreetAddress>Salman Al Farsi Street Al Hram 42313</hotelStreetAddress><hotelZipCode></hotelZipCode><hotelCountry>SAUDI ARABIA</hotelCountry><hotelState></hotelState><hotelCity>MADINAH</hotelCity></fullAddress><rating>560</rating><hotelImages count="3"><thumb><![CDATA[https://us.dotwconnect.com/poze_hotel/23/2367535/v0DrDZ9f_cd63eb89c2a87a321f400df82ef51221.jpg]]></thumb>    <image runno="0">
+        <alt></alt>
+        <category id="48809">Hotel</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/23/2367535/v0DrDZ9f_cd63eb89c2a87a321f400df82ef51221.jpg]]></url>
+    </image>    <image runno="1">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/23/2367535/luK24i3J_2c4aa861b82c5f83f1b43180150bf01a.jpg]]></url>
+    </image>    <image runno="2">
+        <alt></alt>
+        <category id="48829">Rooms</category>
+        <url><![CDATA[https://us.dotwconnect.com/poze_hotel/23/2367535/BKCnSnqN_4e4da3729a7bcd9b7d54c835a1217a19.jpg]]></url>
+    </image></hotelImages><description1><language id="EN" name="English"><![CDATA[Providing free WiFi, Al Mukhtara Al Gharbi Hotel offers rooms in Al Madinah, 1.3 km from Al-Masjid an-Nabawi. Located around 1.8 km from Old Bazaar, the hotel is also 2.9 km away from Mazaya Mall. Al Baqia Cemetry is 3.1 km from the hotel and Quba Mosque is 3.7 km away.<br />
+<br />
+At the hotel, all rooms include a wardrobe, a flat-screen TV and a private bathroom. All guest rooms have a seating area.<br />
+<br />
+Languages spoken at the 24-hour front desk include Arabic and English.<br />
+<br />
+Madina Mall is 5 km from Al Mukhtara Al Gharbi Hotel, while Al Noor Mall is 5 km from the property. Prince Mohammad bin Abdulaziz International Airport is 15 km away.]]></language></description1><description2><language id="EN" name="English"><![CDATA[The Al Mukhtara Al Gharbi is a  hotel.]]></language></description2><geoPoint><lat>24.468306</lat><lng>39.603630</lng></geoPoint><cityName>MADINAH</cityName><cityCode>174</cityCode><countryName>SAUDI ARABIA</countryName><countryCode>4</countryCode><preferred>no</preferred><hotelCheckIn>16:00</hotelCheckIn><hotelCheckOut>12:00</hotelCheckOut></hotel></hotels><successful>TRUE</successful></result>

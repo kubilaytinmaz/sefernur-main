@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><result  tID="1773806342100001" ip="46.196.168.128"  date="2026-03-18 03:59:02" version="4.0" elapsedTime="0.0011141300201416"><request><successful>FALSE</successful><error><class>RequestController</class><code>41</code><postXml><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://www.dotwconnect.com/xsd/booking.xsd" xmlns:ns2="http://www.dotwconnect.com/xsd/general.xsd">
+  <SOAP-ENV:Header>
+    <ns2:AuthHeader>
+      <ns2:Username>birlikgrup</ns2:Username>
+      <ns2:Password>591c7f4e4319f7f1881166c494edae26</ns2:Password>
+      <ns2:Culture>en-US</ns2:Culture>
+      <ns2:Version>4</ns2:Version>
+    </ns2:AuthHeader>
+  </SOAP-ENV:Header>
+  <SOAP-ENV:Body>
+    <ns1:SearchHotelsRequest>
+      <ns1:Options>
+        <ns2:NoPrice>true</ns2:NoPrice>
+      </ns1:Options>
+      <ns1:BookingDetails>
+        <ns2:CityId>174</ns2:CityId>
+        <ns2:CheckIn>2026-03-18</ns2:CheckIn>
+        <ns2:CheckOut>2026-03-19</ns2:CheckOut>
+        <ns2:Nationality>5</ns2:Nationality>
+        <ns2:Currency>520</ns2:Currency>
+        <ns2:Rooms>
+          <ns2:Room>
+            <ns2:Adults>1</ns2:Adults>
+            <ns2:Children>0</ns2:Children>
+          </ns2:Room>
+        </ns2:Rooms>
+      </ns1:BookingDetails>
+      <ns1:Fields>
+        <ns2:Field>hotelName</ns2:Field>
+        <ns2:Field>address</ns2:Field>
+        <ns2:Field>rating</ns2:Field>
+        <ns2:Field>hotelImages</ns2:Field>
+        <ns2:Field>description1</ns2:Field>
+        <ns2:Field>geoPoint</ns2:Field>
+        <ns2:Field>cityName</ns2:Field>
+        <ns2:Field>countryName</ns2:Field>
+      </ns1:Fields>
+    </ns1:SearchHotelsRequest>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>]]></postXml><details>Incorrect data for given source or no access from specified source</details><extraDetails>Details Hidden</extraDetails></error></request></result>
