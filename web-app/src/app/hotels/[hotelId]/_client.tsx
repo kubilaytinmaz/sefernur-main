@@ -5,13 +5,13 @@ import {
   HotelImageGallery,
   HotelInfoSection,
   HotelLocation,
+  HotelMiniMap,
   HotelReviews,
   SimilarHotels
 } from "@/components/hotels";
 import { EmptyState, ErrorState, LoadingState } from "@/components/states/AsyncStates";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { useRouteId } from "@/hooks/useRouteId";
 import { formatTlUsdPairFromTl, formatTlUsdPairFromUsd } from "@/lib/currency";
 import { createReservation } from "@/lib/firebase/reservations";
@@ -25,7 +25,6 @@ import {
   ArrowLeft,
   BedDouble,
   CalendarDays,
-  Check,
   CheckCircle2,
   ChevronDown,
   ChevronUp,
@@ -329,12 +328,30 @@ function RoomCard({
   isSelected,
   onSelect,
   nightCount,
+  hotelId,
+  checkIn,
+  checkOut,
+  adults,
+  cityCode,
+  hotelName,
+  hotelImage,
+  hotelAddress,
+  stars,
 }: {
   room: NormalizedRoom;
   index: number;
   isSelected: boolean;
   onSelect: () => void;
   nightCount: number;
+  hotelId: string;
+  checkIn: string;
+  checkOut: string;
+  adults: number;
+  cityCode: number;
+  hotelName: string;
+  hotelImage: string;
+  hotelAddress: string;
+  stars: number;
 }) {
   const rateId = room.rateId || "";
   const roomName = translateRoomName(room.roomName || "Oda");
@@ -347,12 +364,13 @@ function RoomCard({
   const leftNum = Number(leftToSell);
   const perNight = nightCount > 0 ? priceNumber / nightCount : priceNumber;
 
+  // Create SEO-friendly slug
+  const hotelSlug = `${hotelName.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "")}-${hotelId}`;
+  const bookingUrl = `/otel-rezervasyon/${hotelSlug}?checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&cityCode=${cityCode}&hotelName=${encodeURIComponent(hotelName)}&hotelImage=${encodeURIComponent(hotelImage)}&hotelAddress=${encodeURIComponent(hotelAddress)}&stars=${stars}&preselectRoom=${rateId}`;
+
   return (
-    <button
-      key={`${rateId || "rate"}-${index}`}
-      type="button"
-      onClick={onSelect}
-      className={`group w-full text-left border-2 rounded-2xl p-5 transition-all duration-200 ${
+    <div
+      className={`group border-2 rounded-2xl p-5 transition-all duration-200 ${
         isSelected
           ? "border-emerald-500 bg-emerald-50/70 shadow-md shadow-emerald-100"
           : "border-slate-200 hover:border-emerald-300 hover:shadow-sm bg-white"
@@ -400,13 +418,17 @@ function RoomCard({
         </div>
       </div>
 
-      {/* Selection indicator */}
-      {isSelected && (
-        <div className="flex items-center gap-1.5 mt-3 pt-3 border-t border-emerald-200 text-sm text-emerald-700 font-medium">
-          <Check className="w-4 h-4" /> Bu oda seçildi
-        </div>
-      )}
-    </button>
+      {/* Action button */}
+      <div className="mt-4 pt-3 border-t border-slate-100">
+        <Link
+          href={bookingUrl}
+          className="inline-flex items-center justify-center gap-2 w-full h-11 rounded-xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition-colors"
+        >
+          <BedDouble className="w-4 h-4" />
+          Rezervasyon Yap
+        </Link>
+      </div>
+    </div>
   );
 }
 
@@ -607,6 +629,14 @@ export default function HotelDetailPage() {
   const [bookingMessage, setBookingMessage] = useState<string | null>(null);
   const [bookingError, setBookingError] = useState<string | null>(null);
   const [showAllRooms, setShowAllRooms] = useState(false);
+
+  // Scroll to map section
+  const handleScrollToMap = () => {
+    const mapSection = document.getElementById("hotel-map-section");
+    if (mapSection) {
+      mapSection.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
 
   const [form, setForm] = useState<BookingPayload>({
     title: "Mr",
@@ -1064,89 +1094,86 @@ export default function HotelDetailPage() {
                 cityName={cityName || undefined}
                 countryName={countryName || undefined}
               />
-              <HotelAmenities />
+              <div className="space-y-6">
+                <HotelAmenities />
+                <HotelMiniMap
+                  hotelName={hotelName}
+                  address={hotelAddress}
+                  lat={geoPoint?.lat ? parseFloat(geoPoint.lat) : undefined}
+                  lng={geoPoint?.lng ? parseFloat(geoPoint.lng) : undefined}
+                  cityCode={cityCode}
+                  onExpandMap={handleScrollToMap}
+                />
+              </div>
             </div>
 
-            {/* Rooms + Booking Section */}
-            <div className="grid xl:grid-cols-3 gap-8">
-              {/* Left: Room List */}
-              <div className="xl:col-span-2 space-y-6">
-                {/* Section header */}
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-xl font-bold text-slate-900">Oda Seçenekleri</h2>
-                    <p className="text-sm text-slate-500 mt-0.5">
-                      {roomItems.length} farklı seçenek bulundu — birini seçerek rezervasyona geçin
-                    </p>
-                  </div>
-                </div>
-
-                {/* Room cards */}
-                <div className="space-y-3">
-                  {visibleRooms.map((room, index) => (
-                    <RoomCard
-                      key={`${room.rateId || "rate"}-${index}`}
-                      room={room}
-                      index={index}
-                      isSelected={selectedRateId === (room.rateId || "")}
-                      onSelect={() => handleSelectRoom(room.rateId || "")}
-                      nightCount={nightCount}
-                    />
-                  ))}
-                </div>
-
-                {/* Show more / less */}
-                {roomItems.length > 6 && (
-                  <button
-                    type="button"
-                    onClick={() => setShowAllRooms((v) => !v)}
-                    className="w-full flex items-center justify-center gap-2 py-3 text-sm font-medium text-emerald-700 hover:text-emerald-800 border border-emerald-200 rounded-xl hover:bg-emerald-50 transition-colors"
-                  >
-                    {showAllRooms ? (
-                      <>
-                        <ChevronUp className="w-4 h-4" /> Daha az göster
-                      </>
-                    ) : (
-                      <>
-                        <ChevronDown className="w-4 h-4" /> Tümünü göster ({roomItems.length} oda)
-                      </>
-                    )}
-                  </button>
-                )}
-              </div>
-
-              {/* Right: Sticky Booking Form */}
-              <div ref={bookingRef} className="xl:col-span-1">
-                <div className="xl:sticky xl:top-6">
-                  <Card className="border-slate-200 bg-white shadow-lg shadow-slate-200/50">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg text-slate-900">Rezervasyon & Ödeme</CardTitle>
-                      <p className="text-xs text-slate-500">Bilgileri doldurup güvenli ödeme adımına geçin</p>
-                    </CardHeader>
-                    <CardContent>
-                      <BookingFormSection
-                        form={form}
-                        setForm={setForm}
-                        submitBooking={submitBooking}
-                        bookingMutation={bookingMutation}
-                        bookingError={bookingError}
-                        bookingMessage={bookingMessage}
-                        selectedRoom={selectedRoom}
-                        nightCount={nightCount}
-                      />
-                    </CardContent>
-                  </Card>
+            {/* Rooms Section */}
+            <div className="space-y-6">
+              {/* Section header */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900">Oda Seçenekleri</h2>
+                  <p className="text-sm text-slate-500 mt-0.5">
+                    {roomItems.length} farklı seçenek bulundu — birini seçerek rezervasyon yapın
+                  </p>
                 </div>
               </div>
+
+              {/* Room cards - Grid layout */}
+              <div className="grid md:grid-cols-2 gap-4">
+                {visibleRooms.map((room, index) => (
+                  <RoomCard
+                    key={`${room.rateId || "rate"}-${index}`}
+                    room={room}
+                    index={index}
+                    isSelected={selectedRateId === (room.rateId || "")}
+                    onSelect={() => handleSelectRoom(room.rateId || "")}
+                    nightCount={nightCount}
+                    hotelId={hotelId}
+                    hotelName={hotelName}
+                    checkIn={checkIn}
+                    checkOut={checkOut}
+                    adults={adults}
+                    cityCode={cityCode}
+                    hotelImage={hotelImage}
+                    hotelAddress={hotelAddress}
+                    stars={stars}
+                  />
+                ))}
+              </div>
+
+              {/* Show more / less */}
+              {roomItems.length > 6 && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllRooms((v) => !v)}
+                  className="w-full flex items-center justify-center gap-2 py-3 text-sm font-medium text-emerald-700 hover:text-emerald-800 border border-emerald-200 rounded-xl hover:bg-emerald-50 transition-colors"
+                >
+                  {showAllRooms ? (
+                    <>
+                      <ChevronUp className="w-4 h-4" /> Daha az göster
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown className="w-4 h-4" /> Tümünü göster ({roomItems.length} oda)
+                    </>
+                  )}
+                </button>
+              )}
             </div>
 
             {/* Location */}
-            <HotelLocation
-              address={hotelAddress}
-              cityCode={cityCode}
-              lat={geoPoint?.lat ? parseFloat(geoPoint.lat) : undefined}
-              lng={geoPoint?.lng ? parseFloat(geoPoint.lng) : undefined}
-            />
+            <div id="hotel-map-section">
+              <HotelLocation
+                address={hotelAddress}
+                cityCode={cityCode}
+                lat={geoPoint?.lat ? parseFloat(geoPoint.lat) : undefined}
+                lng={geoPoint?.lng ? parseFloat(geoPoint.lng) : undefined}
+                cityName={cityName || undefined}
+                countryName={countryName || undefined}
+                hotelName={hotelName}
+              />
+            </div>
 
             {/* Reviews */}
             <HotelReviews

@@ -46,6 +46,10 @@ const NAV_ITEMS = [
     label: "Oteller",
     href: "/admin/hotels",
     icon: Building2,
+    subItems: [
+      { label: "Oteller", href: "/admin/hotels" },
+      { label: "Rezervasyonlar", href: "/admin/hotels/reservations" },
+    ],
   },
   {
     label: "Transferler",

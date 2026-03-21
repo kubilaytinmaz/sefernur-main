@@ -2,26 +2,26 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import {
-    Baby,
-    Car,
-    Clock,
-    Coffee,
-    ConciergeBell,
-    Dumbbell,
-    Fan,
-    HeartPulse,
-    Home,
-    MapPin,
-    ParkingCircle,
-    Phone,
-    Plane,
-    Shield,
-    Snowflake,
-    Sparkles,
-    Tv,
-    Users,
-    Utensils,
-    Wifi
+  Baby,
+  Car,
+  Clock,
+  Coffee,
+  ConciergeBell,
+  Dumbbell,
+  Fan,
+  HeartPulse,
+  Home,
+  MapPin,
+  ParkingCircle,
+  Phone,
+  Plane,
+  Shield,
+  Snowflake,
+  Sparkles,
+  Tv,
+  Users,
+  Utensils,
+  Wifi
 } from "lucide-react";
 
 /* ────────── Types ────────── */
@@ -356,6 +356,9 @@ export function HotelAmenities({
   customAmenities,
 }: HotelAmenitiesProps) {
   const categories = customAmenities || (amenities ? parseAmenitiesToList(amenities) : DEFAULT_AMENITIES);
+  
+  // "Spor & Eğlence" kategorisini filtrele
+  const filteredCategories = categories.filter((category) => category.id !== "wellness");
 
   return (
     <Card className="border-slate-200">
@@ -367,7 +370,7 @@ export function HotelAmenities({
       </CardHeader>
       <CardContent>
         <div className="grid sm:grid-cols-2 gap-4">
-          {categories.map((category) => (
+          {filteredCategories.map((category) => (
             <AmenityCard key={category.id} category={category} />
           ))}
         </div>

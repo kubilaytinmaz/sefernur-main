@@ -10,7 +10,9 @@ export { HotelAmenities } from "./HotelAmenities";
 export { HotelImageGallery } from "./HotelImageGallery";
 export { HotelInfoSection } from "./HotelInfoSection";
 export { HotelLocation } from "./HotelLocation";
+export { HotelMiniMap } from "./HotelMiniMap";
 export { HotelReviews } from "./HotelReviews";
+export { MapModal } from "./MapModal";
 export { SimilarHotels, type SimilarHotel } from "./SimilarHotels";
 
 // Room & Guest Filtering Components

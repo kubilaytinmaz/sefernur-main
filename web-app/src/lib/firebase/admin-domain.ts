@@ -416,6 +416,144 @@ export async function getTransferReservationStats(): Promise<TransferReservation
 }
 
 // ═══════════════════════════════════════════════════════════════════════
+// HOTEL RESERVATIONS
+// ═══════════════════════════════════════════════════════════════════════
+
+export interface HotelReservationFilters extends Omit<ReservationFilters, "type"> {
+  hotelId?: string;
+  roomType?: string;
+}
+
+export async function getHotelReservations(
+  filters?: HotelReservationFilters,
+): Promise<ReservationModel[]> {
+  const constraints: QueryConstraint[] = [];
+
+  // Sadece hotel tipindeki rezervasyonları getir
+  constraints.push(where("type", "==", "hotel"));
+
+  if (filters?.status) constraints.push(where("status", "==", filters.status));
+  if (filters?.source) constraints.push(where("source", "==", filters.source));
+  if (filters?.maxResults) constraints.push(limit(filters.maxResults));
+
+  const items = await fetchAll(COLLECTIONS.RESERVATIONS, constraints, mapReservation);
+
+  let filtered = items;
+
+  // Otel ID filtresi (meta içinde hotelId kontrolü)
+  if (filters?.hotelId) {
+    filtered = filtered.filter((r) =>
+      r.meta?.hotelId === filters.hotelId
+    );
+  }
+
+  // Oda tipi filtresi (meta içinde roomType kontrolü)
+  if (filters?.roomType) {
+    filtered = filtered.filter((r) =>
+      r.meta?.roomType === filters.roomType
+    );
+  }
+
+  // Tarih filtreleri
+  if (filters?.startAfter) {
+    filtered = filtered.filter((r) => r.startDate >= filters.startAfter!);
+  }
+  if (filters?.startBefore) {
+    filtered = filtered.filter((r) => r.startDate <= filters.startBefore!);
+  }
+
+  return sortByCreatedAtDesc(filtered);
+}
+
+export async function getReservationsByHotelId(
+  hotelId: string,
+): Promise<ReservationModel[]> {
+  return getHotelReservations({ hotelId });
+}
+
+export interface HotelReservationStats extends ReservationStats {
+  confirmedReservations: number;
+  cancelledReservations: number;
+  todayCheckins: number;
+  todayCheckouts: number;
+  upcomingCheckins: number;
+  averagePrice: number;
+  totalNights: number;
+  averageNights: number;
+}
+
+export async function getHotelReservationStats(): Promise<HotelReservationStats> {
+  const all = await getHotelReservations();
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const stats: HotelReservationStats = {
+    total: all.length,
+    pending: 0,
+    confirmed: 0,
+    cancelled: 0,
+    completed: 0,
+    totalRevenue: 0,
+    confirmedReservations: 0,
+    cancelledReservations: 0,
+    todayCheckins: 0,
+    todayCheckouts: 0,
+    upcomingCheckins: 0,
+    averagePrice: 0,
+    totalNights: 0,
+    averageNights: 0,
+  };
+
+  let totalPrice = 0;
+  let totalNights = 0;
+
+  for (const r of all) {
+    stats[r.status]++;
+    
+    if (r.status === "confirmed" || r.status === "completed") {
+      stats.totalRevenue += r.price;
+      stats.confirmedReservations++;
+    }
+
+    if (r.status === "cancelled") {
+      stats.cancelledReservations++;
+    }
+
+    // Bugünkü check-in'ler (startDate bugün)
+    if (r.startDate >= today && r.startDate < tomorrow) {
+      stats.todayCheckins++;
+    }
+
+    // Bugünkü check-out'lar (endDate bugün)
+    if (r.endDate >= today && r.endDate < tomorrow) {
+      stats.todayCheckouts++;
+    }
+
+    // Gelecek check-in'ler (bugünden sonra)
+    if (r.startDate >= tomorrow) {
+      stats.upcomingCheckins++;
+    }
+
+    totalPrice += r.price;
+
+    // Gece sayısı hesaplama
+    const nights = Math.round((r.endDate.getTime() - r.startDate.getTime()) / (1000 * 60 * 60 * 24));
+    totalNights += Math.max(1, nights);
+  }
+
+  if (all.length > 0) {
+    stats.averagePrice = totalPrice / all.length;
+    stats.averageNights = totalNights / all.length;
+  }
+
+  stats.totalNights = totalNights;
+
+  return stats;
+}
+
+// ═══════════════════════════════════════════════════════════════════════
 // USERS
 // ═══════════════════════════════════════════════════════════════════════
 

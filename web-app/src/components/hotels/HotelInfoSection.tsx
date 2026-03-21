@@ -3,13 +3,13 @@
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import {
-    Building2,
-    Clock,
-    Globe,
-    Info,
-    MapPin,
-    Phone,
-    Star
+  Building2,
+  Clock,
+  Globe,
+  Info,
+  MapPin,
+  Phone,
+  Star
 } from "lucide-react";
 
 /* ────────── Types ────────── */
@@ -210,7 +210,7 @@ export function HotelInfoSection({
             <div className="flex-1 text-sm text-blue-900">
               <p className="font-medium mb-1">Önemli Bilgi</p>
               <p className="text-blue-700">
-                Giriş sırasında geçerli kimlik belgesi ve kredi kartı gereklidir. 
+                Giriş sırasında geçerli kimlik belgesi ve kredi kartı gereklidir.
                 Rezervasyonunuz onaylandıktan sonra otel ile iletişime geçebilirsiniz.
               </p>
             </div>
